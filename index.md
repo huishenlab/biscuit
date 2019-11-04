@@ -18,6 +18,52 @@ nav_order: 1
 
 ---
 
+BISulfite-seq CUI Toolkit (BISCUIT) is a utility suite for analyzing sodium
+bisulfite conversion-based DNA methylation/modification data. It was written to
+perform alignment, DNA methylation and mutation calling, and allele specific
+methylation from bisulfite sequencing data.
+
+## Quick Start
+
+To jump right in to performing analyses with BISCUIT, precompiled binaries are
+available for download on the [BISCUIT release page](https://github.com/huishenlab/biscuit/releases/latest).
+Note, these are currently only available for Linux and MacOS. (See
+[Download and Install](#Download-and-Install) for more information about
+downloading and installing BISCUIT).
+
+Once a working binary version of BISCUIT is ready, the alignment process is as
+follows:
+```bash
+$ biscuit index my_reference.fa
+$ biscuit align -M -R "my_rg" /path/to/my_reference.fa read1.fq.gz read2.fq.gz | 
+    samblaster -M | samtools sort -o my_output.bam -O BAM -
+```
+More information regarding indexing, alignment, and duplicate marking can be
+found at [Read Mapping]({{ site.baseurl }}{% link docs/alignment/alignment.md %}).
+
+BISCUIT can then be used to extract DNA methylation and genetic information
+using the `pileup` subcommand:
+```bash
+$ biscuit pileup /path/to/my_reference.fa my_output.bam -o my_pileup.vcf
+$ bgzip my_pileup.vcf
+$ tabix -p vcf my_pileup.vcf.gz
+```
+This will create a tabix-indexed VCF file for downstream analysis. More
+information regarding generating the VCF file can be found at
+[Read Pileup]({{ site.baseurl }}{% link docs/pileup.md %})).
+
+Once the VCF file has been created, DNA methylation information can be extracted
+using the `vcf2bed` subcommand:
+```bash
+$ biscuit vcf2bed -t cg my_pileup.vcf.gz
+```
+This will create a BED file that includes the methylation fraction and coverage
+for each CpG found in the VCF file. More information regarding methylation
+extraction can be found at
+[Extract Methylation]({{ site.baseurl }}{% link docs/methylextraction.md %}).
+
+## Download and Install
+
 ### Getting Started
 
 To start, just download the [Precompiled Binaries](https://github.com/zwdzwd/biscuit/releases/latest)
