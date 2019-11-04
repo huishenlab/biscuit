@@ -14,13 +14,13 @@ nav_order: 1
 # BISCUIT - Understand Sequencing Data with Bisulfite Conversion
 {: .fs-9 }
 
-[Get started now](#getting-started){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [View it on GitHub](https://github.com/zwdzwd/biscuit){: .btn .fs-5 .mb-4 .mb-md-0 }
+[Get started now](#getting-started){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [View it on GitHub](https://github.com/huishenlab/biscuit){: .btn .fs-5 .mb-4 .mb-md-0 }
 
 ---
 
 ### Getting Started
 
-To start, just download the [Precompiled Binaries](https://github.com/zwdzwd/biscuit/releases/latest).
+To start, just download the [Precompiled Binaries](https://github.com/zwdzwd/biscuit/releases/latest)
 from Github (currently only supports latest versions of Linux and MacOSX).
 One can do this in terminal using the following one-liner:
 
