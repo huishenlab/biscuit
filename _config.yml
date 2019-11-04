@@ -14,12 +14,11 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 title: BISCUIT
-email: wanding.zhou@vai.org
+email: jacob.morrison@vai.org
 description: >- # this means to ignore newlines until "baseurl:"
 baseurl: "/biscuit/" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: zhouwanding
-github_username:  zwdzwd
+github_username:  huishenlab
 
 # Build settings
 markdown: kramdown
@@ -28,7 +27,7 @@ remote_theme: pmarsceill/just-the-docs
 search_enabled: true
 aux_links:
   "BISCUIT on GitHub":
-    - "//github.com/zwdzwd/biscuit"
+    - "//github.com/huishenlab/biscuit"
 
 # theme: jekyll-theme-minimal
 # theme: minima
