@@ -7,9 +7,26 @@ permalink: /bamoperation/
 
 # BAM Operation
 
-### Mark read duplication
+### Mark duplicate reads
 
-This step is optional. The mark duplicate of BISCUIT is bisulfite strand aware.
+#### biscuitBlaster Pipeline
+
+The biscuitBlaster pipeline combines BISCUIT, samblaster, and samtools to mark duplicates and sort aligned reads.
+The pipeline is:
+```bash
+$ biscuit align -M -R "my_rg" /path/to/idx read1.fq.gz read2.fq.gz | 
+    samblaster -M | samtools sort -o my_output.bam -O BAM -
+```
+where `"my_rg"` is the read group (if applicable) to be used,
+`/path/to/idx` is the FASTA file for your reference genome,
+`read*.fq.gz` are the read1 and read2 FASTQ files from your sequencing run, and
+`my_output.bam` is the name of your output BAM file.
+
+#### Deprecated functionality
+
+**This functionality is DEPRECATED and will be removed in the next release!!!!
+We suggest using the biscuitBlaster pipeline for duplicate marking.**
+*This step is optional. The mark duplicate of BISCUIT is bisulfite strand aware.*
 ```bash
 $ biscuit markdup input.bam output.bam
 ```

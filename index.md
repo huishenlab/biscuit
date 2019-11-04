@@ -70,45 +70,33 @@ this by just typing `biscuit` in terminal.
 #### BAM Operation
 
   - `tview` View read mapping in terminal with bisulfite coloring (see
-    [Visualization]({{ site.baseurl }}
-    {% link docs/alignment/visualization.md %}))
-  - `markdup` Mark read duplication (see [BAM operation]({{ site.baseurl }}
-    {% link docs/alignment/bam_operation.md %}))
+    [Visualization]({{ site.baseurl }}{% link docs/alignment/visualization.md %}))
+  - `markdup` Mark read duplication (see [BAM operation]({{ site.baseurl }}{% link docs/alignment/bam_operation.md %}))
   - `bsstrand` Investigate bisulfite conversion strand label (see
-    [Quality Control]({{ site.baseurl }}
-    {% link docs/alignment/QC.md %}))
+    [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}))
   - `bsconv` Investigate bisulfite conversion rate (see
-    [Quality Control]({{ site.baseurl }}
-    {% link docs/alignment/QC.md %}))
+    [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}))
   - `cinread` Print cytosine-read pair in a long form (see
-    [BAM operation]({ site.baseurl }}
-    {% link docs/alignment/bam_operation.md %}))
+    [BAM operation]({ site.baseurl }}{% link docs/alignment/bam_operation.md %}))
 
 #### Methylation, SNP Extraction
 
   - `pileup` Generate standard-compliant VCF (see 
-    [Read Pileup]({{ site.baseurl }}
-    {% link docs/pileup.md %}))
+    [Read Pileup]({{ site.baseurl }}{% link docs/pileup.md %}))
   - `vcf2bed` Extract mutation, methylation from VCF.
-    (see [Extract Methylation]({{ site.baseurl }}
-    {% link docs/methylextraction.md %}) and 
-    [Extract Mutation]({{ site.baseurl }}
-    {% link docs/methylextraction.md %}))
+    (see [Extract Methylation]({{ site.baseurl }}{% link docs/methylextraction.md %}) and 
+    [Extract Mutation]({{ site.baseurl }}{% link docs/methylextraction.md %}))
   - `mergecg` Merge neighboring C and G in CpG context.
-    (see [Extract Methylation]({{ site.baseurl }}
-    {% link docs/methylextraction.md %}))
+    (see [Extract Methylation]({{ site.baseurl }}{% link docs/methylextraction.md %}))
   
 #### Epi-read & Epi-allele
 
   - `epiread` Convert bam to epi-read format (see
-    [Epi-read & Epi-allele]({{ site.baseurl }}
-    {% link docs/Epiread.md %}))
+    [Epi-read & Epi-allele]({{ site.baseurl }}{% link docs/Epiread.md %}))
   - `rectangle` Convert epi-read to rectangle format (see
-    [Epi-read & Epi-allele]({{ site.baseurl }}
-    {% link docs/Epiread.md %}))
+    [Epi-read & Epi-allele]({{ site.baseurl }}{% link docs/Epiread.md %}))
   - `asm` Test allele-specific methylation. (see
-    [Allele-specific Methylation]({{ site.baseurl }}
-    {% link docs/allele_meth.md %}))
+    [Allele-specific Methylation]({{ site.baseurl }}{% link docs/allele_meth.md %}))
 
 ### About the project
 
