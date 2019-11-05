@@ -1,7 +1,7 @@
 ---
 # Feel free to add content and custom Front Matter to this file.
 # To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
-title: HOME
+title: Home
 layout: default
 description: "BISulfite-seq CUI Toolkit (BISCUIT) BISulfite-seq CUI Toolkit
   (BISCUIT) is a utility suite for analyzing sodium bisulfite

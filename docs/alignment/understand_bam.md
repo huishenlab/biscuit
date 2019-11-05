@@ -28,8 +28,8 @@ tags and how insert sizes are computed.
   the more accurate the position.
   - `SA` Other parts of a chimeric primary mapping.
   - `YD` Bisulfite conversion strand label.
-    - `f` for forward/Watson strand (C<p>&#8594;</p>T from IGV)
-    - `r` for reverse/Crick strand (G<p>&#8594;</p>A from IGV)
+    - `f` for forward/Watson strand (C&#8594;T from IGV)
+    - `r` for reverse/Crick strand (G&#8594;A from IGV)
 
 See [BAM Operation]({{ site.baseurl }}{% link docs/alignment/bam_operation.md %})
 for how to add a `ZN` tag for cytosine conversion under `CpG` and other non-CpG
