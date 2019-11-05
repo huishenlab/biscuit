@@ -49,10 +49,10 @@ $ samtools index my_output.bam
 ```
 The first line is referred to as the *biscuitBlaster* pipeline and provides
 the user with a sorted BAM file of aligned reads with duplicates marked, but not
-removed. During the [Read Pileup]({{ site.baseurl }}{% docs/pileup.md %}) state,
-BISCUIT will skip marked duplicates by default. If desired, `samblaster` has a
-flag for removing duplicates during the marking process. Or, if desired, there
-is a flag for BISCUIT to retain marked duplicates during the pileup stage.
+removed. During the [Read Pileup]({{ site.baseurl }}{% link docs/pileup.md %}))
+state, BISCUIT will skip marked duplicates by default. If desired, `samblaster`
+has a flag for removing duplicates during the marking process. Or, if desired,
+there is a flag for BISCUIT to retain marked duplicates during the pileup stage.
 
 For more information regarding read mapping, run `biscuit align` in the terminal.
 
