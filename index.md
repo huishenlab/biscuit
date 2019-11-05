@@ -28,7 +28,7 @@ methylation from bisulfite sequencing data.
 To jump right in to performing analyses with BISCUIT, precompiled binaries are
 available for download on the [BISCUIT release page](https://github.com/huishenlab/biscuit/releases/latest).
 Note, these are currently only available for Linux and MacOS. (See
-[Download and Install](#Download-and-Install) for more information about
+[Download and Install](#download-and-install) for more information about
 downloading and installing BISCUIT).
 
 Once a working binary version of BISCUIT is ready, the alignment process is as
@@ -64,97 +64,110 @@ extraction can be found at
 
 ## Download and Install
 
-### Getting Started
+For your convenience, BISCUIT is available either as a precompiled binary (for
+macOS and Linux) or as source code for compilation on your own machine. In either
+instance, the `biscuit` binary is the main entry point for working with BISCUIT.
 
-To start, just download the [Precompiled Binaries](https://github.com/zwdzwd/biscuit/releases/latest)
-from Github (currently only supports latest versions of Linux and MacOSX).
-One can do this in terminal using the following one-liner:
+### Download Source Code and Compile
 
-For mac OS,
+You can compile from source code using either `git` or `curl`.
+
+Using `git`,
 ```bash
-$ curl -o biscuit \
-    -L $(curl -s https://api.github.com/repos/zwdzwd/biscuit/releases/latest |
-    grep browser_download_url | grep darwin | cut -d '"' -f 4) && chmod a+x biscuit
+git clone --recursive git@github.com:huishenlab/biscuit.git
+cd biscuit
+make
 ```
+Note, after v0.2.0, if you choose to download via `git`, make sure to use
+`git clone --recursive` to get the submodules.
 
-For linux,
+Using `curl`,
 ```bash
-$ curl -o biscuit \
-    -OL $(curl -s https://api.github.com/repos/zwdzwd/biscuit/releases/latest | 
-    grep browser_download_url | grep linux | cut -d '"' -f 4) && chmod a+x biscuit
-```
-
-### Compile from Source Code
-
-You can compile from source code using the following command. Note if
-you choose to clone from Github, make sure you specify `git clone --recursive`
-to get the submodules.
-
-```bash
-$ curl -OL $(curl -s https://api.github.com/repos/zwdzwd/biscuit/releases/latest | 
+$ curl -OL $(curl -s https://api.github.com/repos/zwdzwd/biscuit/releases/latest |
     grep browser_download_url | grep release-source.zip | cut -d '"' -f 4)
 $ unzip release.zip
 $ cd biscuit-release
 $ make
 ```
 
-The created `biscuit` binary is the main entry point.
+### Download Precompiled Binaries
 
-### Overview of Functionalities
+Precompiled binaries can be found on the
+[latest release page](https://github.com/huishenlab/biscuit/releases/latest) on
+GitHub. Currently, there are only precompiled binaries for the latest versions
+of Linux and macOS. You can also do this in the terminal using the following
+one-liner:
 
-See the following list for an overview of different
-functionalities/subcommands provided in `biscuit`. You can also see
-this by just typing `biscuit` in terminal.
+For macOS,
+```bash
+$ curl -OL $(curl -s https://api.github.com/repos/zwdzwd/biscuit/releases/latest |
+    grep browser_download_url | grep darwin | cut -d '"' -f 4)
+```
 
-#### Read Mapping
+For Linux,
+```bash
+$ curl -OL $(curl -s https://api.github.com/repos/zwdzwd/biscuit/releases/latest |
+    grep browser_download_url | grep linux_amd64 | cut -d '"' -f 4)
+$ chmod +x biscuit_*
+```
+
+## Overview of Functionalities
+
+The following list provides an overview of the different subcommands and the
+various functionalities provided by `biscuit`. You can also find much of this by
+typing `biscuit` (or `biscuit --help`) in the terminal.
+
+### Read Mapping
 
   - `index` Index reference genome (see 
-    [Read Mapping]({{ site.baseurl }}{% link docs/alignment/alignment.md %}))
+  [Read Mapping]({{ site.baseurl }}{% link docs/alignment/alignment.md %}))
   - `align` Map bisulfite converted short reads to reference (see
-    [Read Mapping]({{ site.baseurl }}{% link docs/alignment/alignment.md %}))
+  [Read Mapping]({{ site.baseurl }}{% link docs/alignment/alignment.md %}))
 
-#### BAM Operation
+### BAM Operation
 
   - `tview` View read mapping in terminal with bisulfite coloring (see
-    [Visualization]({{ site.baseurl }}{% link docs/alignment/visualization.md %}))
-  - `markdup` Mark read duplication (see [BAM operation]({{ site.baseurl }}{% link docs/alignment/bam_operation.md %}))
+  [Visualization]({{ site.baseurl }}{% link docs/alignment/visualization.md %}))
+  - `markdup` Mark read duplication - *Note, this subcommand is DEPRECATED and
+  will be removed in the next release of BISCUIT* (see
+  [BAM operation]({{ site.baseurl }}{% link docs/alignment/bam_operation.md %}))
   - `bsstrand` Investigate bisulfite conversion strand label (see
-    [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}))
+  [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}))
   - `bsconv` Investigate bisulfite conversion rate (see
-    [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}))
+  [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}))
   - `cinread` Print cytosine-read pair in a long form (see
-    [BAM operation]({ site.baseurl }}{% link docs/alignment/bam_operation.md %}))
+  [BAM operation]({ site.baseurl }}{% link docs/alignment/bam_operation.md %}))
 
-#### Methylation, SNP Extraction
+### Methylation, SNP Extraction
 
   - `pileup` Generate standard-compliant VCF (see 
-    [Read Pileup]({{ site.baseurl }}{% link docs/pileup.md %}))
-  - `vcf2bed` Extract mutation, methylation from VCF.
-    (see [Extract Methylation]({{ site.baseurl }}{% link docs/methylextraction.md %}) and 
-    [Extract Mutation]({{ site.baseurl }}{% link docs/methylextraction.md %}))
-  - `mergecg` Merge neighboring C and G in CpG context.
-    (see [Extract Methylation]({{ site.baseurl }}{% link docs/methylextraction.md %}))
+  [Read Pileup]({{ site.baseurl }}{% link docs/pileup.md %}))
+  - `vcf2bed` Extract mutation, methylation from VCF.  (see
+  [Extract Methylation]({{ site.baseurl }}{% link docs/methylextraction.md %})
+  and [Extract Mutation]({{ site.baseurl }}{% link docs/methylextraction.md %}))
+  - `mergecg` Merge neighboring C and G in CpG context. (see
+  [Extract Methylation]({{ site.baseurl }}{% link docs/methylextraction.md %}))
   
-#### Epi-read & Epi-allele
+### Epi-read & Epi-allele
 
   - `epiread` Convert bam to epi-read format (see
-    [Epi-read & Epi-allele]({{ site.baseurl }}{% link docs/Epiread.md %}))
+  [Epi-read & Epi-allele]({{ site.baseurl }}{% link docs/Epiread.md %}))
   - `rectangle` Convert epi-read to rectangle format (see
-    [Epi-read & Epi-allele]({{ site.baseurl }}{% link docs/Epiread.md %}))
+  [Epi-read & Epi-allele]({{ site.baseurl }}{% link docs/Epiread.md %}))
   - `asm` Test allele-specific methylation. (see
-    [Allele-specific Methylation]({{ site.baseurl }}{% link docs/allele_meth.md %}))
+  [Allele-specific Methylation]({{ site.baseurl }}{% link docs/allele_meth.md %}))
 
-### About the project
+## About the project
 
-This package is made by the folks from Van Andel Research Institute
-with help from prior code base from the internet.
+This package is made by the folks from Van Andel Institute with help from prior
+code base from the internet.
 
-### Acknowledgement
+## Acknowledgement
 
  - lib/aln was adapted from Heng Li's BWA-mem code.
  - lib/htslib was submoduled from the htslib library.
  - lib/klib was submoduled from Heng Li's klib.
 
-### Reference
+## Reference
 
 In preparation
