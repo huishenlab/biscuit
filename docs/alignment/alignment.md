@@ -147,8 +147,8 @@ done in the following manner: If the chromosome names are listed as `chr1`,
 
 ### Other useful options
 
-For more options in `biscuit index` and `biscuit align`, run `biscuit index` or
-`biscuit align` in your terminal.
+For more options available for indexing and aligning with BISCUIT, run
+`biscuit index` or `biscuit align` in your terminal.
 
 ### Other Alignment Features
 

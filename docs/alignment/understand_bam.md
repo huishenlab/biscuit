@@ -1,45 +1,45 @@
 ---
-title: Understand BAM
+title: Understand the Output BAM
 parent: Read Mapping
 nav_order: 1
 ---
-# Understand BISCUIT bams
 
-The BISCUIT bam is slightly different from usual BAM files in tags and
-how insert size are computed.
+# Understanding BISCUIT BAMs
 
-### TAGS
+The BISCUIT BAM is slightly different from typical BAM files with regards to
+tags and how insert sizes are computed.
 
-- `NM` - number of mismatches. This excludes cytosine conversions.
-- `XA` - location of the suboptimal alignments
-- `XB` - integer pair. The first in pair indicates the number of
-  suboptimal mapping in the primary/non-decoy chromosomes. The second
-  in pair indicates the number of suboptimal mapping in the ALT/decoy
-  chromosomes. E.g., `10,5` means 10 suboptimal alignment exists on
-  primary/non-decoy chromosomes and 5 exists on ALT/decoy chromosomes.
-- `ZC` - number of cytosine conversion
-- `ZR` - number of cytosine retention
-- `AS` - best alignment score
-- `XS` - suboptimal alignment score. This is usually equal or under
-  AS. In rare cases, pairing would cause a `XS` higher than `AS`
-- `MD` - location of the mismatches, following samtools convention.
-- `PA` - ratio of score (AS) / alt_score (XS), the higher the ratio,
-  the more accurate the position
-- `SA` - other parts of a chimeric primary mapping
-- `YD` - Bisulfite conversion strand label, `f` for forward/Watson (C>T from
-  IGV) and `r` for reverse/Crick (G>A from IGV), a la BWA-meth.
+### Useful Tags to Know
 
-See also [BAM Operation]({{ site.baseurl }}{% link docs/alignment/bam_operation.md %})
-for how to add `ZN` tag for cytosine conversion under `CpG`, and other
-non-CpG dinucleotide sequence contexts.
+  - `NM` Number of mismatches, excluding cytosine conversions.
+  - `XA` Location of suboptimal alignments.
+  - `XB` Integer pair. The first integer indicates the number of suboptimal
+  mappings in the primary/non-decoy chromosomes. The second integer in the pair
+  indicates the number of suboptimal mappings in the ALT/decoy chromosomes. For
+  example, `10,5` means ten suboptimal alignments exist on primary/non-decoy
+  chromosomes and five exist on ALT/decoy chromosomes.
+  - `ZC` Number of cytosine conversions.
+  - `ZR` Number of cytosine retentions.
+  - `AS` Best alignment score.
+  - `XS` Suboptimal alignment score.  This is usually equal to or less than `AS`.
+  In rare cases, pairing would cause a `XS` greater than `AS`.
+  - `MD` Location of mismatches, following samtools conventions.
+  - `PA` Ratio of best score to alternate score (`AS/XS`). The higher the ratio,
+  the more accurate the position.
+  - `SA` Other parts of a chimeric primary mapping.
+  - `YD` Bisulfite conversion strand label.
+    - `f` for forward/Watson strand (C<p>&#8594;</p>T from IGV)
+    - `r` for reverse/Crick strand (G<p>&#8594;</p>A from IGV)
+
+See [BAM Operation]({{ site.baseurl }}{% link docs/alignment/bam_operation.md %})
+for how to add a `ZN` tag for cytosine conversion under `CpG` and other non-CpG
+dinucleotide sequence contexts.
 
 ### Insert Size
 
-Insert size/TLEN is printed in different ways from BWA. Here the tlen
-is the actual insert size:
+In BISCUIT, the insert size/TLEN is printed in a different way than BWA. Here,
+the TLEN is the actual insert size:
 
 ```
-reverse mate read's right-most coordinate - forward mate read's left-most coordinate.
+(right-most coordinate of reverse-mate read) - (left-most coordinate of forward-mate read)
 ```
-
-
