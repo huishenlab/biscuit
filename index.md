@@ -115,7 +115,7 @@ $ chmod +x biscuit_*
 
 The following list provides an overview of the different subcommands and the
 various functionalities provided by `biscuit`. You can also find much of this by
-typing `biscuit` (or `biscuit --help`) in the terminal.
+typing `biscuit` in the terminal.
 
 ### Read Mapping
 

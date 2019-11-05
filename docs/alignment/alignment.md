@@ -14,137 +14,155 @@ permalink: docs/alignment
 1. TOC
 {:toc}
 
-### Index reference for mapping
+There are two subcommands used when mapping reads to a reference genome, `index`
+and `align`. `index` pertains to indexing the chosen reference genome to allow
+for quicker mapping during the alignment process. `align` performs the actual
+mapping of reads to the indexed reference genome.
+
+## Step 1: Index Reference for Mapping
+
+Before performing the read alignment, you must create create an index of the
+reference genome (called `my_reference.fa` below) to be used in your alignment:
 
 ```bash
-biscuit index GRCh38.fa
+biscuit index my_reference.fa
 ```
+The index of BISCUIT is composed of the 2-bit packed reference (`*.bis.pac`,
+`*.bis.amb`, `*.bis.ann`). The FM-index and suffix array of the parent strand
+(`*.par.bwt` and `*.par.sa`) and the daughter strand (`*.dau.bwt` and `*.dau.sa`).
+Here, `*` references to the input reference file, `my_reference.fa`.
 
-The index of BISCUIT composed of the 2-bit packed reference
-(`.bis.pac`, `.bis.amb`, `.bis.ann`). The suffix array and
-FM-index of the parent strand (`.par.bwt` and `.par.sa`) and
-the daughter strand (`.dau.bwt` and `.dau.sa`).
+For more information regarding read mapping, run `biscuit index` in the terminal.
 
-### Read mapping
+## Step 2: Read Mapping
 
-The following snippet shows how BISCUIT can be used in conjunction
-with [samtools](https://github.com/samtools/samtools) to produce
-indexed alignment BAM file.
-```bash
-$ biscuit align -t 10 GRCh38.fa fastq1.fq.gz fastq2.fq.gz | 
-    samtools sort -T . -O bam -o output.bam
-$ samtools index output.bam
-```
-
-### Map one sequence
-
-One does not need to prepare a fastq file to map the reads. The `-1`
-option let you map one read on the fly.
+After creating an index of the reference genome, the sequenced reads can be
+mapped. In conjunction with [samtools](https://github.com/samtools/samtools)
+and [samblaster](https://github.com/GregoryFaust/samblaster), BISCUIT can be
+used to map, mark duplicate, and sort the provided reads.  Additionally,
+`samtools` can be used to create an indexed alignment BAM file.
 
 ```bash
-$ biscuit align GRCh38.fa -1 AATTGGCC
+$ biscuit align -M my_reference.fa read1.fq.gz read2.fq.gz |
+    samblaster -M | samtools sort -o my_output.bam -O BAM -
+$ samtools index my_output.bam
 ```
+The first line is referred to as the *biscuitBlaster* pipeline and provides
+the user with a sorted BAM file of aligned reads with duplicates marked, but not
+removed. During the [Read Pileup]({{ site.baseurl }}{% docs/pileup.md %}) state,
+BISCUIT will skip marked duplicates by default. If desired, `samblaster` has a
+flag for removing duplicates during the marking process. Or, if desired, there
+is a flag for BISCUIT to retain marked duplicates during the pileup stage.
 
-One can also just map one pair of reads with an extra `-2` option.
+For more information regarding read mapping, run `biscuit align` in the terminal.
+
+### Mapping a Single Read
+
+While the above example highlights using FASTQ files for read mapping, BISCUIT
+does not require a FASTQ file to map reads. Instead, you can use the `-1` option
+in `biscuit align` to map single reads on the fly.
+
+```bash
+$ biscuit align my_reference.fa -1 AATTGGCC
+```
+You can also map one *pair* of reads with an extra `-2` option.
 
 ### Which strand to map?
 
-Depending on the library construction strategy, bisulfite-converted
-reads can come from one of the four types of strands, depending on
-whether the targeted strand is the Waston or Crick strand and whether
-the DNA is the original strand that underwent bisulfite conversion
-(__parent strand__), or the synthesized strand during PCR
-amplification (__daughter strand__). Understanding which strand reads
-come from or can be generated is critical to proper use of a read
-mapper. In BISCUIT, whether mapping occurs at parent or daughter
+Depending on the library construction strategy, bisulfite-converted reads can
+come from one of four types of strands. These types are determined by whether the
+target is the Waston or Crick strand and whether the DNA is the original strand
+that underwent bisulfite conversion (__parent strand__), or the synthesized
+strand during PCR amplification (__daughter strand__). In order to properly use a
+read mapper, it is critical to understand the strands from which the sequenced
+reads can be generated. In BISCUIT, whether mapping occurs at parent or daughter
 strand is controled using `-b` option.
 
-#### Single-End library
+#### Single-End Library
 
-By default, BISCUIT map read to both strands (`-b 0`). This works for
-most cases including conventional library (such as TCGA WGBS and
-Roadmap Epigenome Project) and PBAT library and single cell libraries
-(where tagging happens after amplification). When `-b 1` is specified,
-reads are forced to map to parent strands. This is the behavior with
-the conventional libraries (such as from TCGA and Roadmap
-Project). `-b 1` makes mapping more efficient and less error-prone for
-the conventional libraries. `-b 3` (rarely used) forces reads to be
-mapped to daughter strands.
+By default, BISCUIT maps reads to both strands (`-b 0`). This works for most
+cases, including coventional libraries (such as TCGA WGBS and Roadmap Epigenome
+Project), the PBAT library, and single cell libraries (where tagging happens
+after amplification). When `-b 1` is specified, reads are forced to map only to
+the parent strands. This is more efficient and less error-prone for conventional
+libraries, such as TCGA and the Roadmap Project, as their library preparations
+only generate reads from the parent strands. If, for some reason, you need to
+force reads to be mapped to only the daughter strands, then use `-b 3` in your
+options for `biscuit align`.
 
-#### Paired-End library
+#### Paired-End Library
 
-By default, BISCUIT map read 1 to one strand (parent or daughter) and
-read 2 to the other strand (different from the read 1 strand). This is
-the behavior with `-b 0`. The `-b 1` forces read 1 to be mapped to
-parent strand and read 2 to be mapped to the daughter strand. You
-could map read 1 to the daughter and read 2 to the parent by simply
-swapping the read 1 and read 2 fastq file.
+When `-b 0` is used (BISCUIT's default behavior), BISCUIT maps read 1 (from
+`read1.fq.gz`) to one strand (parent or daughter) and read 2 (from `read2.fq.gz`)
+to the other strand. Alternatively, when using `-b 1`, read 1 is forced to map to
+the parent strand and read 2 is mapped to the daughter strand. In order to map
+read 1 to the daughter and read 2 to the parent, simply swap `read1.fq.gz` and
+`read2.fq.gz` in the command line prompt.
 
-#### An example
+#### An Example
 
-Let's look at one example:
-
-```bash
-biscuit align mm10.fa -1
-    TTGGTGTGTGGGTTTTGATGTTGGGTGGAGGGTTT
-```
-
-```
-inputread	0	chr10	3386516	3	35M	*	0	0
-    TTGGTGTGTGGGTTTTGATGTTGGGTGGAGGGTTT	*
-	NM:i:0	MD:Z:35	ZC:i:1	ZR:i:0	AS:i:35
-	XS:i:34	XL:i:35	XA:Z:chr10,+3386516,35M,1	XB:Z:1,0
-	YD:A:f
-```
-
-One can see without specifying the strand BISCUIT sends the read
-to bisulfite Waston (`YD:A:f`) automatically without 
-mismatches (`NM:i:0`).
+An example of using the default funcionality in BISCUIT is:
 
 ```bash
-biscuit align -b 3 mm10.fa -1
-    TTGGTGTGTGGGTTTTGATGTTGGGTGGAGGGTTT
+biscuit align mm10.fa -1 TTGGTGTGTGGGTTTTGATGTTGGGTGGAGGGTTT
+```
+```
+# Note, this is a reduced representation of output
+inputread    0    chr10    3386516    3    35M    *    0    0
+    TTGGTGTGTGGGTTTTGATGTTGGGTGGAGGGTTT    *
+    NM:i:0    MD:Z:35    ZC:i:1    ZR:i:0    AS:i:35
+    XS:i:34    XL:i:35    XA:Z:chr10,+3386516,35M,1
+    XB:Z:1,0    YD:A:f
 ```
 
+In this example, you can see that, without specifying the strand, BISCUIT maps
+the read to bisulfite Watson (`YD:A:f`) automatically, without any mismatches
+(`NM:i:0`).
+
+A further example is:
+
+```bash
+biscuit align -b 3 mm10.fa -1 TTGGTGTGTGGGTTTTGATGTTGGGTGGAGGGTTT
 ```
-inputread	0	chr10	3386516	60	35M	*	0	0
-    TTGGTGTGTGGGTTTTGATGTTGGGTGGAGGGTTT	*
-	NM:i:1	MD:Z:34C0	ZC:i:0	ZR:i:17	AS:i:34
-	XS:i:0	XL:i:35	YD:A:r
+```
+inputread    0    chr10    3386516    60    35M    *    0    0
+    TTGGTGTGTGGGTTTTGATGTTGGGTGGAGGGTTT    *
+    NM:i:1    MD:Z:34C0    ZC:i:0    ZR:i:17    AS:i:34
+    XS:i:0    XL:i:35    YD:A:r
 ```
 
-With `-b 3`, BISCUIT sends the read to Bisulfite Crick (`YD:A:r`)
-with 1 mismatch (`NM:i:1`).
+Using `-b 3`, BISCUIT maps the read to Bisulfite Crick (`YD:A:r`) with 1 mismatch
+(`NM:i:1`).
 
-### Distinguish decoy chromosomes in human and mouse
+### Distinguishing Decoy Chromosomes in Human and Mouse Genomes
 
-A la BWA, BISCUIT makes a distinction of primary chromosomes from
-alternative/decoy chromosomes. For human and mouse, the inference is
-turned on by default. This results a preferred alignment of read to
-the primary chromosomes. This can be turned off through a `-i` option.
-The logic of inference is the following: If the chromosome names are
-like chr1, chr2, ..., then chromosomes with name pattern `chrUn`,
-`_random`, `_hap`, `_alt` are set as ALT chromosomes.
+As is done in BWA, BISCUIT makes a distinction of primary chromosomes from
+alternative/decoy chromosomes. For human and mouse genomes, this inference is
+turned on by default, which results in a preferential alignment of reads to the
+primary chromosomes. This can be turned off through the `-i` option in
+`biscuit align`. The inference of alternative/decoy chromosomes is (generically)
+done in the following manner: If the chromosome names are listed as `chr1`,
+`chr2`, and so on, then chromosomes with the name pattern `chrUn`, `_random`,
+`_hap`, or `_alt` are set as ALT chromosomes.
 
 ### Other useful options
 
-- `-F` suppresses SAM header output
+For more options in `biscuit index` and `biscuit align`, run `biscuit index` or
+`biscuit align` in your terminal.
 
-### Other alignment features worth mentioning
+### Other Alignment Features
 
-- assymmetric scoring for C to T and G to A in local mapping.
-- produce consistent mapping quality calculation with destination
-  strand specification.
-- produce consistent NM and MD tags under assymmetric scoring.
-- produce ZR and ZC tags for retention count and conversion count
-- separate seeding for parent and daughter strands for mapping
-  efficiency
-- disk-space-economic indices with no need to store a bisulfite
-  converted reference.
-- BWA-mem-like parameters visible to the users.
-- rare dependencies
-- robust to OS build, stable multi-threading
-- Optional parent strand and daughter strand restriction for both
-  single- and paired-end reads.
-- Optional BSW/top/BSC/bottom strand restriction, tightly integrated
-  in mapping.
+  - Asymmetric scoring for C to T and G to A is used in local mapping
+  - Generates a consistent mapping quality calculation with destination strand
+  specification
+  - Produces consistent `NM` and `MD` tags under asymmetric scoring
+  - Produces `ZR` and `ZC` tags for retention count and conversion count
+  - Separate seeding for parent and daughter strands for mapping efficiency
+  - Indices make efficient use of disk-space and there is no need to store a
+  bisulfite-converted reference
+  - BWA-mem-like parameters that are visible to the users
+  - Rare dependencies
+  - Robust to OS build and stable multi-threading
+  - Optional parent and daughter strand restriction for both single- and
+  paired-end reads
+  - Optional BSW/top/BSC/bottom strand restriction, tightly integrated in mapping
