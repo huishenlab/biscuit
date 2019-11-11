@@ -143,8 +143,7 @@ typing `biscuit` in the terminal.
   - `pileup` Generate standard-compliant VCF (see 
   [Read Pileup]({{ site.baseurl }}{% link docs/pileup.md %}))
   - `vcf2bed` Extract mutation, methylation from VCF.  (see
-  [Extract Methylation]({{ site.baseurl }}{% link docs/methylextraction.md %})
-  and [Extract Mutation]({{ site.baseurl }}{% link docs/methylextraction.md %}))
+  [Extracting Methylation and Mutation Information]({{ site.baseurl }}{% link docs/methylextraction.md %}))
   - `mergecg` Merge neighboring C and G in CpG context. (see
   [Extract Methylation]({{ site.baseurl }}{% link docs/methylextraction.md %}))
   
