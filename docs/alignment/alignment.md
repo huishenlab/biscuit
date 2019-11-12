@@ -30,7 +30,7 @@ biscuit index my_reference.fa
 The index of BISCUIT is composed of the 2-bit packed reference (`*.bis.pac`,
 `*.bis.amb`, `*.bis.ann`). The FM-index and suffix array of the parent strand
 (`*.par.bwt` and `*.par.sa`) and the daughter strand (`*.dau.bwt` and `*.dau.sa`).
-Here, `*` references to the input reference file, `my_reference.fa`.
+Here, `*` refers to the input reference file, `my_reference.fa`.
 
 For more information regarding read mapping, run `biscuit index` in the terminal.
 
@@ -49,7 +49,7 @@ $ samtools index my_output.bam
 ```
 The first line is referred to as the *biscuitBlaster* pipeline and provides
 the user with a sorted BAM file of aligned reads with duplicates marked, but not
-removed. During the [Read Pileup]({{ site.baseurl }}{% link docs/pileup.md %}))
+removed. During the [Read Pileup]({{ site.baseurl }}{% link docs/pileup.md %})
 state, BISCUIT will skip marked duplicates by default. If desired, `samblaster`
 has a flag for removing duplicates during the marking process. Or, if desired,
 there is a flag for BISCUIT to retain marked duplicates during the pileup stage.

@@ -5,19 +5,26 @@ parent: Read Mapping
 ---
 # Quality Control
 
-A bash script is provided to simplify QC procedure.
+A bash script is provided to simplify QC procedure. It generates QC information
+that can be picked up by MultiQC.
 ```bash
 $ ./scripts/QC.sh -v input.vcf setup_file sample.name input.bam
 ```
-generates QC information that can be picked up by MultiQC. Setup files for [hg19](http://zwdzwd.io/BISCUITqc/hg19_QC_assets.zip), [hg38](http://zwdzwd.io/BISCUITqc/hg38_QC_assets.zip) and [mm10](http://zwdzwd.io/BISCUITqc/mm10_QC_assets.zip) are provided. Other genome builds can be built following the same format.
+Setup files for [hg19](http://zwdzwd.io/BISCUITqc/hg19_QC_assets.zip),
+[hg38](http://zwdzwd.io/BISCUITqc/hg38_QC_assets.zip) and
+[mm10](http://zwdzwd.io/BISCUITqc/mm10_QC_assets.zip) are provided. Other genome
+builds can be built following the same format.
 
-## Validate bisulfite conversion label
+## Validate Bisulfite Conversion Label
 
-Sometimes, the bisulfite conversion labels in a given alignment are inaccurate, conflicting or ambiguous. The `bsstrand` command summarizes these labels given the number of C>T, G>A substitutions. It can correct inaccurate labels as an option.
+Sometimes, the bisulfite conversion labels in a given alignment are inaccurate,
+conflicting, or ambiguous. The `bsstrand` subcommand summarizes these labels, given
+the number of C&#8594;T and G&#8594;A substitutions. As an option, it can also
+correct inaccurate labels.
 ```bash
-$ biscuit bsstrand -g "chr1:1000000-1050000" GRCh37.fa input.bam
+$ biscuit bsstrand -g "chr1:1000000-1050000" my_reference.fa input.bam
 ```
-gives something like
+returns something like
 ```
 Mapped reads: 2865
 Unmapped reads: 44
@@ -44,22 +51,30 @@ Conflict (c):   0            0            0            0
  Unknown (u):   0            0            0            0
 ```
 
-
 The inferred `YD` tag gives the following
-- f: foward/Waston strand
-- r: reverse/Crick strand
-- c: conflicting strand information
-- u: unintelligible strand source (unknown)
+  - f: foward/Waston strand
+  - r: reverse/Crick strand
+  - c: conflicting strand information
+  - u: unintelligible strand source (unknown)
 
-`YD` is inferred based on the count of `C>T` (`nCT`) and `G>A` (`nGA`) observations in each read according to the following rule: If both `nCT` and `nGA` are zero, `YD = u`. `s = min(nG2A,nC2T)/max(nG2A,nC2T)`. if `nC2T > nG2A && (nG2A == 0 || s <= 0.5)`, then `YD = f`. if `nC2T < nG2A && (nC2T == 0 || s <= 0.5)`, then `YD = r`. All other scenarios gives `YD = c`. `-y` append `nCT`(YC tag) and `nGA`(YG tag) in the output bam.
+`YD` is inferred based on the count of `C>T` (`nCT`) and `G>A` (`nGA`) observations
+in each read according to the following rules:
+
+  - If both `nCT` and `nGA` are zero, `YD = u` and `s = min(nGA,nCT) / max(nGA,nCT)`.
+  - If `nCT > nGA` and (`nGA == 0` or `s <= 0.5`), then `YD = f`.
+  - If `nCT < nGA` and (`nCT == 0` or `s <= 0.5`), then `YD = r`.
+  - All other scenarios give `YD = c`.
+
+The flag `-y` appends `nCT` (YC tag) and `nGA` (YG tag) in the output BAM file.
 
 ### When `-b 1` was specified in mapping
 
-`-b 1` force the mapping to be conducted in a stranded manner. Using `bsstrand`, one could validate whether this enforcement is successful. For example,
+`-b 1` forces the mapping to be conducted in a stranded manner. Using `bsstrand`,
+you can validate whether this enforcement is successful. For example,
 ```bash
-$ biscuit bsstrand -g "chr1:1000000-1050000" GRCh37.fa stranded.bam
+$ biscuit bsstrand -g "chr1:1000000-1050000" my_reference.fa stranded.bam
 ```
-gives something like
+returns
 ```
 Mapped reads: 2918
 Unmapped reads: 93
@@ -85,12 +100,18 @@ orig\infer      BSW (f)      BSC (r)      Conflict (c) Unknown (u)
 Conflict (c):   0            0            0            0
  Unknown (u):   0            0            0            0
 ```
-As you can see in this case, read 1 is always mapped to converted strand and read 2 is always mapped to the synthesized strand.
+In this case, read 1 is always mapped to the converted strand and read 2 is
+always mapped to the synthesized strand.
 
+## Summarize and Filter Reads by Bisulfite Conversion
 
-## Summarize and filter reads by bisulfite conversion
-
+For some library preparations, incomplete conversions are enriched in a subset
+of reads that need to be filtered. The `bsconv` subcommand transforms the BAM
+file into a BAM that contains the `ZN` tag (like `ZN:Z:CA_R0C11,CC_R1C14,CG_R0C2,CT_R1C5`).
+This tag summarizes counts of retention and conversion for four different
+cytosine contexts, `CpA`, `CpC`, `CpG` and `CpT`. In general, it contains a
+minimum threshold of `CpA`, `CpC`, `CpT` or `CpH`. The `-b` option outputs the
+summary in tables instead of as tags in the BAM file.
 ```bash
-$ biscuit bsconv -g "chr1:1000000-1050000" GRCh37.fa input.bam
+$ biscuit bsconv -g "chr1:1000000-1050000" my_reference.fa input.bam
 ```
-For some library preparation, incomplete conversion are enriched in a subset of reads that needs to be filtered. This command transforms bam into one that contains file `ZN` tag e.g., `ZN:Z:CA_R0C11,CC_R1C14,CG_R0C2,CT_R1C5`. This tag summarizes counts of retention and conversion for four different cytosine contexts `CpA`, `CpC`, `CpG` and `CpT`. It contains a minimum threshold of `CpA`, `CpC`, `CpT` or `CpH` in general. The `-b` option outputs the summary in tables instead of as tags in the BAM file.
