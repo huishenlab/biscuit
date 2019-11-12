@@ -163,7 +163,7 @@ strand, BISCUIT will only record the fourth G and not the third C, but will stil
 use the position of the third C as the position for the CpG. This is done to be
 consistent with standard BS-seq.
 
-### Generate Rectangular Forms
+## Generate Rectangular Forms
 
 ```bash
 $ biscuit rectangle /path/to/my_reference.fa my_epiread_file.epiread
