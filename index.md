@@ -60,7 +60,7 @@ $ biscuit vcf2bed -t cg my_pileup.vcf.gz
 This will create a BED file that includes the methylation fraction and coverage
 for each CpG found in the VCF file. More information regarding methylation
 extraction can be found at
-[Extract Methylation]({{ site.baseurl }}{% link docs/methylextraction.md %}).
+[Extracting Methylation and Mutation Information]({{ site.baseurl }}{% link docs/methylextraction.md %}).
 
 ## Download and Install
 
@@ -145,14 +145,14 @@ typing `biscuit` in the terminal.
   - `vcf2bed` Extract mutation, methylation from VCF.  (see
   [Extracting Methylation and Mutation Information]({{ site.baseurl }}{% link docs/methylextraction.md %}))
   - `mergecg` Merge neighboring C and G in CpG context. (see
-  [Extract Methylation]({{ site.baseurl }}{% link docs/methylextraction.md %}))
+  [Extracting Methylation and Mutation Information]({{ site.baseurl }}{% link docs/methylextraction.md %}))
   
 ### Epi-read & Epi-allele
 
   - `epiread` Convert bam to epi-read format (see
-  [Epi-read & Epi-allele]({{ site.baseurl }}{% link docs/Epiread.md %}))
+  [Epi-read & Epi-allele]({{ site.baseurl }}{% link docs/epiread.md %}))
   - `rectangle` Convert epi-read to rectangle format (see
-  [Epi-read & Epi-allele]({{ site.baseurl }}{% link docs/Epiread.md %}))
+  [Epi-read & Epi-allele]({{ site.baseurl }}{% link docs/epiread.md %}))
   - `asm` Test allele-specific methylation. (see
   [Allele-specific Methylation]({{ site.baseurl }}{% link docs/allele_meth.md %}))
 
