@@ -150,9 +150,9 @@ typing `biscuit` in the terminal.
 ### Epi-read & Epi-allele
 
   - `epiread` Convert bam to epi-read format (see
-  [Epi-read & Epi-allele]({{ site.baseurl }}{% link docs/epiread.md %}))
+  [Epi-read & Epi-allele]({{ site.baseurl }}{% link docs/epiread_format.md %}))
   - `rectangle` Convert epi-read to rectangle format (see
-  [Epi-read & Epi-allele]({{ site.baseurl }}{% link docs/epiread.md %}))
+  [Epi-read & Epi-allele]({{ site.baseurl }}{% link docs/epiread_format.md %}))
   - `asm` Test allele-specific methylation. (see
   [Allele-specific Methylation]({{ site.baseurl }}{% link docs/allele_meth.md %}))
 

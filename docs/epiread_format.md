@@ -1,6 +1,6 @@
 ---
 title: Epi-read & Epi-allele
-permalink: /epiread/
+permalink: /epiread_format/
 nav_order: 6
 ---
 
