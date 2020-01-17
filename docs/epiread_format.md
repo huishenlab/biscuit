@@ -1,7 +1,7 @@
 ---
 title: Epi-read & Epi-allele
 permalink: /epiread_format/
-nav_order: 6
+nav_order: 5
 ---
 
 # Epi-read and Epi-allele

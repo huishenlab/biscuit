@@ -25,7 +25,7 @@ Before performing the read alignment, you must create create an index of the
 reference genome (called `my_reference.fa` below) to be used in your alignment:
 
 ```bash
-biscuit index my_reference.fa
+$ biscuit index my_reference.fa
 ```
 The index of BISCUIT is composed of the 2-bit packed reference (`*.bis.pac`,
 `*.bis.amb`, `*.bis.ann`). The FM-index and suffix array of the parent strand
@@ -50,9 +50,10 @@ $ samtools index my_output.bam
 The first line is referred to as the *biscuitBlaster* pipeline and provides
 the user with a sorted BAM file of aligned reads with duplicates marked, but not
 removed. During the [Read Pileup]({{ site.baseurl }}{% link docs/pileup.md %})
-state, BISCUIT will skip marked duplicates by default. If desired, `samblaster`
-has a flag for removing duplicates during the marking process. Or, if desired,
-there is a flag for BISCUIT to retain marked duplicates during the pileup stage.
+state, BISCUIT will skip marked duplicates, by default. If desired, `samblaster`
+has a flag for removing duplicates during the marking process. If duplicates
+were retained and one desires to retain the marked duplicates during the pileup
+stage, a flag has been included for `biscuit pileup` to retain marked duplicates
 
 For more information regarding read mapping, run `biscuit align` in the terminal.
 
@@ -76,7 +77,7 @@ that underwent bisulfite conversion (__parent strand__), or the synthesized
 strand during PCR amplification (__daughter strand__). In order to properly use a
 read mapper, it is critical to understand the strands from which the sequenced
 reads can be generated. In BISCUIT, whether mapping occurs at parent or daughter
-strand is controled using `-b` option.
+strand is controlled using `-b` option.
 
 #### Single-End Library
 
@@ -104,7 +105,7 @@ read 1 to the daughter and read 2 to the parent, simply swap `read1.fq.gz` and
 An example of using the default funcionality in BISCUIT is:
 
 ```bash
-biscuit align mm10.fa -1 TTGGTGTGTGGGTTTTGATGTTGGGTGGAGGGTTT
+$ biscuit align mm10.fa -1 TTGGTGTGTGGGTTTTGATGTTGGGTGGAGGGTTT
 ```
 ```
 # Note, this is a reduced representation of output
@@ -122,7 +123,7 @@ the read to bisulfite Watson (`YD:A:f`) automatically, without any mismatches
 A further example is:
 
 ```bash
-biscuit align -b 3 mm10.fa -1 TTGGTGTGTGGGTTTTGATGTTGGGTGGAGGGTTT
+$ biscuit align -b 3 mm10.fa -1 TTGGTGTGTGGGTTTTGATGTTGGGTGGAGGGTTT
 ```
 ```
 inputread    0    chr10    3386516    60    35M    *    0    0
