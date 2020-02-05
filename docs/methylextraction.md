@@ -5,7 +5,7 @@ nav_order: 4
 
 # Extract Methylation
 
-## Make bed files
+## Make BED files
 
 After generating the VCF file with both genetic and methylation information,
 beta values and coverage can be extracted to study the methylation levels at
