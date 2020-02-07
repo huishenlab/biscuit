@@ -22,6 +22,14 @@ where `"my_rg"` is the read group (if applicable) to be used,
 `read*.fq.gz` are the read1 and read2 FASTQ files from your sequencing run, and
 `my_output.bam` is the name of your output BAM file.
 
+Representation of the serial biscuitBlaster pipeline:
+
+![serial biscuitBlaster](/biscuit/assets/serial_cookie_monster.gif)
+
+Representation of the parallel biscuitBlaster pipeline:
+
+![parallel biscuitBlaster](/biscuit/assets/parallel_cookie_monster.gif)
+
 #### Deprecated functionality
 
 **This functionality is DEPRECATED and will be removed in the next release!!!!
