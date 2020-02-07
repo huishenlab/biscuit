@@ -68,7 +68,7 @@ $ biscuit align my_reference.fa -1 AATTGGCC
 ```
 You can also map one *pair* of reads with an extra `-2` option.
 
-### Which strand to map?
+### Which Strand to Map?
 
 Depending on the library construction strategy, bisulfite-converted reads can
 come from one of four types of strands. These types are determined by whether the
@@ -146,7 +146,7 @@ done in the following manner: If the chromosome names are listed as `chr1`,
 `chr2`, and so on, then chromosomes with the name pattern `chrUn`, `_random`,
 `_hap`, or `_alt` are set as ALT chromosomes.
 
-### Other useful options
+### Other Useful Options
 
 For more options available for indexing and aligning with BISCUIT, run
 `biscuit index` or `biscuit align` in your terminal.

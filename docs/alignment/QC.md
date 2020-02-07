@@ -67,7 +67,7 @@ in each read according to the following rules:
 
 The flag `-y` appends `nCT` (YC tag) and `nGA` (YG tag) in the output BAM file.
 
-### When `-b 1` was specified in mapping
+### When `-b 1` Was Specified in Mapping
 
 `-b 1` forces the mapping to be conducted in a stranded manner. Using `bsstrand`,
 you can validate whether this enforcement is successful. For example,

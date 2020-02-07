@@ -14,7 +14,7 @@ mutation with a high base quality score, `biscuit pileup` starts its SNP
 processing and *may* revert the methylation call if the SNP interferes with the
 determination of cytosine retention or conversion.
 
-## Generating pileup for a single sample
+## Generating Pileup for a Single Sample
 
 Like samtools, BISCUIT can extract DNA methylation as well as genetic information.
 The following shows how to produce a tabix-indexed VCF file:
@@ -41,7 +41,7 @@ To get additional diagnostic information, add `-v 1` to the `biscuit pileup`
 call. If you would prefer to receive additional debut information, use `-v 6`
 instead.
 
-### Example output with diagnostic information
+### Example Output with Diagnostic Information
 
 The following example shows output `biscuit pileup` in a low coverage, low
 quality region, including additional diagnostic information.
@@ -85,7 +85,7 @@ Note, when running with the `-v 1` option, BISCUIT will also print positions
 with no SNP or cytosine methylation, which allows for differentiation between
 "no mutation" and "no coverage."
 
-#### Codes for retention-mutation status
+#### Codes for Retention-Mutation Status
 
   - **0:** mutation to A
   - **1:** mutation to C
@@ -97,7 +97,7 @@ with no SNP or cytosine methylation, which allows for differentiation between
   - **7:** conversion
   - **8:** reference base
 
-## Generating pileup for multiple samples
+## Generating Pileup for Multiple Samples
 
 BISCUIT has the ability to put mutation calling and DNA methylation measurements
 from multiple samples next to each other by providing `biscuit pileup` with more
@@ -108,7 +108,7 @@ $ bgzip my_combined_pileup.vcf
 $ tabix -p vcf my_combined_pileup.vcf.gz
 ```
 
-### Somatic mode
+### Somatic Mode
 
 If provided BAMs from a tumor and matched normal, it is possible to call somatic
 mutations with BISCUIT. To run in "somatic mode," run `biscuit pileup` with the
@@ -145,7 +145,7 @@ To control the contamination rate, include the `-x` option when running `biscuit
 pileup`. A higher contamination rate means a more conservative approach will be
 used when making somatic calls (i.e. there will be fewer SS=2 calls).
 
-## Ambiguous alternative alleles
+## Ambiguous Alternative Alleles
 
 At times, it is possible that BISCUIT is unable to determine what the
 alternative allele should be, either because the alternative is completely

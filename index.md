@@ -65,8 +65,9 @@ extraction can be found at
 ## Download and Install
 
 For your convenience, BISCUIT is available either as a precompiled binary (for
-macOS and Linux) or as source code for compilation on your own machine. In either
-instance, the `biscuit` binary is the main entry point for working with BISCUIT.
+macOS and Linux), as source code for compilation on your own machine, or as a
+Docker container. In either the first two cases, the `biscuit` binary is the
+main entry point for working with BISCUIT.
 
 ### Download Source Code and Compile
 
@@ -74,9 +75,9 @@ You can compile from source code using either `git` or `curl`.
 
 Using `git`,
 ```bash
-git clone --recursive git@github.com:huishenlab/biscuit.git
-cd biscuit
-make
+$ git clone --recursive git@github.com:huishenlab/biscuit.git
+$ cd biscuit
+$ make
 ```
 Note, after v0.2.0, if you choose to download via `git`, make sure to use
 `git clone --recursive` to get the submodules.
@@ -110,6 +111,17 @@ $ curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/la
     grep browser_download_url | grep linux_amd64 | cut -d '"' -f 4)
 $ chmod +x biscuit_*
 ```
+
+### Download the Docker Container
+
+The Docker container can be downloaded from
+[GitHub](https://github.com/huishenlab/sv_calling_docker) via:
+```bash
+$ git clone https://github.com/huishenlab/sv_calling_docker.git
+```
+
+For more information about the docker container, see
+[Structural Variant Calling]({{ site.baseurl }}{% link docs/structural_variants.md %}).
 
 ## Overview of Functionalities
 

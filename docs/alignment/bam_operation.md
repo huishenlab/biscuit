@@ -7,7 +7,7 @@ permalink: /bamoperation/
 
 # BAM Operation
 
-### Mark duplicate reads
+### Mark Duplicate Reads
 
 #### biscuitBlaster Pipeline
 
@@ -30,7 +30,7 @@ Representation of the parallel biscuitBlaster pipeline:
 
 ![parallel biscuitBlaster](/biscuit/assets/parallel_cookie_monster.gif)
 
-#### Deprecated functionality
+#### Deprecated Functionality
 
 **This functionality is DEPRECATED and will be removed in the next release!!!!
 We suggest using the biscuitBlaster pipeline for duplicate marking.**
@@ -39,7 +39,7 @@ We suggest using the biscuitBlaster pipeline for duplicate marking.**
 $ biscuit markdup input.bam output.bam
 ```
 
-### Filter reads by bisulfite conversion
+### Filter Reads by Bisulfite Conversion
 
 ```bash
 $ biscuit bsconv -g "chr1:1000000-1050000" GRCh37.fa input.bam
