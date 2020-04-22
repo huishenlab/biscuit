@@ -9,7 +9,7 @@ nav_order: 1
 The BISCUIT BAM is slightly different from typical BAM files with regards to
 tags and how insert sizes are computed.
 
-### Useful Tags to Know
+## Useful Tags to Know
 
   - `NM` Number of mismatches, excluding cytosine conversions.
   - `XA` Location of suboptimal alignments.
@@ -21,7 +21,7 @@ tags and how insert sizes are computed.
   - `ZC` Number of cytosine conversions.
   - `ZR` Number of cytosine retentions.
   - `AS` Best alignment score.
-  - `XS` Suboptimal alignment score.  This is usually equal to or less than `AS`.
+  - `XS` Suboptimal alignment score. This is usually equal to or less than `AS`.
   In rare cases, pairing would cause a `XS` greater than `AS`.
   - `MD` Location of mismatches, following samtools conventions.
   - `PA` Ratio of best score to alternate score (`AS/XS`). The higher the ratio,
@@ -35,7 +35,7 @@ See [BAM Operation]({{ site.baseurl }}{% link docs/alignment/bam_operation.md %}
 for how to add a `ZN` tag for cytosine conversion under `CpG` and other non-CpG
 dinucleotide sequence contexts.
 
-### Insert Size
+## Insert Size
 
 In BISCUIT, the insert size/TLEN is printed in a different way than BWA. Here,
 the TLEN is the actual insert size:

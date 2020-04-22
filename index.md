@@ -26,13 +26,14 @@ methylation from bisulfite sequencing data.
 ## Quick Start
 
 To jump right in to performing analyses with BISCUIT, precompiled binaries are
-available for download on the [BISCUIT release page](https://github.com/huishenlab/biscuit/releases/latest).
+available for download on the
+[BISCUIT release page](https://github.com/huishenlab/biscuit/releases/latest).
 Note, these are currently only available for Linux and MacOS. (See
 [Download and Install](#download-and-install) for more information about
 downloading and installing BISCUIT).
 
-Once a working binary version of BISCUIT is ready, the alignment process is as
-follows:
+Once a working binary version of BISCUIT is ready, the basic alignment process
+is as follows:
 ```bash
 $ biscuit index my_reference.fa
 $ biscuit align -M -R "my_rg" /path/to/my_reference.fa read1.fq.gz read2.fq.gz | 
@@ -44,7 +45,7 @@ found at [Read Mapping]({{ site.baseurl }}{% link docs/alignment/alignment.md %}
 BISCUIT can then be used to extract DNA methylation and genetic information
 using the `pileup` subcommand:
 ```bash
-$ biscuit pileup /path/to/my_reference.fa my_output.bam -o my_pileup.vcf
+$ biscuit pileup -o my_pileup.vcf /path/to/my_reference.fa my_output.bam
 $ bgzip my_pileup.vcf
 $ tabix -p vcf my_pileup.vcf.gz
 ```
@@ -66,8 +67,8 @@ extraction can be found at
 
 For your convenience, BISCUIT is available either as a precompiled binary (for
 macOS and Linux), as source code for compilation on your own machine, or as a
-Docker container. In either the first two cases, the `biscuit` binary is the
-main entry point for working with BISCUIT.
+Docker container. In the first two cases, the `biscuit` binary is the main entry
+point for working with BISCUIT.
 
 ### Download Source Code and Compile
 
@@ -79,14 +80,14 @@ $ git clone --recursive git@github.com:huishenlab/biscuit.git
 $ cd biscuit
 $ make
 ```
-Note, after v0.2.0, if you choose to download via `git`, make sure to use
-`git clone --recursive` to get the submodules.
+Note, after v0.2.0, if you choose to download via `git`, make sure to use the
+`--recursive` flag to get the submodules.
 
 Using `curl`,
 ```bash
 $ curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/latest |
     grep browser_download_url | grep release-source.zip | cut -d '"' -f 4)
-$ unzip release.zip
+$ unzip release-source.zip
 $ cd biscuit-release
 $ make
 ```
@@ -96,13 +97,13 @@ $ make
 Precompiled binaries can be found on the
 [latest release page](https://github.com/huishenlab/biscuit/releases/latest) on
 GitHub. Currently, there are only precompiled binaries for the latest versions
-of Linux and macOS. You can also do this in the terminal using the following
-one-liner:
+of Linux and macOS. You can also download the binaries directly from the
+terminal using the following one-liner:
 
 For macOS,
 ```bash
 $ curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/latest |
-    grep browser_download_url | grep darwin | cut -d '"' -f 4)
+    grep browser_download_url | grep darwin_amd64 | cut -d '"' -f 4)
 ```
 
 For Linux,

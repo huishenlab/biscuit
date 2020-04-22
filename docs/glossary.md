@@ -4,13 +4,6 @@ nav_order: 8
 ---
 
 # Glossary of Terms
-{: .no_toc }
-
-## Table of Content
-{: .no_toc .text-delta }
-
-1. TOC
-{:toc}
 
 This glossary serves as a reference for terms that can be easily misunderstood,
 are used multiple ways in bioinformatics, or just need more explaining than is

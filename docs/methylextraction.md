@@ -9,13 +9,11 @@ nav_order: 4
 
 After generating the VCF file with both genetic and methylation information,
 beta values and coverage can be extracted to study the methylation levels at
-any CpGs sequenced. The following shows how to extract this information from
+any sequenced CpGs. The following shows how to extract this information from
 the VCF file:
 ```bash
 $ biscuit vcf2bed -t cg my_pileup.vcf.gz > my_pileup.bed
 ```
-
-This will create a BED file, which can be used for further analysis.
 
 The `-t` flag can be used to retrieve mutation and other information, including
 

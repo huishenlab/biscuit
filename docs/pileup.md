@@ -5,7 +5,7 @@ nav_order: 3
 
 # Generate Standard VCF Output
 
-The `biscuit pileup` subcommand allows the user to computes cytosine retention
+The `biscuit pileup` subcommand allows the user to compute cytosine retention
 and callable SNP mutations.
 
 BISCUIT tries to minimize false positive methylation calls and can be stringent
@@ -16,10 +16,10 @@ determination of cytosine retention or conversion.
 
 ## Generating Pileup for a Single Sample
 
-Like samtools, BISCUIT can extract DNA methylation as well as genetic information.
-The following shows how to produce a tabix-indexed VCF file:
+BISCUIT can extract DNA methylation as well as genetic information. The
+following shows how to produce a tabix-indexed VCF file:
 ```bash
-$ biscuit pileup /path/to/my_reference.fa my_output.bam -o my_pileup.vcf
+$ biscuit pileup -o my_pileup.vcf /path/to/my_reference.fa my_output.bam
 $ bgzip my_pileup.vcf
 $ tabix -p vcf my_pileup.vcf.gz
 ```
@@ -28,18 +28,20 @@ A few flags that can be found in the VCF and are useful to understand are:
 
   - **DP:** the total read coverage
   - **CV:** cytosine strand coverage
-  - **BT:** Beta value [No. methylated / (No. unmethylated + No. methylated)]
-  - **GT:** Genotype
-  - **GP:** Comma-separated list of likelihoods for each of the three genotypes
-  - **GQ:** Genotype quality (for the called genotype)
-  - **SP:** Shows allelic support for SNPs
-  - **NS:** Number of samples with data
-  - **CX:** Cytosine context (CG, CHH, etc.)
-  - **N5:** 5 base sequence environment
+  - **BT:** beta value [No. methylated / (No. unmethylated + No. methylated)]
+  - **GT:** genotype
+  - **GP:** comma-separated list of likelihoods for each of the three genotypes
+  - **GQ:** genotype quality (for the called genotype)
+  - **SP:** shows allelic support for SNPs
+  - **NS:** number of samples with data
+  - **CX:** cytosine context (CG, CHH, etc.)
+  - **N5:** 5 base sequence context
 
 To get additional diagnostic information, add `-v 1` to the `biscuit pileup`
-call. If you would prefer to receive additional debut information, use `-v 6`
+call. If you would prefer to receive additional debug information, use `-v 6`
 instead.
+
+For more help on available flags, run `biscuit pileup` in the terminal.
 
 ### Example Output with Diagnostic Information
 
@@ -47,13 +49,17 @@ The following example shows output `biscuit pileup` in a low coverage, low
 quality region, including additional diagnostic information.
 
 ```
-chr20   47419734    .   C   .   19  PASS    NS=1;CX=CG;N5=CACGG DP:GT:GP:GQ:SP:CV:BT    12:0/0:1,6,19:19:C7:2:0.00
-```
-```
+# Output line from VCF file
+chr20    47419734    .    C    .    19    PASS    NS=1;CX=CG;N5=CACGG
+    DP:GT:GP:GQ:SP:CV:BT    12:0/0:1,6,19:19:C7:2:0.00
+
+# Diagnostic information
 DIAGNOSE;
 RN=0;CN=2;
-Bs0=CCCTT; Sta0=66677; Bq0=;7);<; Str0=++---; Pos0=74,68,51,44,23; Rret0=21,19,21,22,18;
-Bs1=CCCCCCC; Sta1=8888888; Bq1=;;):<<2; Str1=+++----; Pos1=69,63,63,62,59,20,1; Rret1=19,19,15,17,19,26,25
+Bs0=CCCTT; Sta0=66677; Bq0=;7);<; Str0=++---;
+    Pos0=74,68,51,44,23; Rret0=21,19,21,22,18;
+Bs1=CCCCCCC; Sta1=8888888; Bq1=;;):<<2; Str1=+++----;
+    Pos1=69,63,63,62,59,20,1; Rret1=19,19,15,17,19,26,25
 ```
 
 When `biscuit pileup` is run with diagnostic information printed out, the
@@ -66,13 +72,14 @@ about the bisulfite Crick (BSC) strand can be found on the line starting with
 *Bs1*. The BSW strand has five reads, with base identities of CCCTT (see `Bs0`
 flag). On the other hand, the BSC strand has seven reads, with base identities
 of CCCCCCC (`Bs1` flag). The `Sta0` and `Sta1` flags show the retention-mutation
-status code that is internally determined by BISCUIT (see *Codes for
-retention-mutation status* below for a description on each possibly value). The
-`Bq0` and `Bq1` flags show the Phred-scaled base qualities for the specific
-bases in question. The `Str0` and `Str1` flags show whether the reads are on the
-forward (`+`) or reverse (`-`) strand. The `Pos0` and `Pos1` flags show where
-the bases are positioned in the read, while the `Rret0` and `Rret1` flags show
-the number of retention (i.e. methylated cytosines) on each read.
+status code that is internally determined by BISCUIT (see 
+[Codes for Retention Mutation Status](#codes-for-retention-mutation-status)
+below for a description on each possibly value). The `Bq0` and `Bq1` flags show
+the Phred-scaled base qualities for the specific bases in question. The `Str0`
+and `Str1` flags show whether the reads are on the forward (`+`) or reverse (`-`)
+strand. The `Pos0` and `Pos1` flags show where the bases are positioned in the
+read, while the `Rret0` and `Rret1` flags show the number of retention (i.e.
+methylated cytosines) on each read.
 
 With regard to the five bases on the BSW strand, two reads showing retention
 have a low base quality, while the base in the other read is positioned in the
@@ -85,7 +92,7 @@ Note, when running with the `-v 1` option, BISCUIT will also print positions
 with no SNP or cytosine methylation, which allows for differentiation between
 "no mutation" and "no coverage."
 
-#### Codes for Retention-Mutation Status
+### Codes for Retention Mutation Status
 
   - **0:** mutation to A
   - **1:** mutation to C
@@ -103,7 +110,8 @@ BISCUIT has the ability to put mutation calling and DNA methylation measurements
 from multiple samples next to each other by providing `biscuit pileup` with more
 than one input BAM.
 ```bash
-$ biscuit pileup /path/to/my_reference.fa my_output_1.bam my_output_2.bam [...] -o my_combined_pileup.vcf
+$ biscuit pileup -o my_combined_pileup.vcf /path/to/my_reference.fa \
+    my_output_1.bam my_output_2.bam [...]
 $ bgzip my_combined_pileup.vcf
 $ tabix -p vcf my_combined_pileup.vcf.gz
 ```
@@ -111,24 +119,21 @@ $ tabix -p vcf my_combined_pileup.vcf.gz
 ### Somatic Mode
 
 If provided BAMs from a tumor and matched normal, it is possible to call somatic
-mutations with BISCUIT. To run in "somatic mode," run `biscuit pileup` with the
-`-T` flag:
+mutations with BISCUIT. To run in *somatic mode*, run `biscuit pileup` with the
+`-S` flag:
 ```bash
-$ biscuit pileup /path/to/my_reference.fa tumor.bam normal.bam -T -o somatic_mode.vcf
+$ biscuit pileup -S -o somatic_mode.vcf /path/to/my_reference.fa \
+    -T tumor.bam -I normal.bam
 $ bgzip somatic_mode.vcf
 $ tabix -p vcf somatic_mode.vcf.gz
 ```
-Note, the tumor BAM must be given before the normal BAM, as BISCUIT treats the
-first BAM as the tumor sample.
+Note, the `-T` and `-I` flags must be used to specify the tumor and matched
+normal BAMs, respectively, when running in somatic mode.
 
 When running in somatic mode, two additional flags are added to the INFO string:
 
   - **SS:** somatic state
   - **SC:** somatic score
-
-The somatic score is calculated based on the posterior probability that, given
-the read counts in the tumor and normal samples, the mutation only exists in the
-tumor sample.
 
 The following table shows a brief summary of the somatic states.
 
@@ -140,6 +145,10 @@ The following table shows a brief summary of the somatic states.
 |   3   | LOH                               |        Yes      |        No        |
 |   4   | Post-transcriptional modification |        NA       |        NA        |
 |   5   | Unknown                           |        NA       |        NA        |
+
+The somatic score is calculated based on the posterior probability that, given
+the read counts in the tumor and normal samples, the mutation only exists in the
+tumor sample.
 
 To control the contamination rate, include the `-x` option when running `biscuit
 pileup`. A higher contamination rate means a more conservative approach will be
@@ -167,10 +176,10 @@ this particular variant.
   - Fast, multi-way pileup of multiple samples with VCF output
   - Computes beta values
   - Computes genotype, genotype likelihood, and genotype quality
-  - Computes somatic score and somatic status when tumor and matched normal
-  samples are provided (-T option)
+  - Computes somatic score and somatic state when tumor and matched normal
+  samples are provided (`-S` option)
   - Calls ambiguous alternative allele
-  - Distinguishs between ambiguous alternative allele and multiple alternative
+  - Distinguishes between ambiguous alternative allele and multiple alternative
   alleles
   - Generates a coordinate-sorted output VCF when provided a sorted input BAM
   - Flexible read filtering based on retention number, mapping quality,
