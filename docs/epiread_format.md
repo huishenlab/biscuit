@@ -9,46 +9,23 @@ nav_order: 5
 
 Bisulfite sequencing data may be able to inform how methylation from neighboring
 positions are linked and how methylation is linked to mutations (provided they
-can be unambiguously determined). The `epiread` format is a commonly used data
-format to store this information.
-
-By combining the `epiread` and `rectangle` subcommands, you can generate a matrix
-with columns representing CpGs and rows representing reads. This is important for
-understanding [Methylation Haplotype Load](https://dx.doi.org/10.1038%2Fng.3805),
-epi-polymorphism, methylation entropy, and allele-specific methylation.
-
-## Table of Contents
-{: .no_toc .text-delta }
-
-1. TOC
-{:toc}
-
-To test all SNP-CpG pairs,
-```bash
-$ biscuit epiread -r /path/to/my_reference.fa -P -i my_output.bam -B snp.bed
-```
-
-## Generating Epireads
-
-The command to generate an `epiread` file from your aligned BAM file is
-```bash
-$ biscuit epiread -r /path/to/my_reference.fa -i input.bam -B snp.bed
-```
-
-The epiread format is a compact way of storing the CpG retention pattern, as
-well as SNP information on the same read. It is useful for estimating the
-epiallele fraction and clonal structure/cell population
+can be unambiguously determined). The epiread format is a commonly used, compact
+data format used to store the CpG retention pattern, as well as SNP information
+on the same read. It is useful for estimating the epiallele fraction and clonal
+structure/cell population
 ([Li et al. Genome Biology 2014](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0554-4),
 [Zheng et al. Genome Biology 2014](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0419-x)).
 
+## Generating Epireads
+
 The original epiread format (proposed by the methpipe team), only includes
 information related to CpGs. BISCUIT extends this format to also include SNP
-information. The columns in BISCUIT's epiread format indicate
+information. The columns in the BISCUIT epiread format indicate:
 
   1. Chromosome name
   2. Read name
   3. Read position in paired-end sequencing
-  4. Bisulfite strand (bisulfite Watson or Crick)
+  4. Bisulfite strand (bisulfite Watson (+) or bisulfite Crick (-))
   5. Position of the cytosine in the first CpG (0-based)
   6. Retention pattern ("C" for retention or "T" for conversion) for all
   CpGs covered
@@ -77,6 +54,9 @@ my_pilefup.vcf.gz`.  If no SNP file is supplied, the output does not include the
 extra columns related to SNPs. To get back the original epiread format, run `cut
 -f 1,5,6` on the output epiread file.
 
+To test all SNP-CpG pairs, include the `-P` flag in your command prompt. For
+more help on available flags, run `biscuit epiread` in the terminal.
+
 ## Paired-end Epireads
 
 DNA methylation information from both mate reads are physically "phased"
@@ -87,15 +67,15 @@ only on the primary mapping. The following `awk` command gives a nice, compact
 file for a paired-end epiread format:
 ```bash
 $ sort -k2,2 -k3,3n single_end.epiread |
-$     awk 'BEGIN{qname="";rec=""}
-$          qname==$2{print rec"\t"$5"\t"$6"\t"$7"\t"$8;qname=""}
-$          qname!=$2{qname=$2;rec=$1"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8;pair=$3}'
+$     awk 'BEGIN{ qname="" ; rec="" }
+$          qname == $2 { print rec"\t"$5"\t"$6"\t"$7"\t"$8 ; qname="" }
+$          qname != $2 { qname=$2 ; rec=$1"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8 ; pair=$3}'
 ```
 
 In the following output, the columns represent:
 
   1. Chromosome name
-  2. Bisulfite strand (bisulfite Watson or Crick)
+  2. Bisulfite strand (bisulfite Watson (+) or bisulfite Crick (-))
   3. Location of the cytosine in the first CpG covered (0-based) in read 1
   4. Retention pattern of all CpGs covered in read 1
   5. Location of the first SNP covered in read 1
@@ -118,16 +98,17 @@ chr19  +  3083638  TTTTTTTTTTTT   .        .    3083705  TTTTTTTTTTT  .        .
 Including the `-N` option in the `epiread` subcommand allows the GCH and HCG
 retention states in NOMe-seq data to be listed side by side. For example,
 ```bash
-$ biscuit vcf2bed -t snp HCT116.vcf.gz > snp.bed
-$ biscuit epiread -n 3 -N -r hg19.fa -i HCT116.bam -B snp.bed -N -q 20 |
-$     gzip -c > epiread.gz
+$ biscuit vcf2bed -t snp my_pileup.vcf.gz > snp.bed
+$ biscuit epiread -n 3 -N -r /path/to/my_reference.fa \
+    -i my_output.bam -B snp.bed -N -q 20 |
+    gzip -c > single_end.epiread.gz
 $ # Collating paired epireads
-$ zcat epiread.gz |
-$     sort -k2,2 -k3,3n |
-$         awk 'BEGIN{qname="";rec=""}
-$              qname==$2{print rec"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9"\t"$10;qname=""}
-$              qname!=$2{qname=$2;rec=$1"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9"\t"$10;pair=$3}' |
-$             sort -k1,1 -k3,3n | gzip -c > epiread_paired.gz
+$ zcat single_end.epiread.gz |
+$ sort -k2,2 -k3,3n |
+$ awk 'BEGIN{ qname="" ; rec="" }
+$      qname == $2 { print rec"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9"\t"$10 ; qname="" }
+$      qname != $2 { qname=$2 ; rec=$1"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9"\t"$10 ; pair=$3}' |
+$ sort -k1,1 -k3,3n | gzip -c > paired.epiread.gz
 ```
 
 The paired output looks like,
@@ -142,7 +123,7 @@ chr18  -  11344  CC      11339  CCTTT        .      .  11344  CC     11339  CCTT
 
 The output columns are:
   1. Chromosome name
-  2. Bisulfite strand (bisulfite Watson or Crick)
+  2. Bisulfite strand (bisulfite Watson (+) or bisulfite Crick (-))
   3. Location of the cytosine in the first CpG covered (0-based) in read 1
   4. Retention pattern of all CpGs covered in read 1
   5. Location of the cytosine in the first GpCpH covered (0-based) in read 1
@@ -165,8 +146,14 @@ consistent with standard BS-seq.
 
 ## Generate Rectangular Forms
 
+By combining the `epiread` and `rectangle` subcommands, you can generate a matrix
+with columns representing CpGs and rows representing reads. This is important for
+understanding [Methylation Haplotype Load](https://dx.doi.org/10.1038%2Fng.3805),
+epi-polymorphism, methylation entropy, and allele-specific methylation.
+
 ```bash
 $ biscuit rectangle /path/to/my_reference.fa my_epiread_file.epiread
 ```
 
-More information to come!
+For more details on the available `rectangle` flags, run `biscuit rectangle` in
+the terminal.
