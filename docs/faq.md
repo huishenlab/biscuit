@@ -22,7 +22,7 @@ Supplementary QC asset files will be needed to run the script and can be found
 for the hg19, hg39, and mm10 genomes alongside the QC script.
 
 *I have aligned my data to a reference genome that does not have QC asset files
-provided. What do I files do I need to run `QC.sh`?
+provided. What do I files do I need to run `QC.sh`?*
 
 > As of the latest release, you will need three BED files. You will need a
 gzipped BED file with the locations of all CpGs in your genome (called
