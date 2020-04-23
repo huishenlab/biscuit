@@ -141,15 +141,12 @@ typing `biscuit` in the terminal.
 
   - `tview` View read mapping in terminal with bisulfite coloring (see
   [Visualization]({{ site.baseurl }}{% link docs/alignment/visualization.md %}))
-  - `markdup` Mark read duplication - *Note, this subcommand is DEPRECATED and
-  will be removed in the next release of BISCUIT* (see
-  [BAM operation]({{ site.baseurl }}{% link docs/alignment/bam_operation.md %}))
   - `bsstrand` Investigate bisulfite conversion strand label (see
   [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}))
   - `bsconv` Investigate bisulfite conversion rate (see
   [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}))
   - `cinread` Print cytosine-read pair in a long form (see
-  [BAM operation]({ site.baseurl }}{% link docs/alignment/bam_operation.md %}))
+  [BAM operation]({ site.baseurl }}{% link docs/alignment/QC.md %}))
 
 ### Methylation, SNP Extraction
 
