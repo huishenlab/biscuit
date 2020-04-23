@@ -1,7 +1,7 @@
 ---
 title: Understand the Output BAM
 parent: Read Mapping
-nav_order: 1
+nav_order: 2
 ---
 
 # Understanding BISCUIT BAMs

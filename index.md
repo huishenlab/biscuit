@@ -146,7 +146,7 @@ typing `biscuit` in the terminal.
   - `bsconv` Investigate bisulfite conversion rate (see
   [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}))
   - `cinread` Print cytosine-read pair in a long form (see
-  [BAM operation]({ site.baseurl }}{% link docs/alignment/QC.md %}))
+  [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}))
 
 ### Methylation, SNP Extraction
 
