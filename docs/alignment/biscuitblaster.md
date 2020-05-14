@@ -30,16 +30,17 @@ where `"my_rg"` is the read group (if applicable) to be used,
 
 ## Version 2
 
-Version 2 builds off Version 1 by using samblaster to generate SAM files of the
-split and discordant reads in your FASTQ, a FASTQ file of the heavily clipped
-reads, and a SAM file with each of these three types of reads removed.
+In addition to generating a duplicate marked, sorted, and indexed BAM file,
+with mate tags added for use with structural variant finders, Version 2 builds
+off Version 1 by using samblaster to generate SAM files of the split and
+discordantly aligned reads and a FASTQ file of the heavily clipped reads.
 
 ```bash
 $ biscuit align -M -R "my_rg" \
     /path/to/my_reference.fa read1.fq.gz read2.fq.gz | \
     samblaster -M --addMateTags | \
     parallel --tmpdir temp_dir --pipe --tee {} ::: \
-        "samblaster -M -a -e -u clipped.fastq -d disc.sam -s split.sam -o my_clean_reads.sam" \
+        "samblaster -M -a -e -u clipped.fastq -d disc.sam -s split.sam -o /dev/null" \
         "samtools view -hb | samtools sort -o all_my_reads.bam -O BAM -"
 $ samtools index all_my_reads.bam
 ```
