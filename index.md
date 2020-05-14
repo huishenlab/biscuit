@@ -176,6 +176,7 @@ code base from the internet.
  - lib/aln was adapted from Heng Li's BWA-mem code.
  - lib/htslib was submoduled from the htslib library.
  - lib/klib was submoduled from Heng Li's klib.
+ - This work is supported by NIH/NCI R37CA230748.
 
 ## Reference
 
