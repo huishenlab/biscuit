@@ -71,6 +71,8 @@ $(LSGSL):
 BISCUITSRCS := $(wildcard src/*.c)
 BISCUITLIBS := $(BISCUITSRCS:.c=.o)
 
+# For adding new functionality, copy how ndr is included in Makefile and src/main.c
+#LIBS=lib/aln/libaln.a src/pileup.o src/ndr.o src/vcf2bed.o src/epiread.o src/asm_pairwise.o src/tview.o src/bsstrand.o src/cinread.o src/mergecg.o src/bsconv.o src/bamfilter.o src/epiread_rectangle.o $(LUTILS) $(LKLIB) $(LHTSLIB) $(LSGSL)
 LIBS=lib/aln/libaln.a src/pileup.o src/vcf2bed.o src/epiread.o src/asm_pairwise.o src/tview.o src/bsstrand.o src/cinread.o src/mergecg.o src/bsconv.o src/bamfilter.o src/epiread_rectangle.o $(LUTILS) $(LKLIB) $(LHTSLIB) $(LSGSL)
 biscuit: $(LIBS) src/main.o
 	gcc $(CFLAGS) src/main.o -o $@ -I$(INCLUDE)/aln -I$(INCLUDE)/klib $(LIBS) $(CLIB)
@@ -100,6 +102,9 @@ src/pileup.o: src/pileup.c
 
 src/tview.o: src/tview.c
 	$(CC) -c $(CFLAGS) -I$(LHTSLIB_INCLUDE) -I$(LUTILS_DIR) $< -o $@
+
+#src/ndr.o: src/ndr.c
+#	$(CC) -c $(CFLAGS) -I$(LUTILS_DIR) -I$(LKLIB_DIR) $< -o $@
 
 src/vcf2bed.o: src/vcf2bed.c
 	$(CC) -c $(CFLAGS) -I$(LUTILS_DIR) -I$(LKLIB_DIR) $< -o $@
