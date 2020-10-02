@@ -36,8 +36,8 @@ used to map, mark duplicate, and sort the provided reads.  Additionally,
 `samtools` can be used to create an indexed BAM file.
 
 ```bash
-$ biscuit align -M -R "my_rg" /path/to/my_reference.fa read1.fq.gz read2.fq.gz |
-    samblaster -M | samtools sort -o my_output.bam -O BAM -
+$ biscuit align -R "my_rg" /path/to/my_reference.fa read1.fq.gz read2.fq.gz |
+    samblaster | samtools sort -o my_output.bam -O BAM -
 $ samtools index my_output.bam
 ```
 The first line is referred to as the *biscuitBlaster* pipeline and provides

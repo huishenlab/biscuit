@@ -36,8 +36,8 @@ Once a working binary version of BISCUIT is ready, the basic alignment process
 is as follows:
 ```bash
 $ biscuit index my_reference.fa
-$ biscuit align -M -R "my_rg" /path/to/my_reference.fa read1.fq.gz read2.fq.gz | 
-    samblaster -M | samtools sort -o my_output.bam -O BAM -
+$ biscuit align -R "my_rg" /path/to/my_reference.fa read1.fq.gz read2.fq.gz | 
+    samblaster | samtools sort -o my_output.bam -O BAM -
 ```
 More information regarding indexing, alignment, and duplicate marking can be
 found at [Read Mapping]({{ site.baseurl }}{% link docs/alignment/alignment.md %}).

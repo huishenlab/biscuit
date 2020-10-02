@@ -19,8 +19,8 @@ Version 1 of the biscuitBlaster pipeline is the most basic version, producing an
 sorted, indexed BAM with duplicate marked reads.
 
 ```bash
-$ biscuit align -M -R "my_rg" /path/to/my_reference.fa read1.fq.gz read2.fq.gz | 
-    samblaster -M | samtools sort -o my_output.bam -O BAM -
+$ biscuit align -R "my_rg" /path/to/my_reference.fa read1.fq.gz read2.fq.gz | 
+    samblaster | samtools sort -o my_output.bam -O BAM -
 $ samtools index my_output.bam
 ```
 where `"my_rg"` is the read group (if applicable) to be used,
@@ -36,11 +36,11 @@ off Version 1 by using samblaster to generate SAM files of the split and
 discordantly aligned reads and a FASTQ file of the heavily clipped reads.
 
 ```bash
-$ biscuit align -M -R "my_rg" \
+$ biscuit align -R "my_rg" \
     /path/to/my_reference.fa read1.fq.gz read2.fq.gz | \
-    samblaster -M --addMateTags | \
+    samblaster --addMateTags | \
     parallel --tmpdir temp_dir --pipe --tee {} ::: \
-        "samblaster -M -a -e -u clipped.fastq -d disc.sam -s split.sam -o /dev/null" \
+        "samblaster -a -e -u clipped.fastq -d disc.sam -s split.sam -o /dev/null" \
         "samtools view -hb | samtools sort -o all_my_reads.bam -O BAM -"
 $ samtools index all_my_reads.bam
 ```
