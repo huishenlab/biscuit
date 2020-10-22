@@ -33,6 +33,11 @@ into two separate gzipped BED files, `windows100bp.gc_content.bot10p.bed.gz` for
 the bottom 10% and `windows100bp.gc_content.top10p.bed.gz` for the top 10%.
 Make sure to sort each BED file using (`sort -k1,1 -k2,2n bedfile.bed`).
 
+> As of October 2020, there is now a Perl script that can generate the asset
+files needed to run QC for BISCUIT. The `build_biscuit_QC_assets.pl` script
+requires the name of the output directory to save the assets files to and the
+path to the reference genome.
+
 *I need to generate my own QC asset files, but the previous answer was not very
 helpful. What is a more prescriptive way for creating these files?*
 
