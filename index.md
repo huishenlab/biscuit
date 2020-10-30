@@ -81,7 +81,11 @@ $ cd biscuit
 $ make
 ```
 Note, after v0.2.0, if you choose to download via `git`, make sure to use the
-`--recursive` flag to get the submodules.
+`--recursive` flag to get the submodules. If you do not have an SSH key set up,
+and receive a "permission denied" error, replace the first line with
+```bash
+$ git clone --recursive https://github.com/huishenlab/biscuit.git
+```
 
 Using `curl`,
 ```bash
@@ -119,6 +123,10 @@ The Docker container can be downloaded from
 [GitHub](https://github.com/huishenlab/sv_calling_docker) via:
 ```bash
 $ git clone https://github.com/huishenlab/sv_calling_docker.git
+```
+If you would prefer to use a password-protected SSH key, then use
+```bash
+$ git clone git@github.com:huishenlab/sv_calling_docker.git
 ```
 
 For more information about the docker container, see
