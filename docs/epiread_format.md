@@ -155,5 +155,6 @@ epi-polymorphism, methylation entropy, and allele-specific methylation.
 $ biscuit rectangle /path/to/my_reference.fa my_epiread_file.epiread
 ```
 
-For more details on the available `rectangle` flags, run `biscuit rectangle` in
-the terminal.
+Note, `my_epiread_file.epiread` can only have a single chromosome in it for
+`rectangle` to work. For more details on the available `rectangle` flags, run
+`biscuit rectangle` in the terminal.
