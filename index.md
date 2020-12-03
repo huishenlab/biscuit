@@ -23,6 +23,15 @@ bisulfite conversion-based DNA methylation/modification data. It was written to
 perform alignment, DNA methylation and mutation calling, and allele specific
 methylation from bisulfite sequencing data.
 
+BISCUIT was developed by Wanding Zhou while he was a member of the Shen Lab at
+Van Andel Institute. He is now faculty at University of Pennsylvania and
+Children's Hospital of Philadelphia. BISCUIT is currently maintained by Jacob
+Morrison (who also developed the User's Guide website) in the Shen Lab. The
+development of BISCUIT was done at
+[https://github.com/zhou-lab/biscuit](https://github.com/zhou-lab/biscuit), but
+is now maintained at
+[https://github.com/huishenlab/biscuit](https://github.com/huishenlab/biscuit).
+
 ## Quick Start
 
 To jump right in to performing analyses with BISCUIT, precompiled binaries are
