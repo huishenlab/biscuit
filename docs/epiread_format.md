@@ -46,7 +46,7 @@ To produce an epiread formatted file, you need to run the `epiread` subcommand
 with a BAM file, a FASTA file of the reference genome, and, optionally, a BED
 file for SNPs.
 ```bash
-biscuit epiread -r /path/to/my_reference.fa -i my_output.bam [-B snps.bed]
+biscuit epiread [other options] [-B snps.bed] /path/to/my_reference.fa my_output.bam
 ```
 
 The SNP BED file can be obtained by running `biscuit vcf2bed -t snp
@@ -54,8 +54,10 @@ my_pilefup.vcf.gz`.  If no SNP file is supplied, the output does not include the
 extra columns related to SNPs. To get back the original epiread format, run `cut
 -f 1,5,6` on the output epiread file.
 
-To test all SNP-CpG pairs, include the `-P` flag in your command prompt. For
-more help on available flags, run `biscuit epiread` in the terminal.
+To test all SNP-CpG pairs, include the `-P` flag in your command prompt. Note,
+if looking for allele-specific methylation, you will need to run with the `-P`
+flag and include a SNP BED file. For more help on available flags, run
+`biscuit epiread` in the terminal.
 
 ## Paired-end Epireads
 
@@ -99,8 +101,7 @@ Including the `-N` option in the `epiread` subcommand allows the GCH and HCG
 retention states in NOMe-seq data to be listed side by side. For example,
 ```bash
 $ biscuit vcf2bed -t snp my_pileup.vcf.gz > snp.bed
-$ biscuit epiread -n 3 -N -r /path/to/my_reference.fa \
-    -i my_output.bam -B snp.bed -N -q 20 |
+$ biscuit epiread -B snp.bed -N -q 20 -n 3 -N /path/to/my_reference.fa my_output.bam |
     gzip -c > single_end.epiread.gz
 $ # Collating paired epireads
 $ zcat single_end.epiread.gz |
