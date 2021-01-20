@@ -31,4 +31,4 @@ The columns represent:
   8. SNP_2-CpG_1 count (contingency table value in row_2-col_1)
   9. SNP_2-CpG_2 count (contingency table value in row_2-col_2)
   10. Two-tail Fisher's exact p-value
-  11. $\chi^2$ p-value
+  11. &chi;<sup>2</sup> p-value

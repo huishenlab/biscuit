@@ -74,6 +74,25 @@ helpful. What is a more prescriptive way for creating these files?*
   `windows100bp.gc_content.bot10p.bed` to create your bottom 10% GC-content QC
   file.
 
+*I have a PBAT-style WGBS sample that I tried viewing in IGV's DNA methylation
+color scheme, but I see a lot of CpGs colored brown, rather than the blue and
+red I expected. Why is that and is there anything I can do about it?*
+
+> Generally, PBAT-style WGBS samples have reads 1 and 2 flipped relative to most
+other WGBS and WGBS-like protocols. Because of this, the reads in BAMs from
+these samples have the forward and reverse strands flipped. IGV (at least up to
+Version 2.8.2) can't handle these flipped strands and prints the color as brown,
+rather than blue or red.
+
+> If you want to be able to view your samples in the blue/red color scheme, a
+script, `flip_pbat_strands.sh`, is provided in the `scripts/` directory and on
+the release page. This script removes the "read reverse strand" flag if it was
+included in the BAM FLAG field (or adds it if it was not included). Run
+```bash
+$ bash flip_pbat_strands.sh -h
+```
+for more details on usage.
+
 ## Installation Questions
 
 *I ran `git clone git@github.com:huishenlab/biscuit.git`, but when trying to
