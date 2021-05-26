@@ -13,6 +13,16 @@ terminology. Are there sites that describe relevant terms and phrases?*
 > One place to look is the
 [Glossary]({{ site.baseurl }}{% link docs/glossary.md %}) page.
 
+*Should I include the `-M` flag when running `biscuit align` or using the
+biscuitBlaster pipeline?*
+
+> Our suggestion is to avoid using the `-M` flag in BISCUIT (and samblaster if
+running the biscuitBlaster pipeline) unless working with legacy versions of
+tools. Current tools (like SV callers) do not need `-M` for compatibility, so
+this flag is not needed now (see
+[this Twitter thread](https://twitter.com/biobenkj/status/1311660546232643584)
+for more details).
+
 *I downloaded one of the pre-compiled binaries for BISCUIT, but want to run QC
 on my data. Where can I find the QC script?*
 
