@@ -62,9 +62,8 @@ In (approximate) running order:
       successfully if the required executable is in PATH
     - Toggle optional workflow components
     - Specify other run parameters
-  5. Run the first rule of Snakemake on the command line
-    - `snakemake --cores 2 --use-envmodules --until get_R1_R2_files`
-      - **This rule needs to be run separately first for the correct R1 and R2 files to be passed to `biscuit_align`**
+  5. Run the first rule of Snakemake on the command line: `snakemake --cores 2 --use-envmodules --until get_R1_R2_files`
+    - **This rule needs to be run separately first for the correct R1 and R2 files to be passed to `biscuit_align`**
     - Collects the list of comma separated R1 and R2 files in `bin/samples.tsv` and renames them
       - Only a few seconds per sample and allows quick debugging of missing input files
   6. Submit the workflow to an HPC using command similar to `bin/run_snakemake_workflow.sh`
@@ -73,9 +72,8 @@ In (approximate) running order:
       - Make sure the queue you submit to is able to submit jobs from the nodes available to that queue
       - If the nodes are not able to submit jobs, the snakemake pipeline will not be able to run properly
     - `bin/run_snakemake_workflow.sh` can be easily modified for submission on other queue systems
-  7. Snakemake can also be run on the command line:
-    - `snakemake --use-envmodules --cores 1`
-      - When running on the command line the `--use-envmodules` is required
+  7. Snakemake can also be run on the command line: `snakemake --use-envmodules --cores 1`
+    - When running on the command line the `--use-envmodules` is required
 
 ## After Workflow Completion
 
