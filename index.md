@@ -204,7 +204,7 @@ in the terminal.
 
   - `version` Print `biscuit` and library versions
   - `qc` Generate QC files from BAM (see
-  [Quality Control]({{ site.baseurl }}{% link docs/alignment.QC.md %}))
+  [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}))
 
 ## About the project
 
