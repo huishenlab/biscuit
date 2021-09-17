@@ -42,16 +42,16 @@ In (approximate) running order:
 
 ## Running the Workflow
 
-  1. Clone the repo `git clone git@github.com:huishenlab/WGBS_Biscuit_Snakemake.git`
-  2. Place *gzipped* FASTQ files into `raw_data/` directory
-  3. Replace the example `bin/samples.tsv` with your own `bin/samples.tsv` sample sheet containing:
+  - Clone the repo `git clone git@github.com:huishenlab/WGBS_Biscuit_Snakemake.git`
+  - Place *gzipped* FASTQ files into `raw_data/` directory
+  - Replace the example `bin/samples.tsv` with your own `bin/samples.tsv` sample sheet containing:
     - A row for each sample
     - Three columns per row (separated by a tab - "\t"):
       - `sample_name` name of sample to be used throughout processing
       - `fq1` name of R1 file for `sample_name` in `raw_data/`
       - `fq2` name of R2 file for `sample_name` in `raw_data/`
     - Any additional columns are ignored
-  4. Modify `bin/config.yaml` to specify your
+  - Modify `bin/config.yaml` to specify your
     - Reference genome
     - BISCUIT index
     - BISCUIT QC assets (see [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}) for details)
@@ -62,17 +62,19 @@ In (approximate) running order:
       successfully if the required executable is in PATH
     - Toggle optional workflow components
     - Specify other run parameters
-  5. Run the first rule of Snakemake on the command line: `snakemake --cores 2 --use-envmodules --until get_R1_R2_files`
+  - Run the first rule of Snakemake on the command line:
+    - `snakemake --cores 2 --use-envmodules --until get_R1_R2_files`
     - **This rule needs to be run separately first for the correct R1 and R2 files to be passed to `biscuit_align`**
     - Collects the list of comma separated R1 and R2 files in `bin/samples.tsv` and renames them
       - Only a few seconds per sample and allows quick debugging of missing input files
-  6. Submit the workflow to an HPC using command similar to `bin/run_snakemake_workflow.sh`
+  - Submit the workflow to an HPC using command similar to `bin/run_snakemake_workflow.sh`
     - `bin/run_snakemake_workflow.sh` works for submitting to a PBS/Torque queue system
       - Submit via: `qsub -q [queue_name] bin/run_snakemake_workflow.sh`
       - Make sure the queue you submit to is able to submit jobs from the nodes available to that queue
       - If the nodes are not able to submit jobs, the snakemake pipeline will not be able to run properly
     - `bin/run_snakemake_workflow.sh` can be easily modified for submission on other queue systems
-  7. Snakemake can also be run on the command line: `snakemake --use-envmodules --cores 1`
+  - Snakemake can also be run on the command line: 
+    - `snakemake --use-envmodules --cores 1`
     - When running on the command line the `--use-envmodules` is required
 
 ## After Workflow Completion
@@ -104,4 +106,4 @@ run the test dataset, copy the ten `.fq.gz` files in `bin/working_example_datase
   - To unlock the pipeline after a manually aborted run
     - `snakemake --unlock --cores 1`
   - To create a workflow diagram of your run
-    - snakemake --dag | dot -Tpng > my_dag.png`
+    - `snakemake --dag | dot -Tpng > my_dag.png`
