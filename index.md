@@ -18,140 +18,124 @@ nav_order: 1
 
 ---
 
-BISulfite-seq CUI Toolkit (BISCUIT) is a utility suite for analyzing sodium bisulfite- or enzyme-based DNA
-methylation/modification data. It was written to perform read alignment, DNA methylation and mutation calling, and
-allele specific methylation from bisulfite or bisulfite-like sequencing data.
+BISulfite-seq CUI Toolkit (BISCUIT) is a utility suite for analyzing sodium
+bisulfite conversion-based DNA methylation/modification data. It was written to
+perform alignment, DNA methylation and mutation calling, and allele specific
+methylation from bisulfite sequencing data.
 
-BISCUIT was developed by Wanding Zhou while he was a member of the [Shen Lab](https://shenlab.vai.org) at Van Andel
-Institute. He now holds a faculty position at University of Pennsylvania and Children's Hospital of Philadelphia.
-BISCUIT is currently maintained by Jacob Morrison (who also developed the User's Guide website) in the Shen Lab. The
-development of BISCUIT was done at [https://github.com/zhou-lab/biscuit](https://github.com/zhou-lab/biscuit), but is
-now maintained at [https://github.com/huishenlab/biscuit](https://github.com/huishenlab/biscuit).
+BISCUIT was developed by Wanding Zhou while he was a member of the Shen Lab at
+Van Andel Institute. He is now faculty at University of Pennsylvania and
+Children's Hospital of Philadelphia. BISCUIT is currently maintained by Jacob
+Morrison (who also developed the User's Guide website) in the Shen Lab. The
+development of BISCUIT was done at
+[https://github.com/zhou-lab/biscuit](https://github.com/zhou-lab/biscuit), but
+is now maintained at
+[https://github.com/huishenlab/biscuit](https://github.com/huishenlab/biscuit).
 
 ## Quick Start
 
-In order to get started right away with performing analyses with BISCUIT, precompiled binaries are available for
-download on the [BISCUIT release page](https://github.com/huishenlab/biscuit/releases/latest). Note, binaries are only
-available for Linux and macOS. (See [Download and Install](#download-and-install) for more information about downloading
-and installing BISCUIT).
+To jump right in to performing analyses with BISCUIT, precompiled binaries are
+available for download on the
+[BISCUIT release page](https://github.com/huishenlab/biscuit/releases/latest).
+Note, these are currently only available for Linux and MacOS. (See
+[Download and Install](#download-and-install) for more information about
+downloading and installing BISCUIT).
 
-The basic workflow to align and extract methylation information using BISCUIT is:
-1. Create an index of the reference genome (only needs to be done once for each reference).
-2. Align sequencing reads to the reference.
-3. Create a pileup VCF of DNA methylation and genetic information.
-4. Extract DNA methylation into BED format.
-
-Practically, the commands to run are:
+Once a working binary version of BISCUIT is ready, the basic alignment process
+is as follows:
 ```bash
-# Create index of the reference genome (only needs to be run once for each reference)
-# Gzipped FASTA references can also be used
-biscuit index my_reference.fa
-
-# Align sequencing reads to the reference
-# Gzipped FASTQ files can also be used
-biscuit align -R "my_rg" /path/to/my_reference.fa read1.fastq read2.fastq |
-    samblaster | samtools sort --write-index -o my_output.bam -O BAM -
-
-# Create a pileup VCF of DNA methylation and genetic information
-# Also compresses and indexes the VCF
-biscuit pileup -o my_pileup.vcf /path/to/my_reference.fa my_output.bam
-bgzip my_pileup.vcf
-tabix -p vcf my_pileup.vcf.gz
-
-# Extract DNA methylation into BED format
-# Also compresses and indexes the BED
-biscuit vcf2bed my_pileup.vcf.gz > my_methylation_data.bed
-bgzip my_methylation_data.bed
-tabix -p bed my_methylation_data.bed.gz
+$ biscuit index my_reference.fa
+$ biscuit align -R "my_rg" /path/to/my_reference.fa read1.fq.gz read2.fq.gz | 
+    samblaster | samtools sort -o my_output.bam -O BAM -
 ```
-This basic order of commands will all the necessary files needed to read data into R using the R/Bioconductor companion
-package, [biscuiteer](https://www.bioconductor.org/packages/release/bioc/html/biscuiteer.html).
+More information regarding indexing, alignment, and duplicate marking can be
+found at [Read Mapping]({{ site.baseurl }}{% link docs/alignment/alignment.md %}).
 
-An overview of all available functionalities can be found below in the
-[Overview of Functionalities](#overview-of-functionalities) section.
+BISCUIT can then be used to extract DNA methylation and genetic information
+using the `pileup` subcommand:
+```bash
+$ biscuit pileup -o my_pileup.vcf /path/to/my_reference.fa my_output.bam
+$ bgzip my_pileup.vcf
+$ tabix -p vcf my_pileup.vcf.gz
+```
+This will create a tabix-indexed VCF file for downstream analysis. More
+information regarding generating the VCF file can be found at
+[Read Pileup]({{ site.baseurl }}{% link docs/pileup.md %})).
+
+Once the VCF file has been created, DNA methylation information can be extracted
+using the `vcf2bed` subcommand:
+```bash
+$ biscuit vcf2bed -t cg my_pileup.vcf.gz
+```
+This will create a BED file that includes the methylation fraction and coverage
+for each CpG found in the VCF file. More information regarding methylation
+extraction can be found at
+[Extracting Methylation and Mutation Information]({{ site.baseurl }}{% link docs/methylextraction.md %}).
 
 ## Download and Install
 
-BISCUIT is available as a [precompiled binary](#download-precompiled-binaries) (for macOS and Linux), as
-[source code](#download-source-code-and-compile) for compilation on your own machine, as a
-[conda recipe](#download-with-conda), or as a [Docker container](#download-the-docker-container).
-
-### Download Precompiled Binaries
-
-Precompiled binaries can be found on the [latest release page](https://github.com/huishenlab/biscuit/releases/latest) on
-GitHub. Currently, there are only precompiled binaries for the latest versions of Linux and macOS. You can also download
-the binaries directly from the terminal using the following one-liner:
-
-On macOS,
-```bash
-curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/latest |
-    grep browser_download_url | grep darwin_amd64 | cut -d '"' -f 4)
-mv biscuit_* biscuit
-chmod +x biscuit
-```
-
-On Linux,
-```bash
-curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/latest |
-    grep browser_download_url | grep linux_amd64 | cut -d '"' -f 4)
-mv biscuit_* biscuit
-chmod +x biscuit
-```
-
-To download the scripts to generate the QC asset and data files, run
-```bash
-# QC asset build
-curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/latest |
-    grep browser_download_url | grep build_biscuit_QC_assets.pl | cut -d '"' -f 4
-
-# QC bash script
-curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/latest |
-    grep browser_download_url | grep QC.sh | cut -d '"' -f 4
-```
-These commands work on both macOS and Linux.
+For your convenience, BISCUIT is available either as a precompiled binary (for
+macOS and Linux), as source code for compilation on your own machine, or as a
+Docker container. In the first two cases, the `biscuit` binary is the main entry
+point for working with BISCUIT.
 
 ### Download Source Code and Compile
 
-The source code for BISCUIT can be downloaded using either `git` or `curl`. Compilation requires that `zlib` and
-`ncurses` are in the PATH environment variable.
+You can compile from source code using either `git` or `curl`.
 
 Using `git`,
 ```bash
-git clone --recursive git@github.com:huishenlab/biscuit.git
-cd biscuit
-make
+$ git clone --recursive git@github.com:huishenlab/biscuit.git
+$ cd biscuit
+$ make
 ```
-Note, after v0.2.0, if downloading via `git`, make sure to use the `--recursive` flag to get the submodules. If an SSH
-key has not been set up, and you receive a "permission denied" error, replace the first line with
+Note, after v0.2.0, if you choose to download via `git`, make sure to use the
+`--recursive` flag to get the submodules. If you do not have an SSH key set up,
+and receive a "permission denied" error, replace the first line with
 ```bash
-git clone --recursive https://github.com/huishenlab/biscuit.git
+$ git clone --recursive https://github.com/huishenlab/biscuit.git
 ```
 
 Using `curl`,
 ```bash
-curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/latest |
+$ curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/latest |
     grep browser_download_url | grep release-source.zip | cut -d '"' -f 4)
-unzip release-source.zip
-cd biscuit-release
-make
+$ unzip release-source.zip
+$ cd biscuit-release
+$ make
 ```
 
-The QC related scripts can be found in the `scripts/` directory.
+### Download Precompiled Binaries
 
-### Download with Conda
+Precompiled binaries can be found on the
+[latest release page](https://github.com/huishenlab/biscuit/releases/latest) on
+GitHub. Currently, there are only precompiled binaries for the latest versions
+of Linux and macOS. You can also download the binaries directly from the
+terminal using the following one-liner:
 
-Note, this requires that `conda` has been installed. To download with conda, run:
+For macOS,
 ```bash
-conda install -c bioconda biscuit
+$ curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/latest |
+    grep browser_download_url | grep darwin_amd64 | cut -d '"' -f 4)
 ```
 
-This will also install both `QC.sh` and `build_biscuit_QC_assets.pl`.
+For Linux,
+```bash
+$ curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/latest |
+    grep browser_download_url | grep linux_amd64 | cut -d '"' -f 4)
+$ chmod +x biscuit_*
+```
 
 ### Download the Docker Container
 
-The Docker container can be downloaded from [GitHub](https://github.com/huishenlab/sv_calling_docker) via:
+The Docker container can be downloaded from
+[GitHub](https://github.com/huishenlab/sv_calling_docker) via:
 ```bash
-git clone git@github.com:huishenlab/sv_calling_docker.git
+$ git clone https://github.com/huishenlab/sv_calling_docker.git
+```
+If you would prefer to use a password-protected SSH key, then use
+```bash
+$ git clone git@github.com:huishenlab/sv_calling_docker.git
 ```
 
 For more information about the docker container, see
@@ -159,10 +143,9 @@ For more information about the docker container, see
 
 ## Overview of Functionalities
 
-The following list provides an overview of the different subcommands and the various functionalities provided by
-`biscuit`. You can also find much of this by typing `biscuit` in the terminal. Help for each subcommand can be found on
-the [BISCUIT Subcommands]({{ site.baseurl }}{% link docs/subcommand_help.md %}) page or by typing `biscuit (subcommand)`
-in the terminal.
+The following list provides an overview of the different subcommands and the
+various functionalities provided by `biscuit`. You can also find much of this by
+typing `biscuit` in the terminal.
 
 ### Read Mapping
 
@@ -174,42 +157,36 @@ in the terminal.
 ### BAM Operation
 
   - `tview` View read mapping in terminal with bisulfite coloring (see
-  [Visualization]({{ site.baseurl }}{% link docs/alignment/visualization.md %}) under the Read Mapping tab)
+  [Visualization]({{ site.baseurl }}{% link docs/alignment/visualization.md %}))
   - `bsstrand` Investigate bisulfite conversion strand label (see
-  [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}) under the Read Mapping tab)
+  [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}))
   - `bsconv` Investigate bisulfite conversion rate (see
-  [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}) under the Read Mapping tab)
+  [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}))
   - `cinread` Print cytosine-read pair in a long form (see
-  [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}) under the Read Mapping tab)
+  [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}))
 
-### Methylation and SNP Extraction
+### Methylation, SNP Extraction
 
   - `pileup` Generate standard-compliant VCF (see 
   [Read Pileup]({{ site.baseurl }}{% link docs/pileup.md %}))
-  - `vcf2bed` Extract mutation or methylation from VCF (see
+  - `vcf2bed` Extract mutation, methylation from VCF.  (see
   [Extracting Methylation and Mutation Information]({{ site.baseurl }}{% link docs/methylextraction.md %}))
-  - `mergecg` Merge neighboring C and G in CpG context (see
+  - `mergecg` Merge neighboring C and G in CpG context. (see
   [Extracting Methylation and Mutation Information]({{ site.baseurl }}{% link docs/methylextraction.md %}))
   
 ### Epi-read & Epi-allele
 
-  - `epiread` Convert BAM to epibed format (see
+  - `epiread` Convert bam to epi-read format (see
   [Epi-read & Epi-allele]({{ site.baseurl }}{% link docs/epiread_format.md %}))
-  - `rectangle` Convert epiread format to rectangle format (see
+  - `rectangle` Convert epi-read to rectangle format (see
   [Epi-read & Epi-allele]({{ site.baseurl }}{% link docs/epiread_format.md %}))
   - `asm` Test allele-specific methylation. (see
   [Allele-specific Methylation]({{ site.baseurl }}{% link docs/allele_meth.md %}))
 
-### Other
-
-  - `version` Print `biscuit` and library versions
-  - `qc` Generate QC files from BAM (see
-  [Quality Control]({{ site.baseurl }}{% link docs/alignment.QC.md %}))
-
 ## About the project
 
-This package is made by the folks from [Van Andel Institute](https://www.vai.org) with help from prior code base from
-the internet.
+This package is made by the folks from Van Andel Institute with help from prior
+code base from the internet.
 
 ## Acknowledgement
 
