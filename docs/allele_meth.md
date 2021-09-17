@@ -5,12 +5,13 @@ nav_order: 6
 
 # Allele-specific Methylation
 
-Allele-specific methylation can be extracted from the epiread files via:
+Allele-specific methylation can be extracted from the pairwise epiread files via:
 ```bash
-$ biscuit epiread -P -o my_output.epiread -B snps.bed \
-      /path/to/my_reference.fa my_output.bam |
-$ sort -k1,1 -k2,2n -k3,3n my_output.epiread > my_output.sorted.epiread
-$ biscuit asm my_output.sorted.epiread > my_output.asm
+biscuit epiread -P -o my_output.epiread -B snps.bed \
+    /path/to/my_reference.fa my_output.bam | \
+sort -k1,1 -k2,2n -k3,3n my_output.epiread > my_output.sorted.epiread
+
+biscuit asm my_output.sorted.epiread > my_output.asm
 ```
 
 An example of the `.asm` file format is:
