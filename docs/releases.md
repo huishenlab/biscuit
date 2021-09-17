@@ -1,23 +1,28 @@
 ---
 title: BISCUIT Releases
-nav_order: 10
+nav_order: 12
 ---
 
 # Releases
 
-BISCUIT releases can be found on on the
-[releases page of GitHub](https://github.com/huishenlab/biscuit/releases). For
-details regarding each release, see the "Find it on GitHub" link under each
-release.
+BISCUIT releases can be found on on the [releases page of GitHub](https://github.com/huishenlab/biscuit/releases). For
+details regarding each release, see the "Find it on GitHub" link under each release.
 
 ## Post-publication Releases
 
-  - *Publication in process*
+**Note, releases starting at version 1.0.0 are not backwards compatible with version 0.3.16 and earlier.**
+
+  - *Publication still in progress*
+
+  - **Version 1.0.0**
+    - *Latest Release*
+    - Released: 17 September 2021
+    - [Find it on GitHub](https://github.com/huishenlab/biscuit/releases/tag/v1.0.0.20210917)
+
 
 ## Pre-publication Releases
 
   - **Version 0.3.16**
-    - *Latest Release*
     - Released: 20 April 2020
     - [Find it on GitHub](https://github.com/huishenlab/biscuit/releases/tag/v0.3.16.20200420)
 
