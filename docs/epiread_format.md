@@ -228,4 +228,4 @@ For more details on the available flags, run `biscuit rectangle` in the terminal
 
 ## Three Base Contexts for Methylation Determination
 
-![three base context figure](/biscuit/assets/2021_09_09_methylation_contexts.pdf)
+<object data="../assets/2021_09_09_methylation_contexts.pdf" width="525" height="482" type='application/pdf'></object>
