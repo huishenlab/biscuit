@@ -29,6 +29,7 @@
 #include <string.h>
 #include <strings.h>
 #include <errno.h>
+#include <math.h>
 #include <zlib.h>
 #include "wzbed.h"
 #include "wzvcf.h"
@@ -38,6 +39,8 @@ typedef struct conf_t {
     char target[5];
     int mincov;
     int showctxt;
+    int bismark_cov_report;
+    int bismark_cx_report;
 } conf_t;
 
 typedef struct bed_data_t {
@@ -201,42 +204,6 @@ static void vcf2bed_snp(vcf_file_t *vcf, conf_t *conf) {
             if (n_fmt_sp != bd->nsamples || n_fmt_gt != bd->nsamples || n_fmt_ac != bd->nsamples || n_fmt_af != bd->nsamples)
                 wzfatal("Malformed VCF file (unmatched no. records) in %s\n", vcf->line);
 
-            /* parse out all alleles */
-            // char **alleles; int n_alleles;
-            // use the AB tag for alt
-            // char *AB = get_vcf_record_info("AB", rec->info);
-            /* line_get_fields(AB, ",", &alleles, &n_alleles); */
-            /* free(AB); */
-            /*        */
-            /* alleles = realloc(alleles, (++n_alleles)*sizeof(char*)); */
-            /* memmove(alleles + 1, alleles, (n_alleles-1)*sizeof(char*)); */
-            /* alleles[0] = strdup(rec->ref); */
-            /*  */
-            /* [> parse out allele support in each sample <] */
-            /* int j; */
-            /* int *allele_sp = calloc(n_alleles*n_fmt_sp, sizeof(int)); */
-            /* for (j=0; j<n_fmt_sp; ++j) { */
-            /*   if (strcmp(fmt_sp[j], ".")==0) continue; */
-            /*   int n_allele_sppairs; char **allele_sppairs; */
-            /*   line_get_fields(fmt_sp[j], ",", &allele_sppairs, &n_allele_sppairs); */
-            /*   int k; */
-            /*   for (k=0; k<n_allele_sppairs; ++k) { */
-            /*     // pointing to first digit of allele count */
-            /*     char *ae; for (ae = allele_sppairs[k]; !isdigit(*ae); ++ae); */
-            /*  */
-            /*     // locate which allele */
-            /*     int ai; */
-            /*     for (ai=0; ai<n_alleles; ++ai) */
-            /*       if (strncmp(alleles[ai], allele_sppairs[k], ae-allele_sppairs[k]) == 0) break; */
-            /*      */
-            /*     if (ai < n_alleles) */
-            /*       allele_sp[j*n_alleles+ai] = atoi(ae); */
-            /*     else */
-            /*       wzfatal("Allele %s not found in %s\n", allele_sppairs[k], vcf->line); */
-            /*   } */
-            /*   free_char_array(allele_sppairs, n_allele_sppairs); */
-            /* } */
-            /*  */
             if (b == NULL || b->tid < 0) goto END;
 
             /* compute highest non-ref AF and coverage */
@@ -257,31 +224,79 @@ static void vcf2bed_snp(vcf_file_t *vcf, conf_t *conf) {
                     target_name(vcf->targets, b->tid), b->beg, b->end, rec->ref, rec->alt);
             // genotype, support, cov, vaf
             for (sid = 0; sid<bd->nsamples; ++sid) {
-                /* int highest_altcnt=0, cov=0; // recomputed cov, could be more efficient here */
-                /* int *allele_sp1 = allele_sp + sid*n_alleles; */
-                /* for (i=0; i<n_alleles; ++i) { */
-                /*   if (i && allele_sp[i] > highest_altcnt) highest_altcnt = allele_sp1[i]; */
-                /*   cov += allele_sp1[i]; */
-                /* } */
                 putchar('\t'); fputs(fmt_gt[sid], stdout);
                 putchar('\t'); fputs(fmt_sp[sid], stdout);
                 putchar('\t'); fputs(fmt_ac[sid], stdout);
                 putchar('\t'); fputs(fmt_af[sid], stdout);
-                /* if (cov) fprintf(stdout, "%1.2f", (double) highest_altcnt / cov); */
-                /* else putchar('.'); */
             }
 
             if (fputc('\n', stdout) < 0 && errno == EPIPE) exit(1);
 
-            // putchar('\n');
-
-            // free(allele_sp);
-            // free_char_array(alleles, n_alleles);
 END:
             free_char_array(fmt_gt, n_fmt_gt);
             free_char_array(fmt_sp, n_fmt_sp);
             free_char_array(fmt_ac, n_fmt_ac);
             free_char_array(fmt_af, n_fmt_af);
+        }
+    }
+
+    free_bed1(b, free_bed_data);
+    free_vcf_record(rec);
+}
+
+static void vcf2bed_bismark(vcf_file_t *vcf, conf_t *conf, const char *cx) {
+
+    bed1_t *b = init_bed1(init_bed_data, &vcf->n_tsamples);
+    vcf_record_t *rec = init_vcf_record();
+
+    float percent;
+    int n_meth, n_unmeth;
+    while (vcf_read_record(vcf, rec)) {
+        vcf_record2bed1(b, rec, vcf);
+        bed_data_t *bd = (bed_data_t*) b->data;
+
+        // skip missing context
+        if (bd->cx == NULL) continue;
+
+        if (strcmp(cx, "C") == 0) { // targeting all C
+            if (bd->ref != 'C' && bd->ref != 'G') continue;
+        } else if (strcmp(cx, "CH") == 0) { // targeting CH
+            if (strcmp(bd->cx, "CHH") != 0 && strcmp(bd->cx, "CHG") != 0) continue;
+        } else if (strcmp(bd->cx, cx) != 0) continue; // all other cases
+
+        if (b == NULL || b->tid < 0) continue;
+        if (!pass_coverage(b, conf)) continue;
+
+        // read.bismark in BSseq will break if NA values ('.') are provided, so skip lines with beta = -1
+        // TODO: When one specific sample is allowed, change this (and following instances of index = 0) accordingly
+        if (bd->betas[0] < 0) continue;
+
+        // Number of methylated and unmethylated cytosines
+        // Index 0 is used because we are only using the FIRST sample for Bismark output
+        n_meth   = round(bd->betas[0] * bd->covs[0]);
+        n_unmeth = bd->covs[0] - n_meth;
+
+        if (conf->bismark_cov_report) {
+            percent  = 100.0 * bd->betas[0];
+
+            // chrom, 1-based beg, 1-based end
+            fprintf(stdout, "%s\t%"PRId64"\t%"PRId64, target_name(vcf->targets, b->tid), b->beg+1, b->end);
+
+            // methylation percentage, count methylated, count unmethylated
+            fprintf(stdout, "\t%.2f\t%i\t%i\n", percent, n_meth, n_unmeth);
+        }
+
+        if (conf->bismark_cx_report) {
+            // chrom, 1-based position, strand
+            // Strand is determined by whether the reference base is a C or G
+            // C's become + strand (reads derive from OT/CTOT), while G's become - strand (reads derive from OB/CTOB)
+            fprintf(stdout, "%s\t%"PRId64"\t%c", target_name(vcf->targets, b->tid), b->beg+1, bd->ref=='C' ? '+' : '-');
+
+            // count methylated, count unmethylated, context
+            fprintf(stdout, "\t%i\t%i\t%s", n_meth, n_unmeth, bd->cx);
+
+            // Trinucleotide context
+            fprintf(stdout, "\t%.3s\n", bd->n5+2);
         }
     }
 
@@ -301,6 +316,9 @@ static int usage(conf_t *conf) {
     fprintf(stderr, "    -e        Show context (reference base, context group {CG,CHG,CHH},\n");
     fprintf(stderr, "                  2-base {CA,CC,CG,CT} and 5-base context) before beta\n");
     fprintf(stderr, "                  value and coverage column\n");
+    fprintf(stderr, "    -B        Output results in the Bismark Cov file format\n");
+    fprintf(stderr, "    -R        Output results in the Bismark Cytosine Report file format. Note, this only\n");
+    fprintf(stderr, "                  outputs COVERED cytosines, unlike Bismark, which outputs ALL cytosines\n");
     fprintf(stderr, "    -h        This help\n");
     fprintf(stderr, "\n");
 
@@ -308,13 +326,13 @@ static int usage(conf_t *conf) {
 }
 
 int main_vcf2bed(int argc, char *argv[]) {
-    conf_t conf = {.mincov=3, .showctxt=0};
+    conf_t conf = {.mincov=3, .showctxt=0, .bismark_cov_report=0, .bismark_cx_report=0};
     strcpy(conf.target, "CG");
     char *target_samples = NULL;
 
     int c;
     if (argc<2) return usage(&conf);
-    while ((c = getopt(argc, argv, ":t:k:s:eh")) >= 0) {
+    while ((c = getopt(argc, argv, ":t:k:s:eBRh")) >= 0) {
         switch (c) {
             case 'k': conf.mincov = atoi(optarg); break;
             case 't': {
@@ -324,6 +342,8 @@ int main_vcf2bed(int argc, char *argv[]) {
                       }
             case 's': target_samples = strdup(optarg); break;
             case 'e': conf.showctxt = 1; break;
+            case 'B': conf.bismark_cov_report = 1; break;
+            case 'R': conf.bismark_cx_report = 1; break;
             case 'h': return usage(&conf); break;
             case ':': usage(&conf); wzfatal("Option needs an argument: -%c\n", optopt);
             case '?': usage(&conf); wzfatal("Unrecognized option: -%c\n", optopt);
@@ -331,10 +351,19 @@ int main_vcf2bed(int argc, char *argv[]) {
         }
     }
 
+    if (optind >= argc) { usage(&conf); wzfatal("Please provide input vcf.\n"); }
+    if (conf.bismark_cov_report && conf.bismark_cx_report) { wzfatal("Cannot provide both -B and -R. Try again.\n"); }
+
     // default to only FIRST sample
     if (!target_samples) target_samples = strdup("FIRST");
 
-    if (optind >= argc) { usage(&conf); wzfatal("Please provide input vcf.\n"); }
+    // Right now, Bismark reports only work with the FIRST option
+    // TODO: Get this to work with a single specified sample (will need to be able to check that only one was provided)
+    if ((conf.bismark_cov_report || conf.bismark_cx_report) && (strcmp(target_samples, "FIRST") != 0)) {
+        fprintf(stderr, "WARNING: Bismark reports only work with one sample. Printing results for FIRST sample.");
+        target_samples = strdup("FIRST");
+    }
+
     vcf_file_t *vcf = init_vcf_file(argv[optind]);
     index_vcf_samples(vcf, target_samples);
 
@@ -348,8 +377,12 @@ int main_vcf2bed(int argc, char *argv[]) {
             strcasecmp(conf.target, "SNP") != 0) wzfatal("Invalid option for -t: %s.\n", raw_target);
     free(raw_target);
 
-    if (strcmp(conf.target, "SNP")==0) vcf2bed_snp(vcf, &conf);
-    else vcf2bed_ctxt(vcf, &conf, conf.target);
+    if (conf.bismark_cov_report || conf.bismark_cx_report) {
+        vcf2bed_bismark(vcf, &conf, conf.target);
+    } else {
+        if (strcmp(conf.target, "SNP")==0) vcf2bed_snp(vcf, &conf);
+        else vcf2bed_ctxt(vcf, &conf, conf.target);
+    }
 
     free_vcf_file(vcf);
     free(target_samples);
