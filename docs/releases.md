@@ -16,7 +16,7 @@ details regarding each release, see the "Find it on GitHub" link under each rele
 
   - **Version 1.0.2**
     - *Latest Release*
-    - Released: 13 October 2022
+    - Released: 13 January 2022
     - [Find it on GitHub](https://github.com/huishenlab/biscuit/releases/tag/v1.0.2.20220113)
 
   - **Version 1.0.1**
