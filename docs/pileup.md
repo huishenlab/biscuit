@@ -130,14 +130,14 @@ When running in somatic mode, two additional flags are added to the INFO string:
 
 The following table shows a brief summary of the somatic states.
 
-| State | Description                       | Exists in Tumor | Exists in Normal |
-|:-----:|-----------------------------------|:---------------:|:----------------:|
-|   0   | Wild type                         |        No       |        No        |
-|   1   | Germline                          |        Yes      |        Yes       |
-|   2   | Somatic                           |        No       |        Yes       |
-|   3   | LOH                               |        Yes      |        No        |
-|   4   | Post-transcriptional modification |        NA       |        NA        |
-|   5   | Unknown                           |        NA       |        NA        |
+| State | Description                       | SNP Exists in Normal | SNP Exists in Tumor |
+|:-----:|-----------------------------------|:--------------------:|:-------------------:|
+|   0   | Wild type                         |          No          |         No          |
+|   1   | Germline                          |          Yes         |         Yes         |
+|   2   | Somatic                           |          No          |         Yes         |
+|   3   | LOH                               |          Yes         |         No          |
+|   4   | Post-transcriptional modification |          NA          |         NA          |
+|   5   | Unknown                           |          NA          |         NA          |
 
 The somatic score is calculated based on the posterior probability that, given the read counts in the tumor and normal
 samples, the mutation only exists in the tumor sample.
