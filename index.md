@@ -18,15 +18,16 @@ nav_order: 1
 
 ---
 
-BISulfite-seq CUI Toolkit (BISCUIT) is a utility suite for analyzing sodium bisulfite- or enzyme-based DNA
-methylation/modification data. It was written to perform read alignment, DNA methylation and mutation calling, and
-allele specific methylation from bisulfite or bisulfite-like sequencing data.
+BISulfite-seq CUI Toolkit (BISCUIT) is a utility suite for analyzing bulk and single-cell sodium bisulfite- or
+enzyme-based DNA methylation/modification data, such as WGBS, capture bisulfite sequencing, RRBS, NOMe-seq, and EM-seq.
+It was written to perform read alignment, DNA methylation and mutation calling, and allele specific methylation from
+bisulfite or bisulfite-like sequencing data.
 
 BISCUIT was developed by Wanding Zhou while he was a member of the [Shen Lab](https://shenlab.vai.org) at Van Andel
 Institute. He now holds a faculty position at University of Pennsylvania and Children's Hospital of Philadelphia.
-BISCUIT is currently maintained by Jacob Morrison (who also developed the User's Guide website) in the Shen Lab. The
-development of BISCUIT was done at [https://github.com/zhou-lab/biscuit](https://github.com/zhou-lab/biscuit), but is
-now maintained at [https://github.com/huishenlab/biscuit](https://github.com/huishenlab/biscuit).
+BISCUIT is currently maintained by Jacob Morrison (who also developed the User's Guide website) in the Shen Lab. Current
+versions of BISCUIT are available at [https://github.com/huishenlab/biscuit](https://github.com/huishenlab/biscuit),
+while legacy versions are located at [https://github.com/zhou-lab/biscuit](https://github.com/zhou-lab/biscuit).
 
 ## Quick Start
 
@@ -64,8 +65,8 @@ biscuit vcf2bed my_pileup.vcf.gz > my_methylation_data.bed
 bgzip my_methylation_data.bed
 tabix -p bed my_methylation_data.bed.gz
 ```
-This basic order of commands will all the necessary files needed to read data into R using the R/Bioconductor companion
-package, [biscuiteer](https://www.bioconductor.org/packages/release/bioc/html/biscuiteer.html).
+This basic order of commands will produce all the necessary files needed to read data into R using the R/Bioconductor
+companion package, [biscuiteer](https://www.bioconductor.org/packages/release/bioc/html/biscuiteer.html).
 
 An overview of all available functionalities can be found below in the
 [Overview of Functionalities](#overview-of-functionalities) section.
@@ -216,7 +217,7 @@ the internet.
  - lib/aln was adapted from Heng Li's BWA-mem code.
  - lib/htslib was submoduled from the htslib library.
  - lib/klib was submoduled from Heng Li's klib.
- - This work is supported by NIH/NCI R37CA230748 and U24CA210969.
+ - This work is supported by NIH/NCI R37CA230748.
 
 ## Reference
 
