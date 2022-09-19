@@ -120,12 +120,18 @@ function biscuitQC {
 
     if [[ "${run_cov_qc}" == true ]]; then
         # Create genomecov_all, genomecov_q40, genomecov_all_dup, genomecov_q40_dup
-        samtools view -hb ${in_bam} | tee \
-            >(bedtools genomecov -bga -split -ibam stdin | LC_ALL=C sort -k1,1 -k2,2n -T ${outdir} > ${outdir}/${sample}_genomecov_all.tmp.bed) \
-            >(samtools view -q 40 -b | bedtools genomecov -bga -split -ibam stdin | LC_ALL=C sort -k1,1 -k2,2n -T ${outdir} > ${outdir}/${sample}_genomecov_q40.tmp.bed) \
-            >(samtools view -f 0x400 -b | bedtools genomecov -bga -split -ibam stdin | LC_ALL=C sort -k1,1 -k2,2n -T ${outdir} > ${outdir}/${sample}_genomecov_all_dup.tmp.bed) \
-            >(samtools view -f 0x400 -q 40 -b | bedtools genomecov -bga -split -ibam stdin | LC_ALL=C sort -k1,1 -k2,2n -T ${outdir} > ${outdir}/${sample}_genomecov_q40_dup.tmp.bed) \
-            >/dev/null
+        
+        tmp_dir=$(mktemp -d -p ${outdir})
+        mkfifo "$tmp_dir/f1" "$tmp_dir/f2" "$tmp_dir/f3" "$tmp_dir/f4"
+
+        (bedtools genomecov -bga -split -ibam stdin < "$tmp_dir/f1" | LC_ALL=C sort -k1,1 -k2,2n -T ${outdir} > ${outdir}/${sample}_genomecov_all.tmp.bed) & pid1=$!
+        (samtools view -q 40 -b < "$tmp_dir/f2" | bedtools genomecov -bga -split -ibam stdin | LC_ALL=C sort -k1,1 -k2,2n -T ${outdir} > ${outdir}/${sample}_genomecov_q40.tmp.bed) & pid2=$!
+        (samtools view -f 0x400 -b < "$tmp_dir/f3" | bedtools genomecov -bga -split -ibam stdin | LC_ALL=C sort -k1,1 -k2,2n -T ${outdir} > ${outdir}/${sample}_genomecov_all_dup.tmp.bed) & pid3=$!
+        (samtools view -f 0x400 -q 40 -b < "$tmp_dir/f4" | bedtools genomecov -bga -split -ibam stdin | LC_ALL=C sort -k1,1 -k2,2n -T ${outdir} > ${outdir}/${sample}_genomecov_q40_dup.tmp.bed) & pid4=$!
+            
+        samtools view -hb ${in_bam} | tee "$tmp_dir/f1" "$tmp_dir/f2" "$tmp_dir/f3" "$tmp_dir/f4" >/dev/null & 
+        wait $pid1 $pid2 $pid3 $pid4
+        rm -rf "$tmp_dir"
 
         # Create cpg_all, cpg_q40
         cat ${BISCUIT_CPGS} | tee \
