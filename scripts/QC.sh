@@ -120,7 +120,6 @@ function biscuitQC {
 
     if [[ "${run_cov_qc}" == true ]]; then
         #### Create genomecov_all, genomecov_q40, genomecov_all_dup, genomecov_q40_dup ####
-        
         # First, create named pipes in a temporary dir
         tmp_dir=$(mktemp -d -p ${outdir})
         mkfifo "$tmp_dir/f1" "$tmp_dir/f2" "$tmp_dir/f3" "$tmp_dir/f4"
@@ -140,10 +139,21 @@ function biscuitQC {
         rm -rf "$tmp_dir"
 
         #### Create cpg_all, cpg_q40 ####
-        cat ${BISCUIT_CPGS} | tee \
-            >(bedtools intersect -sorted -wo -b ${outdir}/${sample}_genomecov_all.tmp.bed -a stdin | bedtools groupby -g 1-3 -c 7 -o min > ${outdir}/${sample}_cpg_all.tmp.bed) \
-            >(bedtools intersect -sorted -wo -b ${outdir}/${sample}_genomecov_q40.tmp.bed -a stdin | bedtools groupby -g 1-3 -c 7 -o min > ${outdir}/${sample}_cpg_q40.tmp.bed) \
-            >/dev/null
+        # First, create named pipes in a temporary dir
+        tmp_dir=$(mktemp -d -p ${outdir})
+        mkfifo "$tmp_dir/f1" "$tmp_dir/f2"
+        
+        # Set up the four processing pipelines, each reading data from one of these named pipes
+        # We also need to collect the PID for each process, so that we don't continue with the script before these processes finish
+        (bedtools intersect -sorted -wo -b ${outdir}/${sample}_genomecov_all.tmp.bed -a stdin < "$tmp_dir/f1" | bedtools groupby -g 1-3 -c 7 -o min > ${outdir}/${sample}_cpg_all.tmp.bed) & pid1=$!
+        (bedtools intersect -sorted -wo -b ${outdir}/${sample}_genomecov_q40.tmp.bed -a stdin < "$tmp_dir/f2" | bedtools groupby -g 1-3 -c 7 -o min > ${outdir}/${sample}_cpg_q40.tmp.bed) & pid2=$!
+        
+        # Stream data into the named pipes
+        cat ${BISCUIT_CPGS} | tee $tmp_dir/f1" "$tmp_dir/f2" >/dev/null &
+        
+        # Wait for all subprocesses to complete, then clean up the pipes we created
+        wait $pid1 $pid2 
+        rm -rf "$tmp_dir"
 
         #### Coverage distributions and uniformity ####
         echo -e "BISCUITqc Uniformity Table" > ${outdir}/${sample}_cv_table.txt
