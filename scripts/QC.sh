@@ -143,7 +143,7 @@ function biscuitQC {
         tmp_dir=$(mktemp -d -p ${outdir})
         mkfifo "$tmp_dir/f1" "$tmp_dir/f2"
         
-        # Set up the four processing pipelines, each reading data from one of these named pipes
+        # Set up the processing pipelines, each reading data from one of these named pipes
         # We also need to collect the PID for each process, so that we don't continue with the script before these processes finish
         (bedtools intersect -sorted -wo -b ${outdir}/${sample}_genomecov_all.tmp.bed -a stdin < "$tmp_dir/f1" | bedtools groupby -g 1-3 -c 7 -o min > ${outdir}/${sample}_cpg_all.tmp.bed) & pid1=$!
         (bedtools intersect -sorted -wo -b ${outdir}/${sample}_genomecov_q40.tmp.bed -a stdin < "$tmp_dir/f2" | bedtools groupby -g 1-3 -c 7 -o min > ${outdir}/${sample}_cpg_q40.tmp.bed) & pid2=$!
