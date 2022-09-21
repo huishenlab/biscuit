@@ -149,7 +149,7 @@ function biscuitQC {
         (bedtools intersect -sorted -wo -b ${outdir}/${sample}_genomecov_q40.tmp.bed -a stdin < "$tmp_dir/f2" | bedtools groupby -g 1-3 -c 7 -o min > ${outdir}/${sample}_cpg_q40.tmp.bed) & pid2=$!
         
         # Stream data into the named pipes
-        cat ${BISCUIT_CPGS} | tee $tmp_dir/f1" "$tmp_dir/f2" >/dev/null &
+        cat ${BISCUIT_CPGS} | tee "$tmp_dir/f1" "$tmp_dir/f2" >/dev/null &
         
         # Wait for all subprocesses to complete, then clean up the pipes we created
         wait $pid1 $pid2 
