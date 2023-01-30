@@ -31,10 +31,10 @@ while legacy versions are located at [https://github.com/zhou-lab/biscuit](https
 
 ## Quick Start
 
-In order to get started right away with performing analyses with BISCUIT, precompiled binaries are available for
-download on the [BISCUIT release page](https://github.com/huishenlab/biscuit/releases/latest). Note, binaries are only
-available for Linux and macOS. (See [Download and Install](#download-and-install) for more information about downloading
-and installing BISCUIT).
+In order to get started with performing analyses with BISCUIT, precompiled binaries are available for download on the
+[BISCUIT release page](https://github.com/huishenlab/biscuit/releases/latest). Note, binaries are only available for
+Linux and macOS. (See [Download and Install](#download-and-install) for more information about downloading and
+installing BISCUIT).
 
 The basic workflow to align and extract methylation information using BISCUIT is:
 1. Create an index of the reference genome (only needs to be done once for each reference).
@@ -51,7 +51,8 @@ biscuit index my_reference.fa
 # Align sequencing reads to the reference
 # Gzipped FASTQ files can also be used
 biscuit align -R "my_rg" /path/to/my_reference.fa read1.fastq read2.fastq |
-    samblaster | samtools sort --write-index -o my_output.bam -O BAM -
+    samblaster | samtools sort -o my_output.bam -O BAM -
+samtools index my_output.bam
 
 # Create a pileup VCF of DNA methylation and genetic information
 # Also compresses and indexes the VCF
@@ -99,7 +100,7 @@ mv biscuit_* biscuit
 chmod +x biscuit
 ```
 
-To download the scripts to generate the QC asset and data files, run
+To download the scripts to generate the QC asset files, generate QC files, and flip PBAT strands post-alignment, run
 ```bash
 # QC asset build
 curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/latest |
@@ -108,6 +109,10 @@ curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/late
 # QC bash script
 curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/latest |
     grep browser_download_url | grep QC.sh | cut -d '"' -f 4
+
+# Flip PBAT strands script
+curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/latest |
+    grep browser_download_url | grep flip_pbat_strands.sh | cut -d '"' -f 4
 ```
 These commands work on both macOS and Linux.
 
@@ -137,7 +142,7 @@ cd biscuit-release
 make
 ```
 
-The QC related scripts can be found in the `scripts/` directory.
+The QC and strand-flipping scripts can be found in the `scripts/` directory.
 
 ### Download with Conda
 
@@ -195,9 +200,9 @@ in the terminal.
 ### Epi-read & Epi-allele
 
   - `epiread` Convert BAM to epibed format (see
-  [Epi-read & Epi-allele]({{ site.baseurl }}{% link docs/epiread_format.md %}))
+  [Epireads and the epiBED Format]({{ site.baseurl }}{% link docs/epiread_format.md %}))
   - `rectangle` Convert epiread format to rectangle format (see
-  [Epi-read & Epi-allele]({{ site.baseurl }}{% link docs/epiread_format.md %}))
+  [Epireads and the epiBED Format]({{ site.baseurl }}{% link docs/epiread_format.md %}))
   - `asm` Test allele-specific methylation. (see
   [Allele-specific Methylation]({{ site.baseurl }}{% link docs/allele_meth.md %}))
 
