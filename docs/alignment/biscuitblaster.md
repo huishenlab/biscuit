@@ -8,7 +8,7 @@ permalink: /biscuitblaster/
 # The biscuitBlaster Pipeline
 
 The biscuitBlaster pipeline combines BISCUIT, samblaster, and samtools to align reads, mark duplicates, sort, and index
-the aligned reads in an easy one-liner.
+the aligned reads in an easy two-step process.
 
 Depending on the downstream analysis goals of the user, there are two pipelines available.
 
@@ -19,7 +19,8 @@ marked reads.
 
 ```bash
 biscuit align -R "my_rg" /path/to/my_reference.fa read1.fq.gz read2.fq.gz | \
-    samblaster | samtools sort --write-index -o my_output.bam -O BAM -
+    samblaster | samtools sort -o my_output.bam -O BAM -
+samtools index my_output.bam
 ```
 where `"my_rg"` is the read group (if applicable) to be used, `/path/to/my_reference.fa` is the FASTA file for the
 reference genome, `read*.fq.gz` are the read1 and read2 FASTQ files from the sequencing run, and `my_output.bam` is the

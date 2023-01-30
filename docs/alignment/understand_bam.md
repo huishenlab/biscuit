@@ -6,8 +6,9 @@ nav_order: 2
 
 # Understanding the Output BISCUIT BAM
 
-BISCUIT follows the SAM/BAM specification for the SAM/BAM output from `biscuit align`. Definitions for optional tags can
-be found below, along with how BISCUIT defines the TLEN column (which differs from how BWA defines it).
+BISCUIT follows the [SAM/BAM](http://samtools.github.io/hts-specs/SAMv1.pdf) specification for the SAM/BAM output from
+`biscuit align`. Definitions for optional tags can be found below, along with how BISCUIT defines the TLEN column (which
+differs from how BWA defines it).
 
 ## Useful Tags to Know
 
@@ -29,8 +30,10 @@ be found below, along with how BISCUIT defines the TLEN column (which differs fr
   chromosomes.
   - `XR` Reference/chromosome annotation.
   - `YD` Bisulfite conversion strand label.
-    - `f` for forward/Watson strand (C&#8594;T from IGV)
-    - `r` for reverse/Crick strand (G&#8594;A from IGV)
+    - `f` for OT/CTOT strands (C&#8594;T from IGV)
+    - `r` for OB/CTOB strands (G&#8594;A from IGV)
+  - `MC` CIGAR string for mate/next segment
+  - `MQ` Mapping quality for mate/next segment
   - `ZN` Cytosine retention and conversion. Not included by default, but can be added by running `biscuit bsconv`. See
   [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}) for more details.
   - `YC` Number of C&#8594;T observations. Not included by default, but can be added by running `biscuit bsstrand`. See

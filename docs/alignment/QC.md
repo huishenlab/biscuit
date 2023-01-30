@@ -18,7 +18,7 @@ Usage for `biscuit qc`:
 biscuit qc [-s] /path/to/my_reference.fa input.bam sample_name
 ```
 Additional help can be found by running `biscuit qc` on the command line or visiting the
-[qc help page]({{ site.baseurl }}{% link docs/subcommand_help.md %}).
+[qc help page]({{ site.baseurl }}{% link docs/subcommand_help.md#biscuit-qc %}).
 
 Usage for `QC.sh`:
 ```bash
@@ -47,7 +47,7 @@ instructions can be found on the [FAQ]({{ site.baseurl }}{% link docs/faq.md %})
 For some library preparations, incomplete conversions are enriched in a subset of reads which need to be filtered. The
 `bsconv` subcommand transforms an input BAM into one that contains a `ZN` tag (like
 `ZN:Z:CA_R0C11,CC_R1C14,CG_R0C2,CT_R1C5`). This tag summarizes counts of retention and conversion for four different
-cytosine contexts `CpA`, `CpC`, `CpG` and `CpT`. The `-b` flag outputs the counts in a table, instead of as a
+cytosine contexts `CpA`, `CpC`, `CpG` and `CpT`. The `-p` flag outputs the counts in a table, instead of as a
 tag in the BAM file. Additionally, `biscuit bsconv` can be used to filter reads with user-defined levels of cytosine
 retention in CpH, CpY, CpA, CpC, or CpT contexts.
 
@@ -55,7 +55,7 @@ retention in CpH, CpY, CpA, CpC, or CpT contexts.
 biscuit bsconv /path/to/my_reference.fa input.bam
 ```
 For help on available flags, run `biscuit bsconv` on the command line or visiting the
-[bsconv help page]({{ site.baseurl }}{% link docs/subcommand_help.md %}).
+[bsconv help page]({{ site.baseurl }}{% link docs/subcommand_help.md#biscuit-bsconv %}).
 
 ## Validate Bisulfite Conversion Label
 
@@ -95,12 +95,12 @@ Conflict (c):   0            0            0            0
 If unfamiliar with the OT/OB/CTOT/CTOB definitions, see the [Glossary]({{ site.baseurl }}{% link docs/glossary.md %})
 
 The inferred `YD` tag gives the following
-  - f: foward/Waston strand
-  - r: reverse/Crick strand
+  - f: OT/CTOT (BSW) strand
+  - r: OB/CTOB (BSC) strand
   - c: conflicting strand information
   - u: unintelligible strand source (unknown)
 
-`YD` is inferred based on the number of C&#8594;T (`nCT`) and G&#8594;A`G>A` (`nGA`) observations in each read according
+`YD` is inferred based on the number of C&#8594;T (`nCT`) and G&#8594;A (`nGA`) observations in each read according
 to the following rules:
 
   - If both `nCT` and `nGA` are zero, `YD = u`
@@ -111,7 +111,7 @@ to the following rules:
 The flag `-y` appends `nCT` (`YC` tag) and `nGA` (`YG` tag) in the output BAM file.
 
 For more help with `bsstrand`, run `biscuit bsstrand` in the terminal or visit the
-[bsstrand help page]({{ site.baseurl }}{% link docs/subcommand_help.md %}).
+[bsstrand help page]({{ site.baseurl }}{% link docs/subcommand_help.md#biscuit-bsstrand %}).
 
 ### When `-b 1` Was Specified in Mapping
 
@@ -159,4 +159,4 @@ biscuit cinread /path/to/my_reference.fa input.bam
 ```
 
 For more information about the available options, run `biscuit cinread` in the terminal or visit the
-[cinread help page]({{ site.baseurl }}{% link docs/subcommand_help.md %}).
+[cinread help page]({{ site.baseurl }}{% link docs/subcommand_help.md#biscuit-cinread %}).
