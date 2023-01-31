@@ -59,7 +59,7 @@ For more help on available flags, run `biscuit vcf2bed` in the terminal or visit
 
 ## Merge Neighboring C and G in CpG Context
 
-At times, it might be desired that the methylation status be merged across the C and G in a CpG dinucleotide context.
+At times, it might be desirable to merge the methylation status across the C and G in a CpG dinucleotide context.
 BISCUIT provides an easy-to-use subcommand, `mergecg`, to do this:
 ```bash
 $ biscuit mergecg /path/to/my_reference.fa my_pileup.bed
