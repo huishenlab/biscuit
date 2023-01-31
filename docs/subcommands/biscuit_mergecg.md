@@ -5,7 +5,7 @@ nav_order: 9
 permalink: /biscuit_mergecg/
 ---
 
-## biscuit mergecg
+# biscuit mergecg
 ```bash
 
 Usage: biscuit mergecg [options] <ref.fa> <in.bed>

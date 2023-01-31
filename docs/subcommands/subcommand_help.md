@@ -9,7 +9,6 @@ permalink: docs/subcommands
 
 Usage for all BISCUIT subcommands as of BISCUIT version 1.2.0.
 
-## biscuit
 ```bash
 
 Program: BISCUIT (BISulfite-seq CUI Toolkit)
