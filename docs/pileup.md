@@ -7,14 +7,14 @@ nav_order: 3
 
 The `biscuit pileup` subcommand allows the user to compute cytosine retention and callable SNP mutations.
 
-BISCUIT tries to minimize false positive methylation calls and can be stringent in terms of mutations. If a read has a
-high mapping confidence score and shows a mutation with a high base quality score, `biscuit pileup` starts its SNP
-processing and *may* revert the methylation call if the SNP interferes with the determination of cytosine retention or
-conversion.
+BISCUIT tries to minimize false positive methylation calls. If a read has a high mapping confidence score and shows a
+mutation with a high base quality score, `biscuit pileup` starts its SNP processing and *may* revert the methylation
+call if the SNP interferes with the determination of cytosine retention or conversion.
 
 ## Generating Pileup for a Single Sample
 
-BISCUIT can create a tabix-indexed VCF file for a single sample by running:
+A tabix-indexed VCF can be created with BISCUIT and [bgzip](https://www.htslib.org/doc/bgzip.html) /
+[tabix](https://www.htslib.org/doc/tabix.html):
 ```bash
 biscuit pileup -o my_pileup.vcf /path/to/my_reference.fa my_output.bam
 bgzip my_pileup.vcf
@@ -36,8 +36,8 @@ A few flags that can be found in the VCF and are useful to understand are:
   - **BT:** beta value [No. methylated / (No. unmethylated + No. methylated)]
   - **GT:** genotype relative to normal
   - **GL1:** comma-separated list of likelihoods for each of the three genotypes (0/0, 0/1, 1/1)
-  - **GQ:** genotype quality (for the called genotype, GT)
-  - **SP:** shows allelic support for SNPs
+  - **GQ:** genotype quality for the called genotype (GT, phred-scaled)
+  - **SP:** shows allelic support for SNPs (accounts for bisulfite conversion)
   - **NS:** number of samples with data
   - **CX:** cytosine context (CG, CHH, etc.)
   - **N5:** 5 base sequence context
@@ -64,14 +64,14 @@ header. In brief, the DIAGNOSE data in the above example shows:
 
   - The number of high quality reads showing retention (`RN=0`)
   - The number of high quality reads showing conversion (`CN=1`)
-  - Retention/conversion pattern for cytosines on the Watson strand (`Bs0=T`)
+  - Retention/conversion pattern for cytosines on the Watson (OT/CTOT) strand (`Bs0=T`)
   - Retention-mutation status internally determined by BISCUIT (`Sta0=1`) See
   [Codes for Retention Mutation Status](#codes-for-retention-mutation-status) for a description of possible values.
   - Phred-scaled base qualities for bases in question (`Bq0=F`)
   - Whether the read is on the forward (`+`) or reverse (`-`) (`Str0=+`)
   - Position along the read where the bases are (`Pos0=44`)
   - Number of retained (i.e., methylated) cytosines on each read (`Rret0=23`)
-  - While not shown, information for reads on the Crick strand can be found in the `Bs1`, `Sta0`, etc. tags
+  - While not shown, information for reads on the Crick (OB/CTOB) strand can be found in the `Bs1`, `Sta0`, etc. tags
 
 When running with the `-v 1` option, BISCUIT will also print positions with no SNP or cytosine methylation, which allows
 for differentiating between "no mutation" and "no coverage."
