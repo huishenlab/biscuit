@@ -200,9 +200,9 @@ the [BISCUIT Subcommands]({{ site.baseurl }}{% link docs/subcommands/subcommand_
 ### Epi-read & Epi-allele
 
   - `epiread` Convert BAM to epibed format (see
-  [Epireads and the epiBED Format]({{ site.baseurl }}{% link docs/epiread_format.md %}))
+  [Epireads and the epiBED Format]({{ site.baseurl }}{% link docs/epiread/epiread_format.md %}))
   - `rectangle` Convert epiread format to rectangle format (see
-  [Epireads and the epiBED Format]({{ site.baseurl }}{% link docs/epiread_format.md %}))
+  [Epireads and the epiBED Format]({{ site.baseurl }}{% link docs/epiread/old_epiread_format.md %}))
   - `asm` Test allele-specific methylation. (see
   [Allele-specific Methylation]({{ site.baseurl }}{% link docs/allele_meth.md %}))
 
