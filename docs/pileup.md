@@ -25,7 +25,7 @@ To get additional diagnostic information, include `-v 1` in the `biscuit pileup`
 be including by using `-v 6` instead.
 
 For more help on available flags, run `biscuit pileup` in the terminal or visit the
-[pileup help page]({{ site.baseurl }}{% link docs/subcommand_help.md %}).
+[pileup help page]({{ site.baseurl }}{% link docs/subcommands/biscuit_pileup.md %}).
 
 ### Helpful Flag Definitions
 

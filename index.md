@@ -167,8 +167,8 @@ For more information about the docker container, see
 
 The following list provides an overview of the different subcommands and the various functionalities provided by
 `biscuit`. You can also find much of this by typing `biscuit` in the terminal. Help for each subcommand can be found on
-the [BISCUIT Subcommands]({{ site.baseurl }}{% link docs/subcommand_help.md %}) page or by typing `biscuit (subcommand)`
-in the terminal.
+the [BISCUIT Subcommands]({{ site.baseurl }}{% link docs/subcommands/subcommand_help.md %}) page or by typing
+`biscuit (subcommand)` in the terminal.
 
 ### Read Mapping
 

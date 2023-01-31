@@ -55,7 +55,7 @@ Information about the sequence context for each row can be included by adding th
 filtering out low coverage rows can be done using the `-k` flag.
 
 For more help on available flags, run `biscuit vcf2bed` in the terminal or visit the
-[vcf2bed help page]({{ site.baseurl }}{% link docs/subcommand_help.md %}).
+[vcf2bed help page]({{ site.baseurl }}{% link docs/subcommands/biscuit_vcf2bed.md %}).
 
 ## Merge Neighboring C and G in CpG Context
 
@@ -66,4 +66,4 @@ $ biscuit mergecg /path/to/my_reference.fa my_pileup.bed
 ```
 
 For more help on available flags, run `biscuit mergecg` in the terminal or visit the
-[mergecg help page]({{ site.baseurl }}{% link docs/subcommand_help.md %}).
+[mergecg help page]({{ site.baseurl }}{% link docs/subcommands/biscuit_mergecg.md %}).

@@ -18,7 +18,7 @@ Usage for `biscuit qc`:
 biscuit qc [-s] /path/to/my_reference.fa input.bam sample_name
 ```
 Additional help can be found by running `biscuit qc` on the command line or visiting the
-[qc help page]({{ site.baseurl }}{% link docs/subcommand_help.md#biscuit-qc %}).
+[qc help page]({{ site.baseurl }}{% link docs/subcommands/biscuit_qc.md %}).
 
 Usage for `QC.sh`:
 ```bash
@@ -55,7 +55,7 @@ retention in CpH, CpY, CpA, CpC, or CpT contexts.
 biscuit bsconv /path/to/my_reference.fa input.bam
 ```
 For help on available flags, run `biscuit bsconv` on the command line or visiting the
-[bsconv help page]({{ site.baseurl }}{% link docs/subcommand_help.md#biscuit-bsconv %}).
+[bsconv help page]({{ site.baseurl }}{% link docs/subcommands/biscuit_bsconv.md %}).
 
 ## Validate Bisulfite Conversion Label
 
@@ -111,7 +111,7 @@ to the following rules:
 The flag `-y` appends `nCT` (`YC` tag) and `nGA` (`YG` tag) in the output BAM file.
 
 For more help with `bsstrand`, run `biscuit bsstrand` in the terminal or visit the
-[bsstrand help page]({{ site.baseurl }}{% link docs/subcommand_help.md#biscuit-bsstrand %}).
+[bsstrand help page]({{ site.baseurl }}{% link docs/subcommands/biscuit_bsstrand.md %}).
 
 ### When `-b 1` Was Specified in Mapping
 
@@ -159,4 +159,4 @@ biscuit cinread /path/to/my_reference.fa input.bam
 ```
 
 For more information about the available options, run `biscuit cinread` in the terminal or visit the
-[cinread help page]({{ site.baseurl }}{% link docs/subcommand_help.md#biscuit-cinread %}).
+[cinread help page]({{ site.baseurl }}{% link docs/subcommands/biscuit_cinread.md %}).

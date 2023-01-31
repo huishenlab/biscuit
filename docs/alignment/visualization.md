@@ -22,4 +22,4 @@ C's/G's are marked in red, while converted C's/G's are marked in blue. Mismatche
 are marked in yellow.
 
 For more help on the available options, run `biscuit tview` in the terminal or visit the 
-[tview help page]({{ site.baseurl }}{% link docs/subcommand_help.md#biscuit-tview %}).
+[tview help page]({{ site.baseurl }}{% link docs/subcommands/biscuit_tview.md %}).

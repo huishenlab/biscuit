@@ -1,5 +1,5 @@
 ---
-title: Epireads and the Epibed Format
+title: Epireads and the epiBED Format
 permalink: /epiread_format/
 nav_order: 5
 ---
@@ -35,7 +35,7 @@ BAM file versus how it is handled in the epibed file. The difference can cause s
 which is required when bgzipping and tabixing.
 
 For more help with `epiread`, run `biscuit epiread` in the terminal or check out the
-[epiread help page]({{ site.baseurl }}{% link docs/subcommand_help.md %}).
+[epiread help page]({{ site.baseurl }}{% link docs/subcommands/biscuit_epiread.md %}).
 
 The columns in the BISCUIT epibed format indicate:
 
@@ -224,7 +224,7 @@ biscuit rectangle /path/to/my_reference.fa my_output.epiread
 Note, `my_output.epiread` can only have a single chromosome in it for `rectangle` to work.
 
 For more details on the available flags, run `biscuit rectangle` in the terminal or visit the
-[rectangle help page]({{ site.baseurl }}{% link docs/subcommand_help.md %}).
+[rectangle help page]({{ site.baseurl }}{% link docs/subcommands/biscuit_rectangle.md %}).
 
 ## Three Base Contexts for Methylation Determination
 

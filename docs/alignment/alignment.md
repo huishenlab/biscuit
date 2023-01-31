@@ -26,7 +26,7 @@ suffix array of the parent strand (`*.par.bwt` and `*.par.sa`) and the daughter 
 Here, `*` refers to the input reference file, `my_reference.fa`.
 
 For more help with `index`, run `biscuit index` in the terminal or check out the
-[index help page]({{ site.baseurl }}{% link docs/subcommand_help.md#biscuit-index %}).
+[index help page]({{ site.baseurl }}{% link docs/subcommands/biscuit_index.md %}).
 
 ## Aligning Reads to the Reference
 
@@ -62,7 +62,7 @@ more details). If duplicates want to be retained when running `biscuit pileup`, 
 duplicates when generating the pileup VCF file.
 
 For more help with `align`, run `biscuit align` in the terminal or check out the
-[align help page]({{ site.baseurl }}{% link docs/subcommand_help.md %}).
+[align help page]({{ site.baseurl }}{% link docs/subcommands/biscuit_align.md %}).
 
 ### Mapping a Single Read
 
