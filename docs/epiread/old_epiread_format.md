@@ -1,11 +1,11 @@
 ---
-title: Quality Control
-parent: Read Mapping
-nav_order: 3
+title: Old Epiread Formats
+parent: Epireads and the epiBED Format
+nav_order: 2
 permalink: /old_epiread_format/
 ---
 
-## The Old BISCUIT Epiread Format
+# The Old BISCUIT Epiread Format
 
 Previously, BISCUIT used an epiread format that was an extension of the original epiread format, but closer to the
 original format than the epibed format. This format can still be produced by running:
@@ -15,23 +15,23 @@ biscuit epiread -o my_output.epiread -O [-B snps.bed] /path/to/my_reference.fa m
 
 An example of the epiread format is:
 ```
-chr19  NS500653:8:HF5FGBGXX:3:12402:11299:9856   1  +  3040315  CCCCTCCC  .         .
-chr19  NS500653:8:HF5FGBGXX:1:23304:20253:14257  1  +  3078472  CC        3078510   T
+chr19    read_456    1    +    3040315    CCCCTCCC    .    .
+chr19    read_789    1    +    3078472    CC    3078510    T
 ```
 where the columns are
 
   1. Chromosome name
   2. Read name
   3. Read position in paired-end sequencing
-  4. Bisulfite strand (bisulfite Watson (+) or bisulfite Crick (-))
+  4. Bisulfite strand (OT/CTOT (+) or OB/CTOB (-))
   5. Position of the cytosine in the first CpG (0-based)
-  6. Retention pattern (“C” for retention or “T” for conversion) for all CpGs covered
-  7. Position of the first SNP, if a SNP location file is provided
-  8. Base call of all SNPs covered
+  6. Retention pattern ("C" for retention or "T" for conversion) for all CpGs covered
+  7. Position of the first SNP, if a SNP location file is provided ("." if no SNPs)
+  8. Base call of all SNPs covered ("." if no SNPs)
 
 The original epiread format can be retrieved by running `cut -f 1,5,6` on the output epiread file.
 
-### Single Fragment Epireads
+## Single Fragment Epireads
 
 Because both mate reads come from the same DNA molecule, the DNA methylation information can be considered a physically
 phased molecular event. In such a case, it may be useful to look at a single fragment representation of the epiread
@@ -48,7 +48,7 @@ sort -k2,2 -k3,3n single_end.epiread |
 In the following output, the columns represent:
 
   1. Chromosome name
-  2. Bisulfite strand (bisulfite Watson (+) or bisulfite Crick (-))
+  2. Bisulfite strand (OT/CTOT (+) or OB/CTOB (-))
   3. Location of the cytosine in the first CpG covered (0-based) in read 1
   4. Retention pattern of all CpGs covered in read 1
   5. Location of the first SNP covered in read 1
@@ -59,8 +59,8 @@ In the following output, the columns represent:
   10. Base call of all SNPs covered in read 2
 
 ```
-chr19  -  3083513  CCCCCCC        3083495  ATT  3083513  CCCCCCC      3083495  ATT
-chr19  -  3083545  CCTCCCCCCT     .        .    3083527  CCCCTCCCCCC  3083523  AG
+chr19    -    3083513    CCCCCCC    3083495    ATT    3083513    CCCCCCC    3083495    ATT
+chr19    -    3083545    CCTCCCCCCT    .    .    3083527    CCCCTCCCCCC    3083523    AG
 ```
 ### NOMe-seq Mode in the Old BISCUIT Epiread Format
 
@@ -85,14 +85,14 @@ sort -k1,1 -k3,3n | gzip -c > paired.epiread.gz
 
 The paired output looks like,
 ```
-chr18  +  10689  CCC     10663  TTCT         10696  T  10689  CCC    10663  TTCT      10696  T
-chr18  +  10689  CCC     10694  TT           10696  T  10689  CCC    10694  TT        10696  T
+chr18    +    10689    CCC    10663    TTCT    10696    T    10689    CCC    10663    TTCT    10696    T
+chr18    +    10689    CCC    10694    TT    10696    T    10689    CCC    10694    TT    10696    T
 ```
 
 The output columns are:
 
   1. Chromosome name
-  2. Bisulfite strand (bisulfite Watson (+) or bisulfite Crick (-))
+  2. Bisulfite strand (OT/CTOT (+) or OB/CTOB (-))
   3. Location of the cytosine in the first CpG covered (0-based) in read 1
   4. Retention pattern of all CpGs covered in read 1
   5. Location of the cytosine in the first GpCpH covered (0-based) in read 1
