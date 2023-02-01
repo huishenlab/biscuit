@@ -53,10 +53,10 @@ script?*
 needed to run the script and can be found for the hg19, hg38, and mm10 genomes alongside the QC script. Note, if you
 plan to always include `--no-cov-qc` when running `QC.sh`, you do not need to download or create the asset files.
 
-*I have aligned my data to a reference genome that does not have QC asset files provided. What do I files do I need to
-run `QC.sh`?*
+*I have aligned my data to a reference genome that does not have QC asset files provided. What files do I need to run
+`QC.sh`?*
 
-> As of the latest release, you will need three BED files. You will need a gzipped BED file with the locations of all
+> As of version 1.0.0, you will need three BED files. You will need a gzipped BED file with the locations of all
 CpGs in your genome (called `cpg.bed.gz`). You will also need to break your genome into 100bp non-overlapping windows,
 calculate the GC-content for each window, then find the windows with the top and bottom 10% of GC-content. These regions
 will be placed into two separate gzipped BED files, `windows100bp.gc_content.bot10p.bed.gz` for the bottom 10% and
