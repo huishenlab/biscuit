@@ -11,16 +11,18 @@ definitions provided here in the same way throughout the BISCUIT documentation.
 
 ## General Terms
 
-  - **Coverage:** Fraction of the genome that has been sequenced to a given *depth*.
-  - **Depth:** Average number of reads covering each each base in the genome.
-  - **Watson/Forward/Top Strand:** DNA strand where reading from the 5' to 3' end proceeds from left to right. The
-  choice of the Watson and Crick strands is arbitrary, but a consistent definition should be used across an entire
+  - **Coverage:** Average number of reads covering each base in the genome.
+  - **Depth:** Number of reads covering a given base in the genome.
+  - **Top/Forward/Watson Strand:** DNA strand where reading from the 5' to 3' end proceeds from left to right. The
+  choice of the Top and Bottom strands is arbitrary, but a consistent definition should be used across an entire
   chromosome.
-  - **Crick/Reverse/Bottom Strand:** DNA strand where reading from the 5' to 3' end proceeds from right to left. The
-  choice of the Watson and Crick strands is arbitrary, but a consistent definition should be used across an entire
+  - **Bottom/Reverse/Crick Strand:** DNA strand where reading from the 5' to 3' end proceeds from right to left. The
+  choice of the Top and Bottom strands is arbitrary, but a consistent definition should be used across an entire
   chromosome.
   - **CpG (CG) Dinucleotide:** A cytosine-guanine dinucleotide (often referred to as just CpG). Most DNA methylation
   occurs in at CpG sites.
+  - **CpH (CH) Dinucleotide:** A dinucleotide of a cytosine followed by a adenine, thymine, or another cytosine (i.e.,
+  not a guanine). Most of these are unmethylated, although there is some biological instances of CpA methylation.
   - **CpG Terminology:**
     - *CpG Island:* Region of about 200 bp (or longer) in length with a GC percentage greater than 50% and has an
     observed to expected CpG ratio greater than 60%.
@@ -37,12 +39,10 @@ definitions provided here in the same way throughout the BISCUIT documentation.
   - **Whole Genome (DNA) Methylation Sequencing (WGMS):** With the invention of EM-seq, sodium bisulfite is no longer
   the only method for targeting DNA methylation using whole genome sequencing. WGMS serves as an umbrella term for
   describing both WGBS and EM-seq.
-  - **Bisulfite Watson (BSW) / Original Top (OT):** Reads originating from the bisulfite converted Watson strand.
-  - **Bisulfite Crick (BSC) / Original Bottom (OB):** Reads originating from the bisulfite converted Crick strand.
-  - **Bisulfite Watson Reverse (BSWR) / Complement to Original Top (CTOT):** Complement to the bisulfite converted
-  Watson strand.
-  - **Bisulfite Crick Reverse (BSCR) / Complement to Original Bottom (CTOB):** Complement to the bisulfite converted
-  Crick strand.
+  - **Original Top (OT) / Bisulfite Watson (BSW):** Reads originating from the original top strand.
+  - **Original Bottom (OB) / Bisulfite Crick (BSC):** Reads originating from the original bottom strand.
+  - **Complement to Original Top (CTOT) / Bisulfite Watson Reverse (BSWR):** Complement to the original top strand.
+  - **Complement to Original Bottom (CTOB) / Bisulfite Crick Reverse (BSCR):** Complement to the original bottom strand.
   - **Under (or Incomplete) Conversion:** Occurs when unmethylated cytosines are not converted during the sodium
   bisulfite or enzyme treatment, which can lead to an overestimate of the methylation levels in the sample.
   - **Over Conversion:** Occurs when the sodium bisulfite or enzyme treatment begins converting methylated cytosines,
@@ -57,7 +57,6 @@ definitions provided here in the same way throughout the BISCUIT documentation.
   extension. This method is less harsh on DNA and allows for an increased number of unamplified reads from lower
   quantities of DNA than other methods.
 
-
 ## Methylation Analysis Terms
 
   - **Conversion Rate:** Fraction of thymines that BISCUIT recognizes as converted cytosines relative to the total
@@ -71,8 +70,9 @@ definitions provided here in the same way throughout the BISCUIT documentation.
   - **Epi-Allele:** Similar to genetic alleles, epigenetic marks (like DNA methylation) can be heritable at specific
   regions in the genome of some species. To distinguish the heritable epigenetic marks from their genetic counterparts,
   the term *Epi-allele (or epiallele)* is used.
-  - **Allele Specific Methylation:** Methylation that occurs on one allele in a diploid cell, but not the other.
-  - **Read Level Retention:** In BISCUIT, read level retention is calculated by directly averaging the retention rate
-  across reads, without grouping the reads by their mapped locations.
+  - **Allele Specific Methylation:** Methylation that occurs on one allele in a diploid cell, but not the other. A
+  common place this occurs is in imprinted regions.
+  - **Read Level Retention:** In BISCUIT, read level retention is calculated by averaging the retention rate across
+  reads, without grouping the reads by their mapped locations.
   - **Base Pair Retention:** In BISCUIT, base level retention is calculated by first averaging the retention rate over
   each base/CpG and then averaging over all bases.
