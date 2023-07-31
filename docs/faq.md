@@ -12,11 +12,10 @@ relevant terms and phrases?*
 
 > One place to look is the [Glossary]({{ site.baseurl }}{% link docs/glossary.md %}) page.
 
-*Should I include the `-M` flag when running `biscuit align` or using the biscuitBlaster pipeline?*
+*Should I include the `-M` flag when running `biscuit align` or using the biscuitSifter pipeline?*
 
-> Our suggestion is to avoid using the `-M` flag in BISCUIT (and samblaster if running the biscuitBlaster pipeline)
-unless working with legacy versions of tools or doing structural variant calling. While current SV callers supposedly do
-not need the `-M` flag for compatibility (see
+> Our suggestion is to avoid using the `-M` flag in BISCUIT unless working with legacy versions of tools or doing
+structural variant calling. While current SV callers supposedly do not need the `-M` flag for compatibility (see
 [this Twitter thread](https://twitter.com/biobenkj/status/1311660546232643584) for more details), our experience is that
 the `-M` flag is still needed.
 

@@ -32,31 +32,31 @@ For more help with `index`, run `biscuit index` in the terminal or check out the
 
 After creating an index of the reference genome, the sequenced reads can be mapped to the reference genome. In
 conjunction with [samtools](https://github.com/samtools/samtools) and
-[samblaster](https://github.com/GregoryFaust/samblaster), BISCUIT can be used to map, duplicate mark, sort, and index
-the provided reads.
+[dupsifter](https://github.com/huishenlab/dupsifter/tree/main), BISCUIT can be used to map, duplicate mark, sort, and
+index the provided reads.
 
 The suggested one-line command to generate an aligned, duplicate marked, and sorted BAM is referred to as the
-[biscuitBlaster]({{ site.baseurl }}{% link docs/alignment/biscuitblaster.md %}) pipeline:
+[biscuitSifter]({{ site.baseurl }}{% link docs/alignment/biscuitsifter.md %}) pipeline:
 ```bash
 # Uncompressed single end FASTQ example
 biscuit align -@ NTHREADS -R "my_rg" /path/to/my_reference.fa read1.fq | \
-    samblaster | samtools sort -@ NTHREADS -o my_output.bam -O BAM -
+    dupsifter /path/to/my_reference.fa | samtools sort -@ NTHREADS -o my_output.bam -O BAM -
 
 # Uncompressed paired end FASTQ example
 biscuit align -@ NTHREADS -R "my_rg" /path/to/my_reference.fa read1.fq read2.fq | \
-    samblaster | samtools sort -@ NTHREADS -o my_output.bam -O BAM -
+    dupsifter /path/to/my_reference.fa | samtools sort -@ NTHREADS -o my_output.bam -O BAM -
 
 # Gzipped paired end FASTQ example
 biscuit align -@ NTHREADS -R "my_rg" /path/to/my_reference.fa read1.fq.gz read2.fq.gz | \
-    samblaster | samtools sort -@ NTHREADS -o my_output.bam -O BAM -
+    dupsifter /path/to/my_reference.fa | samtools sort -@ NTHREADS -o my_output.bam -O BAM -
 ```
 Indexing the aligned BAM is done with samtools:
 ```
 samtools index my_output.bam
 ```
 
-In its suggested form, the biscuitBlaster pipeline creates a BAM file that retains the duplicate marked reads. If
-desired, the `--removeDups` flag in `samblaster` will remove duplicates during processing, but BISCUIT will skip marked
+In its suggested form, the biscuitSifter pipeline creates a BAM file that retains the duplicate marked reads. If
+desired, the `--remove-dups` flag in `dupsifter` will remove duplicates during processing, but BISCUIT will skip marked
 duplicates when running `biscuit pileup` by default (see [Read Pileup]({{ site.baseurl }}{% link docs/pileup.md %}) for
 more details). If duplicates want to be retained when running `biscuit pileup`, including the `-u` flag will retain
 duplicates when generating the pileup VCF file.

@@ -11,11 +11,11 @@ with other similar callers.
 
 ## Recommended Structural Variant Calling Pipeline
 
-  1. Create aligned, sorted, and duplicate marked BAM using Version 1 of the biscuitBlaster pipeline. Note, while we
-  would not suggest using the `-M` flag otherwise, for structural variant calling, we suggest using the `-M` flag in
-  both `biscuit` and `samblaster` when running the pipeline. Also, if planning to use `lumpy` rather than
-  `lumpyexpress`, Version 2 of the biscuitBlaster pipeline must be used. However, most other structural variant callers
-  extract the split and discordant reads during processing, so this is generally not needed.
+  1. Create aligned, sorted, and duplicate marked BAM using the biscuitSifter pipeline. Note, while we would not suggest
+  using the `-M` flag otherwise, for structural variant calling, we suggest using the `-M` flag in `biscuit` when
+  running the pipeline. Also, if planning to use `lumpy` rather than `lumpyexpress`, a different pipeline must be used, as
+  `lumpy` requires split and discordant reads to be separated from the original BAM. However, most other structural
+  variant callers extract the split and discordant reads during processing, so this is generally not needed.
   2. Using the [BISCUIT SV calling container available on GitHub](https://github.com/huishenlab/sv_calling_docker), call
   structural variants using your preferred structural variant caller. Out of the box, the container includes Manta,
   Delly, Smoove, and Lumpy, but it can be easily modified to include other callers.
