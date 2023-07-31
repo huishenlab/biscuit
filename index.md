@@ -50,14 +50,14 @@ biscuit index my_reference.fa
 
 # Align sequencing reads to the reference
 # Gzipped FASTQ files can also be used
-biscuit align -R "my_rg" /path/to/my_reference.fa read1.fastq read2.fastq |
-    samblaster | samtools sort -o my_output.bam -O BAM -
+biscuit align -@ NTHREADS -R "my_rg" /path/to/my_reference.fa read1.fastq read2.fastq |
+    samblaster | samtools sort -@ NTHREADS -o my_output.bam -O BAM -
 samtools index my_output.bam
 
 # Create a pileup VCF of DNA methylation and genetic information
 # Also compresses and indexes the VCF
-biscuit pileup -o my_pileup.vcf /path/to/my_reference.fa my_output.bam
-bgzip my_pileup.vcf
+biscuit pileup -@ NTHREADS -o my_pileup.vcf /path/to/my_reference.fa my_output.bam
+bgzip -@ NTHREADS my_pileup.vcf
 tabix -p vcf my_pileup.vcf.gz
 
 # Extract DNA methylation into BED format

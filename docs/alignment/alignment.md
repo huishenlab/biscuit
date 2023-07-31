@@ -39,16 +39,16 @@ The suggested one-line command to generate an aligned, duplicate marked, and sor
 [biscuitBlaster]({{ site.baseurl }}{% link docs/alignment/biscuitblaster.md %}) pipeline:
 ```bash
 # Uncompressed single end FASTQ example
-biscuit align -R "my_rg" /path/to/my_reference.fa read1.fq | \
-    samblaster | samtools sort -o my_output.bam -O BAM -
+biscuit align -@ NTHREADS -R "my_rg" /path/to/my_reference.fa read1.fq | \
+    samblaster | samtools sort -@ NTHREADS -o my_output.bam -O BAM -
 
 # Uncompressed paired end FASTQ example
-biscuit align -R "my_rg" /path/to/my_reference.fa read1.fq read2.fq | \
-    samblaster | samtools sort -o my_output.bam -O BAM -
+biscuit align -@ NTHREADS -R "my_rg" /path/to/my_reference.fa read1.fq read2.fq | \
+    samblaster | samtools sort -@ NTHREADS -o my_output.bam -O BAM -
 
 # Gzipped paired end FASTQ example
-biscuit align -R "my_rg" /path/to/my_reference.fa read1.fq.gz read2.fq.gz | \
-    samblaster | samtools sort -o my_output.bam -O BAM -
+biscuit align -@ NTHREADS -R "my_rg" /path/to/my_reference.fa read1.fq.gz read2.fq.gz | \
+    samblaster | samtools sort -@ NTHREADS -o my_output.bam -O BAM -
 ```
 Indexing the aligned BAM is done with samtools:
 ```

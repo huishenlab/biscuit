@@ -22,11 +22,11 @@ off this format to put it in a standard-compliant format, while also containing 
 SNPs, indels, and, in NOMe-seq mode, GpC methylation. To generate an epiBED file, run
 ```bash
 # For WGBS data
-biscuit epiread [-B snps.bed] /path/to/my_reference.fa my_output.bam | \
+biscuit epiread -@ NTHREADS [-B snps.bed] /path/to/my_reference.fa my_output.bam | \
     sort -k1,1 -k2,2n > my_epireads.epibed
 
 # For NOMe-seq data
-biscuit epiread [-B snps.bed] -N /path/to/my_reference.fa my_output.bam | \
+biscuit epiread -@ NTHREADS [-B snps.bed] -N /path/to/my_reference.fa my_output.bam | \
     sort -k1,1 -k2,2n > my_epireads.epibed
 ```
 The `snps.bed` file can be obtained by running `biscuit vcf2bed -t snp my_pileup.vcf.gz`. If no SNP file is given, the
@@ -46,14 +46,14 @@ aligns with the output from `biscuit pileup`, whereas the epiread and pairwise f
 the results from `pileup`.
 ```bash
 # Original epiread format with WGBS data
-biscuit epiread -o my_output.epiread -O [-B snps.bed] /path/to/my_reference.fa my_output.bam
+biscuit epiread -@ NTHREADS -o my_output.epiread -O [-B snps.bed] /path/to/my_reference.fa my_output.bam
 
 # Original epiread format with NOMe-seq data
-biscuit epiread -o my_output.epiread -O -N [-B snps.bed] /path/to/my_reference.fa my_output.bam
+biscuit epiread -@ NTHREADS -o my_output.epiread -O -N [-B snps.bed] /path/to/my_reference.fa my_output.bam
 
 # Pairwise format with WGBS data
-biscuit epiread -o my_output.epiread -P [-B snps.bed] /path/to/my_reference.fa my_output.bam
+biscuit epiread -@ NTHREADS -o my_output.epiread -P [-B snps.bed] /path/to/my_reference.fa my_output.bam
 
 # Pairwise format with NOMe-seq data
-biscuit epiread -o my_output.epiread -P -N [-B snps.bed] /path/to/my_reference.fa my_output.bam
+biscuit epiread -@ NTHREADS -o my_output.epiread -P -N [-B snps.bed] /path/to/my_reference.fa my_output.bam
 ```

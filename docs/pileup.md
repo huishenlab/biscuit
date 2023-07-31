@@ -16,8 +16,8 @@ call if the SNP interferes with the determination of cytosine retention or conve
 A tabix-indexed VCF can be created with BISCUIT and [bgzip](https://www.htslib.org/doc/bgzip.html) /
 [tabix](https://www.htslib.org/doc/tabix.html):
 ```bash
-biscuit pileup -o my_pileup.vcf /path/to/my_reference.fa my_output.bam
-bgzip my_pileup.vcf
+biscuit pileup -@ NTHREADS -o my_pileup.vcf /path/to/my_reference.fa my_output.bam
+bgzip -@ NTHREADS my_pileup.vcf
 tabix -p vcf my_pileup.vcf.gz
 ```
 
@@ -51,7 +51,7 @@ information included.
 
 ```
 # Example command run in BISCUIT
-biscuit pileup -o diagnostic.vcf -v 1 /path/to/my_reference.fa output.bam
+biscuit pileup -@ NTHREADS -o diagnostic.vcf -v 1 /path/to/my_reference.fa output.bam
 
 # Output line from VCF file
 chr1    2361154    .    C    .    5    LowQual    NS=1;CX=CG;N5=ACCGG \
@@ -104,9 +104,9 @@ Otherwise, the possible values are:
 BISCUIT has the ability to put mutation calls and DNA methylation measurements from multiple samples next to each other
 in the output VCF by providing `biscuit pileup` with more than one input BAM.
 ```bash
-biscuit pileup -o my_combined_pileup.vcf /path/to/my_reference.fa \
+biscuit pileup -@ NTHREADS -o my_combined_pileup.vcf /path/to/my_reference.fa \
     my_output_1.bam my_output_2.bam [...]
-bgzip my_combined_pileup.vcf
+bgzip -@ NTHREADS my_combined_pileup.vcf
 tabix -p vcf my_combined_pileup.vcf.gz
 ```
 
@@ -115,9 +115,9 @@ tabix -p vcf my_combined_pileup.vcf.gz
 BISCUIT can call somatic mutations by providing a tumor and matched normal BAM to `pileup`. To run in *somatic mode*,
 run `biscuit pileup` with the `-S` flag:
 ```bash
-biscuit pileup -S -o somatic_mode.vcf /path/to/my_reference.fa \
+biscuit pileup -@ NTHREADS -S -o somatic_mode.vcf /path/to/my_reference.fa \
     -T tumor.bam -I normal.bam
-bgzip somatic_mode.vcf
+bgzip -@ NTHREADS somatic_mode.vcf
 tabix -p vcf somatic_mode.vcf.gz
 ```
 Note, the `-T` and `-I` flags must be used to specify the tumor and matched normal BAMs, respectively, when running in

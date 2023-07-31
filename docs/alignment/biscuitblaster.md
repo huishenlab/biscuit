@@ -18,8 +18,8 @@ Version 1 of the biscuitBlaster pipeline is the most basic version, producing a 
 marked reads.
 
 ```bash
-biscuit align -R "my_rg" /path/to/my_reference.fa read1.fq.gz read2.fq.gz | \
-    samblaster | samtools sort -o my_output.bam -O BAM -
+biscuit align -@ NTHREADS -R "my_rg" /path/to/my_reference.fa read1.fq.gz read2.fq.gz | \
+    samblaster | samtools sort -@ NTHREADS -o my_output.bam -O BAM -
 samtools index my_output.bam
 ```
 where `"my_rg"` is the read group (if applicable) to be used, `/path/to/my_reference.fa` is the FASTA file for the
@@ -33,7 +33,7 @@ discordant alignments and a FASTQ file of the heavily clipped reads, in addition
 sorted, and indexed BAM file with mate tags added.
 
 ```bash
-biscuit align -R "my_rg" \
+biscuit align -@ NTHREADS -R "my_rg" \
     /path/to/my_reference.fa read1.fq.gz read2.fq.gz | \
     samblaster --addMateTags | \
     parallel --tmpdir temp_dir --pipe --tee {} ::: \

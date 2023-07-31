@@ -7,7 +7,7 @@ nav_order: 6
 
 Allele-specific methylation can be extracted from the pairwise epiread files via:
 ```bash
-biscuit epiread -P -B snps.bed \
+biscuit epiread -@ NTHREADS -P -B snps.bed \
     /path/to/my_reference.fa my_output.bam | \
 sort -k1,1 -k2,2n -k3,3n my_output.pairwise > my_output.sorted.pairwise
 
