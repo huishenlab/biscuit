@@ -119,7 +119,7 @@ These commands work on both macOS and Linux.
 ### Download Source Code and Compile
 
 The source code for BISCUIT can be downloaded using either `git` or `curl`. Compilation requires that `zlib` and
-`ncurses` are in the PATH environment variable.
+`ncurses` are installed.
 
 Using `git`,
 ```bash
@@ -142,7 +142,7 @@ cd biscuit-release
 make
 ```
 
-The QC and strand-flipping scripts can be found in the `scripts/` directory.
+The QC, asset creator, and strand-flipping scripts can be found in the `scripts/` directory.
 
 ### Download with Conda
 
