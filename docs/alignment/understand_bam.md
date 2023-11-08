@@ -41,6 +41,10 @@ differs from how BWA defines it).
   [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}) for more details.
   - `YG` Number of G&#8594;A observations. Not included by default, but can be added by running `biscuit bsstrand`. See
   [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}) for more details.
+  - `CB` Extracted cell barcode. See [Barcode Extraction]({{ site.baseurl }}{% link docs/barcode_extract.md %}) for
+  more details.
+  - `RX` Extracted unique molecular index (UMI). See
+  [Barcode Extraction]({{ site.baseurl }}{% link docs/barcode_extract.md %}) for more details.
 
 ## Insert Size
 
