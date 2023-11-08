@@ -29,7 +29,8 @@ For more help on available flags, run `biscuit pileup` in the terminal or visit 
 
 ### Helpful Flag Definitions
 
-A few flags that can be found in the VCF and are useful to understand are:
+The VCF header contains descriptions of all INFO and FORMAT flags contained within the VCF file.  A few flags that are
+useful to understand are:
 
   - **DP:** raw number of reads covering that position
   - **CV:** strand-specific coverage on cytosine
@@ -42,9 +43,10 @@ A few flags that can be found in the VCF and are useful to understand are:
   - **CX:** cytosine context (CG, CHH, etc.)
   - **N5:** 5 base sequence context
 
-The VCF header contains descriptions of all INFO and FORMAT flags contained within the VCF file.
-
 ### Example Output with Diagnostic Information
+
+Note, when `biscuit pileup` is run with diagnostic information included the resulting VCF is not standard-compliant.
+Therefore, it is not recommended that `-v 1` is included when performing analyses.
 
 The following example shows output `biscuit pileup` in a low coverage, low quality region, with additional diagnostic
 information included.
@@ -75,9 +77,6 @@ header. In brief, the DIAGNOSE data in the above example shows:
 
 When running with the `-v 1` option, BISCUIT will also print positions with no SNP or cytosine methylation, which allows
 for differentiating between "no mutation" and "no coverage."
-
-Note, when `biscuit pileup` is run with diagnostic information included the resulting VCF is not standard-compliant.
-Therefore, it is not recommended that `-v 1` is included when performing analyses.
 
 ### Codes for Retention Mutation Status
 
