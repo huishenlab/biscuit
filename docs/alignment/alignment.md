@@ -40,15 +40,18 @@ The suggested one-line command to generate an aligned, duplicate marked, and sor
 ```bash
 # Uncompressed single end FASTQ example
 biscuit align -@ NTHREADS -R "my_rg" /path/to/my_reference.fa read1.fq | \
-    dupsifter /path/to/my_reference.fa | samtools sort -@ NTHREADS -o my_output.bam -O BAM -
+dupsifter /path/to/my_reference.fa | \
+samtools sort -@ NTHREADS -o my_output.bam -O BAM -
 
 # Uncompressed paired end FASTQ example
 biscuit align -@ NTHREADS -R "my_rg" /path/to/my_reference.fa read1.fq read2.fq | \
-    dupsifter /path/to/my_reference.fa | samtools sort -@ NTHREADS -o my_output.bam -O BAM -
+dupsifter /path/to/my_reference.fa | \
+samtools sort -@ NTHREADS -o my_output.bam -O BAM -
 
 # Gzipped paired end FASTQ example
 biscuit align -@ NTHREADS -R "my_rg" /path/to/my_reference.fa read1.fq.gz read2.fq.gz | \
-    dupsifter /path/to/my_reference.fa | samtools sort -@ NTHREADS -o my_output.bam -O BAM -
+dupsifter /path/to/my_reference.fa | \
+samtools sort -@ NTHREADS -o my_output.bam -O BAM -
 ```
 Indexing the aligned BAM is done with samtools:
 ```

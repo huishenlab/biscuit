@@ -12,7 +12,9 @@ the aligned reads in an easy two-step process.
 
 ```bash
 biscuit align -@ NTHREADS -R "my_rg" /path/to/my_reference.fa read1.fq.gz read2.fq.gz | \
-    dupsifter /path/to/my_reference.fa | samtools sort -@ NTHREADS -o my_output.bam -O BAM -
+dupsifter /path/to/my_reference.fa | \
+samtools sort -@ NTHREADS -o my_output.bam -O BAM -
+
 samtools index my_output.bam
 ```
 where `NTHREADS` is the number of threads, `"my_rg"` is the read group (if applicable) to be used,
