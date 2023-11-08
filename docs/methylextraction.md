@@ -1,6 +1,6 @@
 ---
 title: Extracting Methylation and Mutation Information
-nav_order: 4
+nav_order: 5
 ---
 
 # Extract Methylation and Mutation Information
