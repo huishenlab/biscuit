@@ -211,6 +211,7 @@ the [BISCUIT Subcommands]({{ site.baseurl }}{% link docs/subcommands/subcommand_
   - `version` Print `biscuit` and library versions
   - `qc` Generate QC files from BAM (see
   [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}))
+  - `bc` Extract cell barcodes from reads (see [Extract Barcodes]({{ site.baseurl }}{% link docs/barcode_extract.md %}))
 
 ## About the project
 
