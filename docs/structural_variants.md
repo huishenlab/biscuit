@@ -16,8 +16,8 @@ with other similar callers.
   running the pipeline. Also, if planning to use `lumpy` rather than `lumpyexpress`, a different pipeline must be used, as
   `lumpy` requires split and discordant reads to be separated from the original BAM. However, most other structural
   variant callers extract the split and discordant reads during processing, so this is generally not needed.
-  2. Using the [BISCUIT SV calling container available on GitHub](https://github.com/huishenlab/sv_calling_docker), call
-  structural variants using your preferred structural variant caller. Out of the box, the container includes Manta,
+  2. Using the BISCUIT SV calling container ([available on GitHub](https://github.com/huishenlab/sv_calling_docker)),
+  call structural variants using your preferred structural variant caller. Out of the box, the container includes Manta,
   Delly, Smoove, and Lumpy, but it can be easily modified to include other callers.
 
 For callers that allow the user to restrict to specified call regions, we suggest (at minimum) restricting to primary
