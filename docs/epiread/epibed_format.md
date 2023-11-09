@@ -8,7 +8,7 @@ permalink: /epibed_format/
 # The epiBED Format
 
 The epiBED format has gone through two iterations, versions 1.0 and 2.0. Version 1.0 is the output from BISCUIT versions
-1.0-1.1, while version 2.0 is output from BISCUIT version 1.2 and following.
+1.0.z and 1.1.z, while version 2.0 is output from BISCUIT version 1.2 and following.
 
 The epiBED format makes use of [run length encoded](https://en.wikipedia.org/wiki/Run-length_encoding) (RLE) strings
 to store relevant information out of read sequences in an aligned BAM. An assortment of letters are used to specify
@@ -23,7 +23,7 @@ information:
   - **S:** Unmethylated GpC (shut/closed accessibility, used in NOMe-seq mode)
   - **A/T/C/G/R/Y:** SNP base seen in read relative to reference (NOTE, these are *upper* case); R and Y represent A/G
   and C/T, respectively
-  - **a/t/c/g/i:** Inserted base included in read, but no in reference (NOTE, these are *lower* case); **i** is used as
+  - **a/t/c/g/i:** Inserted base included in read, but not in reference (NOTE, these are *lower* case); **i** is used as
   a placeholder in version 2.0 CpG and GpC RLE strings
   - **x:** Ignored bases (i.e., bases that do not have any of the above occurring at them)
 
@@ -57,8 +57,8 @@ Notes:
   1. The M/U/O/S now occur at the position they are found in the BAM. In other words, the methylation status deriving
   from the C in a CpG or GpC will be placed at the C's position, whereas the methylation status from a G would be placed
   at the G's position.
-  2. The start position is based on the on the read start position listed in the BAM adjusted by any soft clipped bases
-  at the start of the read (i.e., start - n_softclipped).
+  2. The start position is based on the read start position listed in the BAM adjusted by any soft clipped bases at the
+  start of the read (i.e., `start - n_softclipped`).
   3. The end position is set such that `end - start` would be the length of the reference genome the read spans. In
   other words, `end = start + read_length + n_deletions - n_insertions`, where `n_deletions` is the number of deletions
   in the read and `n_insertions` is the number of insertions. Relative to the run length encoded string,

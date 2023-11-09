@@ -8,9 +8,15 @@ permalink: /old_epiread_format/
 # The Old BISCUIT Epiread Format
 
 Previously, BISCUIT used an epiread format that was an extension of the original epiread format, but closer to the
-original format than the epibed format. This format can still be produced by running:
+original format than the epiBED format. This format can still be produced by running:
 ```bash
-biscuit epiread -@ NTHREADS -o my_output.epiread -O [-B snps.bed] /path/to/my_reference.fa my_output.bam
+biscuit epiread \
+    -@ NTHREADS \
+    -o my_output.epiread \
+    -O \
+    [-B snps.bed] \
+    /path/to/my_reference.fa \
+    my_output.bam
 ```
 
 An example of the epiread format is:
@@ -40,9 +46,9 @@ pair. The default behavior of the `epiread` subcommand focuses only on individua
 command gives a nice, compact file for a single fragment epiread format:
 ```bash
 sort -k2,2 -k3,3n single_end.epiread |
-    awk 'BEGIN{ qname="" ; rec="" }
-         qname == $2 { print rec"\t"$5"\t"$6"\t"$7"\t"$8 ; qname="" }
-         qname != $2 { qname=$2 ; rec=$1"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8 ; pair=$3}'
+awk 'BEGIN{ qname="" ; rec="" }
+     qname == $2 { print rec"\t"$5"\t"$6"\t"$7"\t"$8 ; qname="" }
+     qname != $2 { qname=$2 ; rec=$1"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8 ; pair=$3}'
 ```
 
 In the following output, the columns represent:
@@ -64,7 +70,7 @@ chr19    -    3083545    CCTCCCCCCT    .    .    3083527    CCCCTCCCCCC    30835
 ```
 ### NOMe-seq Mode in the Old BISCUIT Epiread Format
 
-As with the epibed format, `epiread` can generate NOMe-seq mode epireads in the old BISCUIT epiread format using the
+As with the epiBED format, `epiread` can generate NOMe-seq mode epireads in the old BISCUIT epiread format using the
 `-N` option. An example of producing single fragment NOMe-seq epireads is:
 ```bash
 # Create SNP BED file
@@ -80,7 +86,8 @@ sort -k1,1 -k2,2 -k3,3n |
 awk 'BEGIN{ qname="" ; rec="" }
      qname == $2 { print rec"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9"\t"$10 ; qname="" }
      qname != $2 { qname=$2 ; rec=$1"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9"\t"$10 ; pair=$3}' |
-sort -k1,1 -k3,3n | gzip -c > paired.epiread.gz
+sort -k1,1 -k3,3n | \
+gzip -c > paired.epiread.gz
 ```
 
 The paired output looks like,
@@ -116,7 +123,7 @@ sort -k1,1 -k2,2n -k3,3n > my_output.pairwise.epiread
 
 ## Generate Rectangular Forms
 
-With the creation of the epibed format and `readEpibed` in biscuiteer, we suggest avoiding the use of the old epiread
+With the creation of the epiBED format and `readEpibed` in biscuiteer, we suggest avoiding the use of the old epiread
 format and `biscuit rectangle` for creating a matrix where column represent CpGs and each row represents a read.
 However, if you still want to run `rectangle` to generate this matrix, run
 ```bash

@@ -23,11 +23,11 @@ SNPs, indels, and, in NOMe-seq mode, GpC methylation. To generate an epiBED file
 ```bash
 # For WGBS data
 biscuit epiread -@ NTHREADS [-B snps.bed] /path/to/my_reference.fa my_output.bam | \
-    sort -k1,1 -k2,2n > my_epireads.epibed
+sort -k1,1 -k2,2n > my_epireads.epibed
 
 # For NOMe-seq data
 biscuit epiread -@ NTHREADS [-B snps.bed] -N /path/to/my_reference.fa my_output.bam | \
-    sort -k1,1 -k2,2n > my_epireads.epibed
+sort -k1,1 -k2,2n > my_epireads.epibed
 ```
 The `snps.bed` file can be obtained by running `biscuit vcf2bed -t snp my_pileup.vcf.gz`. If no SNP file is given, the
 output will not include information related to SNPs. Note, it is suggested that you sort your epiBED file before
