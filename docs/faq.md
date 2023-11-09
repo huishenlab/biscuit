@@ -7,20 +7,20 @@ nav_order: 12
 
 ## General Questions
 
-*I am new to DNA methylation research and do not understand a lot of the terminology. Are there sites that describe
-relevant terms and phrases?*
+**I am new to DNA methylation research and do not understand a lot of the terminology. Are there sites that describe
+relevant terms and phrases?**
 
 > One place to look is the [Glossary]({{ site.baseurl }}{% link docs/glossary.md %}) page.
 
-*Should I include the `-M` flag when running `biscuit align` or using the biscuitSifter pipeline?*
+**Should I include the `-M` flag when running `biscuit align` or using the biscuitSifter pipeline?**
 
 > Our suggestion is to avoid using the `-M` flag in BISCUIT unless working with legacy versions of tools or doing
 structural variant calling. While current SV callers supposedly do not need the `-M` flag for compatibility (see
 [this Twitter thread](https://twitter.com/biobenkj/status/1311660546232643584) for more details), our experience is that
 the `-M` flag is still needed.
 
-*I have a PBAT-style WGBS sample that I tried viewing in IGV's DNA methylation color scheme, but I see a lot of CpGs
-colored brown, rather than the blue and red I expected. Why is that and is there anything I can do about it?*
+**I have a PBAT-style WGBS sample that I tried viewing in IGV's DNA methylation color scheme, but I see a lot of CpGs
+colored brown, rather than the blue and red I expected. Why is that and is there anything I can do about it?**
 
 > Generally, PBAT-style WGBS samples have reads 1 and 2 flipped relative to most other WGBS and WGBS-like protocols.
 Because of this, the reads in BAMs from these samples have the forward and reverse strands flipped. IGV (at least up to
@@ -36,24 +36,24 @@ for more details on usage.
 
 ## Installation Questions
 
-*I ran `git clone git@github.com:huishenlab/biscuit.git`, but when trying to compile the executable, I get an error
-message.*
+**I ran `git clone git@github.com:huishenlab/biscuit.git`, but when trying to compile the executable, I get an error
+message.**
 
 > First, make sure you included `--recursive` when running `git clone`. If that does not solve your problem, make sure
-you have `zlib` and `ncurses` in your PATH.
+you have `zlib` and `ncurses` installed.
 
 ## Quality Control Related Questions
 
-*I downloaded one of the pre-compiled binaries for BISCUIT, but want to run QC on my data. Where can I find the QC
-script?*
+**I downloaded one of the pre-compiled binaries for BISCUIT, but want to run QC on my data. Where can I find the QC
+script?**
 
 > You can downloaded the `QC.sh` script from the
 [BISCUIT release page](https://github.com/huishenlab/biscuit/releases/latest). Supplementary QC asset files will be
 needed to run the script and can be found for the hg19, hg38, and mm10 genomes alongside the QC script. Note, if you
 plan to always include `--no-cov-qc` when running `QC.sh`, you do not need to download or create the asset files.
 
-*I have aligned my data to a reference genome that does not have QC asset files provided. What files do I need to run
-`QC.sh`?*
+**I have aligned my data to a reference genome that does not have QC asset files provided. What files do I need to run
+`QC.sh`?**
 
 > As of version 1.0.0, you will need three BED files. You will need a gzipped BED file with the locations of all
 CpGs in your genome (called `cpg.bed.gz`). You will also need to break your genome into 100bp non-overlapping windows,
@@ -66,8 +66,8 @@ will be placed into two separate gzipped BED files, `windows100bp.gc_content.bot
 `build_biscuit_QC_assets.pl` script requires the name of the output directory to save the assets files to and the path
 to the reference genome.
 
-*I need to generate my own QC asset files and really want to make them myself without running the provided Perl script.
-What is a more prescriptive way for creating these files?*
+**I need to generate my own QC asset files and really want to make them myself without running the provided Perl script.
+What is a more prescriptive way for creating these files?**
 
 > **cpg.bed.gz**
   1. Find positions of all CpGs in genome reference FASTA.
