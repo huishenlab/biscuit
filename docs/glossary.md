@@ -28,7 +28,7 @@ definitions provided here in the same way throughout the BISCUIT documentation.
     observed to expected CpG ratio greater than 60%.
     - *CpG Shore:* Region up to 2 kb upstream/downstream from a CpG island.
     - *CpG Shelf:* Region between 2 and 4 kb upstream/downstream from a CpG island.
-    - *CpG Open Sea:* Isolated CpGs in the genome between CpG shelves
+    - *CpG Open Sea:* Isolated CpGs in the genome between CpG shelves.
 
 ## Bisulfite Sequencing Terms
 
