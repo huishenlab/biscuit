@@ -5,7 +5,7 @@ nav_order: 13
 
 # Releases
 
-BISCUIT releases can be found on on the [releases page of GitHub](https://github.com/huishenlab/biscuit/releases). For
+BISCUIT releases can be found on the [releases page of GitHub](https://github.com/huishenlab/biscuit/releases). For
 details regarding each release, see the "Find it on GitHub" link under each release.
 
 ## Post-publication Releases
