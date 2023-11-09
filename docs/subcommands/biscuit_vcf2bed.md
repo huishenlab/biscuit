@@ -11,13 +11,14 @@ permalink: /biscuit_vcf2bed/
 Usage: biscuit vcf2bed [options] <in.vcf>
 
 Options:
-    -t STR    Extract type {c, cg, ch, hcg, gch, snp} [cg]
+    -t STR    Extract type {c, cg, ch, hcg, gch, snp} [CG]
     -k INT    Minimum coverage [3]
     -s STR    Sample, (takes "FIRST", "LAST", "ALL", or specific
                   sample names separated by ",") [FIRST]
     -e        Show context (reference base, context group {CG,CHG,CHH},
                   2-base {CA,CC,CG,CT} and 5-base context) before beta
                   value and coverage column
+    -c        Output Beta-M-U instead of Beta-Cov.
     -h        This help
 
 ```

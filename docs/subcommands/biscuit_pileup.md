@@ -50,4 +50,5 @@ Genotyping options:
     -P FLOAT    Prior probability for heterozygous variant [0.333]
     -Q FLOAT    Prior probability for homozygous variant [0.333]
     -h          This help
+
 ```

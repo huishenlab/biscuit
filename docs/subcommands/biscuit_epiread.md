@@ -34,9 +34,8 @@ Filter options:
     -5 INT    Minimum distance to 5' end of a read [3]
     -3 INT    Minimum distance to 3' end of a read [3]
     -E        NO filtering of empty epireads
-    -c        NO filtering secondary mapping
     -d        Double count cytosines in overlapping mate reads (avoided
-            by default)
+                  by default)
     -u        NO filtering of duplicate
     -p        NO filtering of improper pair
     -n INT    Maximum NM tag [999999]

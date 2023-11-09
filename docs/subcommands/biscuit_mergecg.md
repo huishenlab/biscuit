@@ -12,6 +12,7 @@ Usage: biscuit mergecg [options] <ref.fa> <in.bed>
 
 Options:
     -N        NOMe-seq mode, only merge C,G both in HCGD context
+    -c        Output Beta-M-U instead of Beta-Cov (input is still Beta-Cov).
     -k INT    Minimum depth after merging - applies to the maximum depth
                   across samples [0]
     -h        This help

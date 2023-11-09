@@ -39,6 +39,7 @@ Algorithm options:
     -S              Skip mate rescue
     -P              Skip pairing - mate rescue performed unless -S also given
     -e              Discard full-length exact matches
+    -9              Extract barcode from read comment
 
 Scoring options:
     -A INT          Score for a sequence match, scales options -TdBOELU unless
@@ -55,7 +56,7 @@ Input/output options:
     -2 STR          Align a read STR paired with -1 read
     -i              Turn off autoinference of ALT chromosomes
     -p              Smart pairing (ignores in2.fq)
-    -R STR          Read group header line (such as '@RG\\tID:foo\\tSM:bar')
+    -R STR          Read group header line (such as '@RG\tID:foo\tSM:bar')
     -F              Suppress SAM header output
     -H STR/FILE     Insert STR to header if it starts with @ or insert lines
                         in FILE
@@ -70,11 +71,11 @@ Input/output options:
     -Y              Use soft clipping for supplementary alignments
     -M              Mark shorter split hits as secondary
     -I FLOAT[,FLOAT[,INT[,INT]]]
-                    Specify the mean, standard deviation (10%% of the mean
+                    Specify the mean, standard deviation (10% of the mean
                         if absent), maximum (4 sigma from the mean if absent)
                         and minimum of insert size distribution. FR orientation
                         only [inferred]
-    -v INT          Verbosity level: 
+    -v INT          Verbosity level:
                         1: error, 2: warning, 3: message, 4+: debugging [3]
     -h              This help
 
