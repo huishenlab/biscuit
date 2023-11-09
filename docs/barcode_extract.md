@@ -3,6 +3,14 @@ title: Barcode Extraction
 nav_order: 2
 ---
 
+*Note: The initial version of BISCUIT that included the `bc` subcommand (version 1.3.0) used a different scheme for
+storing and extracting cell barcodes which means using `umi-tools` is incompatible with version 1.3.0. All versions from
+1.3.1-dev onward use the same scheme as `umi-tools`. This also means that barcodes extracted with version 1.3.0 must
+be aligned with version 1.3.0 to ensure proper inclusion of barcodes in the SAM entry. While the mechanics of using
+`biscuit bc` described on this page will also work for version 1.3.0, please note there will be some minor differences
+in the BAM produced (e.g., CR tag used instead of CB) and `biscuit align` will not work with `umi-tools`-corrected FASTQ
+files.*
+
 # Extracting Cell Barcodes from scWGBS Protocols
 
 Cell barcodes are commonly used in scRNA-seq protocols to overcome DNA input issues and increase throughput by merging
