@@ -74,11 +74,13 @@ Notes:
   5. When performing NOMe-seq, methylation due to off-target activity of the M.CviPI enzyme in endogenous CCG contexts
   has been seen by [Kelly et al](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3514679/). The off-target methylation is a
   small effect (~5% according to Supplemental Figure S8 in Kelly et al), therefore BISCUIT does not filter out
-  methylation occurring in a CCG context ([contrary to Bismark](http://felixkrueger.github.io/Bismark/Docs/)). If all
-  CCGs were removed (in addition to the GCGs already removed due to ambiguity in NOMe-seq), the number of genome-wide
-  cytosines available for analysis would be [cut in half](https://www.nature.com/articles/s41467-018-03149-4). It should
-  be noted that, in cases where analyses are hyper-sensitive to methylation levels, CCGs may need to be filtered
-  post-hoc (in hopefully a nuanced manner) using the epiBED file and a reference genome.
+  methylation occurring in a CCG context
+  ([contrary to Bismark](http://felixkrueger.github.io/Bismark/bismark/methylation_extraction/#optional-nome-seq-or-scnmt-seq)).
+  If all CCGs were removed (in addition to the GCGs already removed due to ambiguity in NOMe-seq), the number of
+  genome-wide cytosines available for analysis would be
+  [cut in half](https://www.nature.com/articles/s41467-018-03149-4). It should be noted that, in cases where analyses
+  are hyper-sensitive to methylation levels, CCGs may need to be filtered post-hoc (in hopefully a nuanced manner) using
+  the epiBED file and a reference genome.
 
 <object data="../assets/2023_01_31_methylation_contexts.pdf" width="525" height="482" type='application/pdf'></object>
 
