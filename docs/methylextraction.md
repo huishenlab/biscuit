@@ -67,3 +67,42 @@ $ biscuit mergecg /path/to/my_reference.fa my_pileup.bed
 
 For more help on available flags, run `biscuit mergecg` in the terminal or visit the
 [mergecg help page]({{ site.baseurl }}{% link docs/subcommands/biscuit_mergecg.md %}).
+
+## Towards the Bismark COV format
+
+Starting in version 1.3.0, BISCUIT can output a format that can be easily worked into the Bismark COV file format for
+easy use in downstream tools that expect such a file. To produce this file, run
+```
+biscuit vcf2bed -c my_pileup.vcf.gz > my_beta_m_u.bed
+```
+which will produce a BED-compliant file with these columns:
+
+  1. Chromosome
+  2. Start position (0-based)
+  3. End position
+  4. Methylation percentage
+  5. M (number of methylated reads covering locus)
+  6. U (number of unmethylated reads covering locus)
+
+The Bismark COV file format is not BED-compliant, so to create a "true" COV file, you can use AWK in conjunction with
+`vcf2bed`:
+```
+# Pipe straight from vcf2bed
+biscuit vcf2bed -c my_pileup.vcf.gz | \
+awk -v OFS='\t' '{ print $1, $2+1, $3, $4, $5, $6 }' > my_beta_m_u.cov
+
+# Create from already processed file
+biscuit vcf2bed -c my_pileup.vcf.gz > my_beta_m_u.bed
+awk -v OFS='\t' '{ print $1, $2+1, $3, $4, $5, $6 }' my_beta_m_u.bed > my_beta_m_u.cov
+```
+
+This file will keep methylation across the strands separate, as is normally done in `biscuit vcf2bed`. To merge
+methylation across strands, run:
+```
+biscuit vcf2bed my_pileup.vcf.gz | \
+biscuit mergecg -c /path/to/my_reference.fa - | \
+awk -v OFS='\t' '{ print $1, $2+1, $3-1, $4, $5, $6 }' > my_merged_beta_m_u.cov
+```
+
+Note, the `-c` flag is *only* included in the `biscuit mergecg` call. If you would prefer a BED-compliant file, remove
+the AWK command.
