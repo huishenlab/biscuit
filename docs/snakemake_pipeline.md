@@ -11,28 +11,28 @@ analyses.
 ## Dependencies
 
 The following dependencies are downloaded when running with `--use-conda`, otherwise you must have these in your PATH.
-| Package        | Conda Version Downloaded | Notes |
-|:---------------|:------------------------:|:------|
-| `snakemake`    | 7.0+                     | Needed before running pipeline |
-| `biscuit`      | 1.2.0                    |       |
-| `htslib`       | 1.17                     |       |
-| `samtools`     | 1.17                     |       |
-| `dupsifter`    | 1.2.0                    |       |
-| `parallel`     | 20230322                 |       |
-| `bedtools`     | 2.30.0                   |       |
-| `preseq`       | 3.2.0                    | Must be compiled with htslib enabled |
-| `fastqc`       | 0.12.1                   |       |
-| `trim_galore`  | 0.6.10                   |       |
-| `fastq_screen` | 0.15.3                   | Only required if running `fastq_screen`)
-| `bismark`      | 0.24.0                   | Only required if running `fastq_screen`)
-| `pigz`         | 2.6                      |       |
-| `python`       | 3.11.3                   |       |
-| `pandas`       | 2.0.0                    |       |
-| `numpy`        | 1.24.2                   |       |
-| `matplotlib`   | 3.7.1                    |       |
-| `seaborn`      | 0.12.2                   |       |
-| `multiqc`      | 1.14                     |       |
-| `R`            | 4.2.3                    |       |
+| Package        | Conda Version Downloaded | Notes                                           |
+|:---------------|:------------------------:|:------------------------------------------------|
+| `snakemake`    | 7.0+                     | Needed before running pipeline                  |
+| `biscuit`      | 1.2.0                    |                                                 |
+| `htslib`       | 1.17                     |                                                 |
+| `samtools`     | 1.17                     |                                                 |
+| `dupsifter`    | 1.2.0                    |                                                 |
+| `parallel`     | 20230322                 |                                                 |
+| `bedtools`     | 2.30.0                   |                                                 |
+| `preseq`       | 3.2.0                    | Must be compiled with htslib enabled            |
+| `fastqc`       | 0.12.1                   |                                                 |
+| `trim_galore`  | 0.6.10                   |                                                 |
+| `fastq_screen` | 0.15.3                   | Only required if running `fastq_screen`)        |
+| `bismark`      | 0.24.0                   | Only required if running `fastq_screen`)        |
+| `pigz`         | 2.6                      |                                                 |
+| `python`       | 3.11.3                   |                                                 |
+| `pandas`       | 2.0.0                    |                                                 |
+| `numpy`        | 1.24.2                   |                                                 |
+| `matplotlib`   | 3.7.1                    |                                                 |
+| `seaborn`      | 0.12.2                   |                                                 |
+| `multiqc`      | 1.14                     |                                                 |
+| `R`            | 4.2.3                    |                                                 |
 | `tidyverse`    | 2.0.0                    | Only required for plotting methylation controls |
 | `ggplot2`      | 3.4.2                    | Only required for plotting methylation controls |
 | `patchwork`    | 1.1.2                    | Only required for plotting methylation controls |
