@@ -7,13 +7,12 @@ permalink: /biscuit_version/
 
 # biscuit version
 ```bash
-BISCUIT Version: 1.3.0
+BISCUIT Version: 1.4.0
 
 Using:
-	htslib version: zwdzwd/htslib at commit f29fa32
-	klib   version: zwdzwd/klib   at commit ca862f8
-	sgsl   version: zwdzwd/sgsl   at commit a0ddc77
-	utils  version: zwdzwd/utils  at commit 332459b
+	htslib : version 1.18
+	sgsl   : huishenlab/sgsl  at commit 6533277
+	utils  : huishenlab/utils at commit 5f4aeab
 
 Libraries found at: https://github.com/huishenlab/biscuit/tree/master/lib
 ```

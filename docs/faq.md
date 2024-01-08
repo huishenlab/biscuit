@@ -39,8 +39,8 @@ for more details on usage.
 **I ran `git clone git@github.com:huishenlab/biscuit.git`, but when trying to compile the executable, I get an error
 message.**
 
-> First, make sure you included `--recursive` when running `git clone`. If that does not solve your problem, make sure
-you have `zlib` and `ncurses` installed.
+> After version 1.4.0, make sure you `zlib`, `ncurses`, and `pthread` installed. If prior to version 1.4.0, make sure
+you included `--recursive` when running `git clone`.
 
 ## Quality Control Related Questions
 

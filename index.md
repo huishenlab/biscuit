@@ -118,25 +118,46 @@ These commands work on both macOS and Linux.
 
 ### Download Source Code and Compile
 
-The source code for BISCUIT can be downloaded using either `git` or `curl`. Compilation requires that `zlib` and
-`ncurses` are installed.
+#### Version 1.4.0 and Newer
 
-Using `git`,
+As of version 1.4.0, BISCUIT uses a CMake-based build system. Regardless of whether you use `git` or `curl` to download
+the source code, you will `cmake` (minimum version 3.21), `zlib`, `ncurses`, `pthread`, and `curl` installed to build
+BISCUIT.
+
+The source can be retrieved with either of these two commands:
 ```bash
-git clone --recursive git@github.com:huishenlab/biscuit.git
+# git
+git clone git@github.com:huishenlab/biscuit.git
 cd biscuit
-make
-```
-Note, after v0.2.0, if downloading via `git`, make sure to use the `--recursive` flag to get the submodules. If an SSH
-key has not been set up, and you receive a "permission denied" error, replace the first line with
-```bash
-git clone --recursive https://github.com/huishenlab/biscuit.git
-```
 
-Using `curl`,
-```bash
+# curl
 curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/latest |
     grep browser_download_url | grep release-source.zip | cut -d '"' -f 4)
+unzip release-source.zip
+cd biscuit-release
+```
+
+After retrieving the source code (regardless of retrieval method), building BISCUIT proceeds as follows:
+```bash
+mkdir build && cd build
+cmake -DCMAKE_INSTALL_PREFIX=../ ../
+make && make install
+```
+This will create a directory called `bin` in top level directory of BISCUIT where the `biscuit` binary and the QC, asset
+creator, and strand-flipping scripts can be found. You can also specify a different directory to install your files
+(replace `-DCMAKE_INSTALL_PREFIX=../` with `-DCMAKE_INSTALL_PREFIX=/path/to/your/other/location`). If you don't include
+the `-DCMAKE_INSTALL_PREFIX` option, you can specify the install location via:
+`cmake --install --prefix /path/to/your/install/location`. If you don't run the install commands, the BISCUIT binary
+can be found in `build/src/biscuit` (relative to the top level directory of BISCUIT) and the scripts can be found in the
+`scripts/` directory.
+
+#### Version 1.3.0 and Earlier
+
+The source code for BISCUIT version 1.3.0 and earlier can be downloaded from the
+[GitHub releases page](https://github.com/huishenlab/biscuit/releases), specifically the `release-source.zip` file.
+Compilation requires that `zlib` and `ncurses` are installed.
+
+```bash
 unzip release-source.zip
 cd biscuit-release
 make

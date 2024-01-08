@@ -7,12 +7,12 @@ permalink: docs/subcommands
 
 # BISCUIT Subcommands
 
-Usage for all BISCUIT subcommands as of BISCUIT version 1.3.0.
+Usage for all BISCUIT subcommands as of BISCUIT version 1.4.0 (printed with either `biscuit` or `biscuit help`).
 
 ```bash
 
 Program: BISCUIT (BISulfite-seq CUI Toolkit)
-Version: 1.3.0
+Version: 1.4.0
 Contact: Jacob Morrison <jacob.morrison@vai.org>
 
 Usage: biscuit <command> [options]
@@ -41,6 +41,7 @@ Command:
 
  -- Other
     version      Print BISCUIT and library versions
+    help         Print usage and exit
     qc           Generate QC files from BAM
     bc           Extract barcodes from FASTQ files
 
