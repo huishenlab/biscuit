@@ -29,6 +29,12 @@ BISCUIT is currently maintained by Jacob Morrison (who also developed the User's
 versions of BISCUIT are available at [https://github.com/huishenlab/biscuit](https://github.com/huishenlab/biscuit),
 while legacy versions are located at [https://github.com/zhou-lab/biscuit](https://github.com/zhou-lab/biscuit).
 
+## Reference
+
+Wanding Zhou, Benjamin K Johnson, Jacob Morrison, *et al.*,
+BISCUIT: an efficient, standards-compliant tool suite for simultaneous genetic and epigenetic inference in bulk and single-cell studies,
+*Nucleic Acids Research*, Volume 52, Issue 6, 12 April 2024, Page e32, [https://doi.org/10.1093/nar/gkae097](https://doi.org/10.1093/nar/gkae097)
+
 ## Quick Start
 
 In order to get started with performing analyses with BISCUIT, precompiled binaries are available for download on the
@@ -245,7 +251,3 @@ the internet.
  - lib/htslib was submoduled from the htslib library.
  - lib/klib was submoduled from Heng Li's klib.
  - This work is supported by NIH/NCI R37CA230748.
-
-## Reference
-
-In preparation
