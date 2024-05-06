@@ -14,7 +14,7 @@ nav_order: 1
 # BISCUIT - Understand Sequencing Data with Bisulfite Conversion
 {: .fs-9 }
 
-[Get started now](#getting-started){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [View it on GitHub](https://github.com/huishenlab/biscuit){: .btn .fs-5 .mb-4 .mb-md-0 }
+[Get started now](#quick-start){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [View it on GitHub](https://github.com/huishenlab/biscuit){: .btn .fs-5 .mb-4 .mb-md-0 }
 
 ---
 
@@ -93,16 +93,14 @@ the binaries directly from the terminal using the following one-liner:
 On macOS,
 ```bash
 curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/latest |
-    grep browser_download_url | grep darwin_amd64 | cut -d '"' -f 4)
-mv biscuit_* biscuit
+    grep browser_download_url | grep darwin_amd64 | cut -d '"' -f 4) --output biscuit
 chmod +x biscuit
 ```
 
 On Linux,
 ```bash
 curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/latest |
-    grep browser_download_url | grep linux_amd64 | cut -d '"' -f 4)
-mv biscuit_* biscuit
+    grep browser_download_url | grep linux_amd64 | cut -d '"' -f 4) --output biscuit
 chmod +x biscuit
 ```
 
@@ -236,6 +234,7 @@ the [BISCUIT Subcommands]({{ site.baseurl }}{% link docs/subcommands/subcommand_
 ### Other
 
   - `version` Print `biscuit` and library versions
+  - `help` Print usage and exit
   - `qc` Generate QC files from BAM (see
   [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}))
   - `bc` Extract cell barcodes from reads (see [Extract Barcodes]({{ site.baseurl }}{% link docs/barcode_extract.md %}))
@@ -248,6 +247,4 @@ the internet.
 ## Acknowledgement
 
  - lib/aln was adapted from Heng Li's BWA-mem code.
- - lib/htslib was submoduled from the htslib library.
- - lib/klib was submoduled from Heng Li's klib.
  - This work is supported by NIH/NCI R37CA230748.
