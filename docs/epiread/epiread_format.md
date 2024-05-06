@@ -38,6 +38,34 @@ which is required when bgzipping and tabixing.
 For more help with `epiread`, run `biscuit epiread` in the terminal or check out the
 [epiread help page]({{ site.baseurl }}{% link docs/subcommands/biscuit_epiread.md %}).
 
+## Generating epiBED Files from modBAMs
+
+`biscuit epiread` can also be used to extract methylation from modification tags (MM/ML) in a BAM file via:
+```bash
+biscuit epiread -M -y 0.9 -L 10000 /path/to/my_reference.fa my_modbam.bam | \
+sort -k1,1 -k2,2n > my_epireads.epibed
+```
+The `-M` flag turns on the modification tag reading and overrides reading methylation from C&rarr;T or G&rarr;A
+conversions. The `-y 0.9` sets the probability of a successful modification call at 0.9 (which is the default value).
+This probability can be adjusted anywhere from 0 to 1 (inclusive). Typically, modBAMs are associated with long read
+sequencing, so the `-L` option increases the maximum read length to 10,000. This may be need to be adjusted depending
+on the read length distribution of your dataset. If your data is short read sequencing, you can forego this option as
+the default value is sufficient for short read lengths. While not required, some other options to consider modifying
+when running `biscuit epiread` on long read data (particularly when comparing Nanopore data against
+[modkit](https://nanoporetech.github.io/modkit/)) are `-b` (minimum base quality), `-m` (minimum mapping quality), `-a`
+(minimum alignment score), `-5`/`-3` (exclude methylation within N bases of the 5' or 3' ends of the reads).
+
+Currently, BISCUIT restricts the number of modifications to one per read and can be `C+m`, `C-m`, `G+m`, or `G-m`.
+Coupled with the SAM FLAG, the position the methylation status is recorded at can either be at the C position or the G
+position relative to the reference:
+
+| Modification | SAM FLAG | Position |
+|:------------:|:--------:|:--------:|
+| `C+m`        | 0        | C        |
+| `C+m`        | 16       | G        |
+| `G-m`        | 0        | G        |
+| `G-m`        | 16       | C        |
+
 ## Generating Legacy File Formats
 
 In addition to the epiBED format, `biscuit epiread` continues to produce the BISCUIT epiread format and the pairwise
