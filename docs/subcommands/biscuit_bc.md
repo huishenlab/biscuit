@@ -19,6 +19,8 @@ Output Options:
 General Options:
     -h, --help             This help
 
-Note: When writing to stdout, reads 1 and 2 will alternate (i.e., are interleaved)
+Note 1: When writing to stdout, reads 1 and 2 will alternate (i.e., are interleaved)
+Note 2: Also adds an artificial UMI (AAAAAAAA) for compatibility purposes and to serve
+        as a placeholder for future UMI work
 
 ```

@@ -19,7 +19,8 @@ Options:
 Output options:
     -o STR    Output file [stdout]
     -N        NOMe-seq mode [off]
-    -L        Data is from long read sequencing [off]
+    -L INT    maximum read length (will need to be increased for long reads) [302]
+    -M        BAM file has modBAM tags (MM/ML) [off]
     -P        Pairwise mode [off]
     -O        Old BISCUIT epiread format, not compatible with -P [off]
     -A        Print all CpG and SNP locations in location column, ignored if -O not given [off]
@@ -39,6 +40,7 @@ Filter options:
     -u        NO filtering of duplicate
     -p        NO filtering of improper pair
     -n INT    Maximum NM tag [999999]
+    -y FLT    Minimum probability a modification is correct (0.0 - 1.0) [0.900000]
     -h        This help
 
 Note, the -O (old epiread format) and -P (pairwise format for biscuit asm) are not guaranteed

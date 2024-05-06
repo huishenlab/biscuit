@@ -39,7 +39,7 @@ Algorithm options:
     -S              Skip mate rescue
     -P              Skip pairing - mate rescue performed unless -S also given
     -e              Discard full-length exact matches
-    -9              Extract barcode from read comment
+    -9              Extract barcode and UMI from read name
 
 Scoring options:
     -A INT          Score for a sequence match, scales options -TdBOELU unless
