@@ -13,6 +13,9 @@ file:
 ```bash
 $ biscuit vcf2bed -t cg my_pileup.vcf.gz > my_pileup.bed
 ```
+For BISCUIT version 1.5.0 and earlier, the minimum coverage by default is 3. This setting was good for traditional WGBS;
+however, for low input and single cell protocols, this option should be changed to 1 (`biscuit vcf2bed -k 1 ...`).
+BISCUIT version 1.6.0 and later have the default value switched to 1 to avoid user confusion.
 
 The `-t` flag can be used to retrieve mutation and other information, including
 
