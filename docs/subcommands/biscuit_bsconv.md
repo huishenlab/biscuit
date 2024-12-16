@@ -19,6 +19,7 @@ Options:
     -a INT      Filter: maximum CpA retention [Inf]
     -c INT      Filter: maximum CpC retention [Inf]
     -t INT      Filter: maximum CpT retention [Inf]
+    -x INT      Filter: maximum CpY retention [Inf]
     -p          Print in tab-separated format, print order:
                     CpA_R, CpA_C, CpC_R, CpC_C, CpG_R, CpG_C, CpT_R, CpT_C
     -v          Show filtered reads instead of remaining reads

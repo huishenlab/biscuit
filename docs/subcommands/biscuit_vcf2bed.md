@@ -12,7 +12,7 @@ Usage: biscuit vcf2bed [options] <in.vcf>
 
 Options:
     -t STR    Extract type {c, cg, ch, hcg, gch, snp} [CG]
-    -k INT    Minimum coverage [3]
+    -k INT    Minimum coverage (see Note 1) [1]
     -s STR    Sample, (takes "FIRST", "LAST", "ALL", or specific
                   sample names separated by ",") [FIRST]
     -e        Show context (reference base, context group {CG,CHG,CHH},
@@ -20,5 +20,9 @@ Options:
                   value and coverage column
     -c        Output Beta-M-U instead of Beta-Cov.
     -h        This help
+
+Note 1: Starting with version 1.6.0, the default minimum coverage was changed from
+        three (3) to one (1) to better match other tools and serve as a better default
+        for single-cell experiments.
 
 ```
