@@ -79,20 +79,44 @@ static void print_meth_average_1chrom(FILE *out, char *sample, char *chrom, doub
         double  b_hchh = betasum[CTXT_HCHH];
         int64_t k_hch  = k_hchg + k_hchh;
         double  b_hch  = b_hchg + b_hchh;
-        int64_t k_gch  = cnt[CTXT_GCG] +
-            cnt[CTXT_GCHG] +
-            cnt[CTXT_GCHH];
-        double  b_gch  = betasum[CTXT_GCG] + 
-            betasum[CTXT_GCHG] +
-            betasum[CTXT_GCHH];
+        int64_t k_gch  = cnt[CTXT_GCG] + cnt[CTXT_GCHG] + cnt[CTXT_GCHH];
+        double  b_gch  = betasum[CTXT_GCG] + betasum[CTXT_GCHG] + betasum[CTXT_GCHH];
 
-        if (k_hcg > 0) {             // skip chrom with no base coverage
+        // Only print chromosomes with non-zero HCG coverage
+        if (k_hcg > 0) {
             fprintf(out, "%s\t%s", sample, chrom);
-            fprintf(out, "\t%"PRId64"\t%1.3f%%", k_hcg,  b_hcg  / (double) k_hcg  * 100);
-            fprintf(out, "\t%"PRId64"\t%1.3f%%", k_hchg, b_hchg / (double) k_hchg * 100);
-            fprintf(out, "\t%"PRId64"\t%1.3f%%", k_hchh, b_hchh / (double) k_hchh * 100);
-            fprintf(out, "\t%"PRId64"\t%1.3f%%", k_hch,  b_hch  / (double) k_hch  * 100);
-            fprintf(out, "\t%"PRId64"\t%1.3f%%", k_gch,  b_gch  / (double) k_gch  * 100);
+
+            // HCG - we already checked that k_hcg > 0, so print all values straight away
+            fprintf(out, "\t%"PRId64"\t%1.3f%%", k_hcg, b_hcg / (double) k_hcg * 100);
+
+            // HCHG - verify non-zero coverage when printing
+            fprintf(out, "\t%"PRId64"\t%1.3f%%", k_hchg);
+            if (k_hchg > 0)
+                fprintf(out, "\t%1.3f%%", b_hchg / (double) k_hchg * 100);
+            else
+                fprintf(out, "\t.");
+
+            // HCHH - verify non-zero coverage when printing
+            fprintf(out, "\t%"PRId64"\t%1.3f%%", k_hchh);
+            if (k_hchh > 0)
+                fprintf(out, "\t%1.3f%%", b_hchh / (double) k_hchh * 100);
+            else
+                fprintf(out, "\t.");
+
+            // HCH - verify non-zero coverage when printing
+            fprintf(out, "\t%"PRId64"\t%1.3f%%", k_hch);
+            if (k_hch > 0)
+                fprintf(out, "\t%1.3f%%", b_hch / (double) k_hch * 100);
+            else
+                fprintf(out, "\t.");
+
+            // GCH - verify non-zero coverage when printing
+            fprintf(out, "\t%"PRId64"\t%1.3f%%", k_gch);
+            if (k_gch > 0)
+                fprintf(out, "\t%1.3f%%", b_gch / (double) k_gch * 100);
+            else
+                fprintf(out, "\t.");
+
             fputc('\n', out);
         }
 
@@ -107,12 +131,34 @@ static void print_meth_average_1chrom(FILE *out, char *sample, char *chrom, doub
         int64_t k_ch  = k_chg + k_chh;
         double  b_ch  = b_chg + b_chh;
 
-        if (k_cg > 0) {             // skip chrom with no base coverage
+        // Only print chromosomes with non-zero CG coverage
+        if (k_cg > 0) {
             fprintf(out, "%s\t%s", sample, chrom);
-            fprintf(out, "\t%"PRId64"\t%1.3f%%", k_cg,  b_cg  / (double) k_cg  * 100);
-            fprintf(out, "\t%"PRId64"\t%1.3f%%", k_chg, b_chg / (double) k_chg * 100);
-            fprintf(out, "\t%"PRId64"\t%1.3f%%", k_chh, b_chh / (double) k_chh * 100);
-            fprintf(out, "\t%"PRId64"\t%1.3f%%", k_ch,  b_ch  / (double) k_ch  * 100);
+
+            // CG - we already check that k_cg > 0, so print all values straight away
+            fprintf(out, "\t%"PRId64"\t%1.3f%%", k_cg, b_cg / (double) k_cg * 100);
+
+            // CHG - verify non-zero coverage when printing
+            fprintf(out, "\t%"PRId64, k_chg);
+            if (k_chg > 0)
+                fprintf(out, "\t%1.3f%%", b_chg / (double) k_chg * 100);
+            else
+                fprintf(out, "\t.");
+
+            // CHH - verify non-zero coverage when printing
+            fprintf(out, "\t%"PRId64, k_chh);
+            if (k_chh > 0)
+                fprintf(out, "\t%1.3f%%", b_chh / (double) k_chh * 100);
+            else
+                fprintf(out, "\t.");
+
+            // CH - verify non-zero coverage when printing
+            fprintf(out, "\t%"PRId64, k_ch);
+            if (k_ch > 0)
+                fprintf(out, "\t%1.3f%%", b_ch / (double) k_ch * 100);
+            else
+                fprintf(out, "\t.");
+
             fputc('\n', out);
         }
     }
