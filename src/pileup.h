@@ -65,7 +65,7 @@ typedef struct {
 void pileup_conf_init(pileup_conf_t *conf);
 
 typedef struct {
-    uint8_t sid;        /* which sample */
+    int sid;            /* which sample */
     uint8_t bsstrand:1; /* bisulfite strand */
     uint8_t qual:7;     /* base quality */
     uint8_t strand:1;   /* read stand */
