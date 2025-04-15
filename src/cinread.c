@@ -296,7 +296,7 @@ int main_cinread(int argc, char *argv[]) {
     cinread_data_t d = {0};
     d.rs = init_refcache(reffn, 100, 100000);
     d.conf = &conf;
-    bam_filter(infn, 0, reg, &d, cinread_func);
+    bam_filter(infn, 0, reg, &d, 0, cinread_func);
 
     free_refcache(d.rs);
     free(conf.tp_names);

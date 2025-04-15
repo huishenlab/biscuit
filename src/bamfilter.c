@@ -29,7 +29,9 @@
 #include "sam.h"
 #include "wzmisc.h"
 
-int bam_filter(char *ifn, char *ofn, char *reg, void *data, bam_filter_f func) {
+#include "biscuit.h"
+
+int bam_filter(char *ifn, char *ofn, char *reg, void *data, char *pg, bam_filter_f func) {
   int ret = 0;
   samFile *in = sam_open(ifn, "rb");
   bam_hdr_t *header = sam_hdr_read(in);
@@ -37,6 +39,7 @@ int bam_filter(char *ifn, char *ofn, char *reg, void *data, bam_filter_f func) {
   if (ofn) {
     out = sam_open(ofn, strcmp(ofn, "-") == 0 ? "w" : "wb");
     if (!out) wzfatal("Cannot write bam %s.\n", ofn);
+    if (sam_hdr_add_pg(header, "biscuit", "PN", "biscuit", "VN", PACKAGE_VERSION, "CL", pg, NULL) < 0) wzfatal("Cannot write @PG tag to BAM header.\n");
     if (sam_hdr_write(out, header) < 0) wzfatal("Cannot write bam header.\n");
   }
 

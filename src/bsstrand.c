@@ -189,6 +189,8 @@ int main_bsstrand(int argc, char *argv[]) {
     char *reg = 0; /* region */
     bsstrand_conf_t conf = {0};
 
+    kstring_t call = generate_command_line_string(argc, argv);
+
     if (argc < 2) { usage(); return 1; }
     while ((c = getopt(argc, argv, ":g:cyh")) >= 0) {
         switch (c) {
@@ -212,7 +214,7 @@ int main_bsstrand(int argc, char *argv[]) {
     bsstrand_data_t d = {0}; // all counts reset to 0
     d.rs = init_refcache(reffn, 100, 100000);
     d.conf = &conf;
-    bam_filter(infn, outfn, reg, &d, bsstrand_func);
+    bam_filter(infn, outfn, reg, &d, call.s, bsstrand_func);
 
     /*** output stats ***/
     fprintf(stderr, "Mapped reads: %d\n", d.n_mapped);
@@ -263,5 +265,7 @@ int main_bsstrand(int argc, char *argv[]) {
     fprintf(stderr, "\n");
 
     free_refcache(d.rs);
+    free(call.s);
+
     return 0;
 }

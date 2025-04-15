@@ -220,6 +220,8 @@ int main_bsconv(int argc, char *argv[]) {
     conf.print_in_tab = 0;
     conf.no_printing = 0; // only needed for qc at this time, so don't provide a command line argument to change this for now
 
+    kstring_t call = generate_command_line_string(argc, argv);
+
     if (argc < 2) { usage(); return 1; }
     while ((c = getopt(argc, argv, ":g:m:ac:f:y:pt:x:uvh")) >= 0) {
         switch (c) {
@@ -252,7 +254,7 @@ int main_bsconv(int argc, char *argv[]) {
     bsconv_data_t d = {0};
     d.rs = init_refcache(reffn, 100, 100000);
     d.conf = &conf;
-    bam_filter(infn, outfn, reg, &d, bsconv_func);
+    bam_filter(infn, outfn, reg, &d, call.s, bsconv_func);
 
     fprintf(stderr, "\n");
     fprintf(stderr, "[%s:%d] Processed %d reads, %d (%f%%) remains.\n",
@@ -260,5 +262,7 @@ int main_bsconv(int argc, char *argv[]) {
     fflush(stderr);
 
     free_refcache(d.rs);
+    free(call.s);
+
     return 0;
 }

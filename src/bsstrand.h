@@ -33,6 +33,7 @@
 #include "refcache.h"
 #include "sam.h"
 #include "bamfilter.h"
+#include "bisc_utils.h"
 
 /* TAG_BSW      - bisulfite converted Watson
  * TAG_BSC      - bisulfite converted Crick

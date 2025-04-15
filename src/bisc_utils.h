@@ -250,4 +250,15 @@ static inline uint8_t is_modbam_cpg(uint16_t flag, int strand, int can_base, cha
     return 0;
 }
 
+// Create @PG CL tag string
+// Includes a memory allocation - calling function will need to free memory
+static inline kstring_t generate_command_line_string(int argc, char *argv[]) {
+    kstring_t call = {0, 0, 0};
+    ksprintf(&call, "biscuit");
+    int i;
+    for (i=0; i < argc; ++i) ksprintf(&call, " %s", argv[i]);
+
+    return call;
+}
+
 #endif /* _BISC_UTILS_H_ */
