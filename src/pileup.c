@@ -260,8 +260,12 @@ void *write_func(void *data) {
             fprintf(out, "sample\tchrm\tCGn\tCGb\tCHGn\tCHGb\tCHHn\tCHHb\tCHn\tCHb\n");
 
         int sid;
-        for (sid=0; sid<c->n_bams; ++sid)
-            print_meth_average1(out, c->bam_fns[sid], betasum+sid*smpl_block, cnt+sid*smpl_block, c);
+        for (sid=0; sid<c->n_bams; ++sid) {
+            char *fname = strdup(c->bam_fns[sid]);
+            char *sample_name = infer_sample_name(fname);
+            print_meth_average1(out, sample_name, betasum+sid*smpl_block, cnt+sid*smpl_block, c);
+            free(fname);
+        }
 
         fclose(out);
         free(outfn);
@@ -975,10 +979,8 @@ char *print_vcf_header(char *reffn, target_v *targets, char **argv, int argc, pi
     int sid=0;
     for (sid=0; sid<n_fns; ++sid) {
         kputc('\t', &header);
-        char *path=strdup(in_fns[sid]);
-        char *bname = basename(path);
-        if (strcmp(bname+strlen(bname)-4,".bam")==0)
-            bname[strlen(bname)-4]=0;
+        char *path = strdup(in_fns[sid]);
+        char *bname = infer_sample_name(path);
         kputs(bname, &header);
         free(path);
     }

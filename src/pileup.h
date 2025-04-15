@@ -86,4 +86,18 @@ static inline int compare_supp(const void *a, const void *b) {
 
 void *write_func(void *data);
 
+// Function modifies input char*
+// Any copy/free of the original char* should be down *outside* of this function
+// This tries to keep it clear when any memory allocations are occuring to
+//     reduce missed free calls
+static inline char *infer_sample_name(char *path) {
+    char *bname = basename(path);
+
+    if (strcmp(bname + strlen(bname) - 4, ".bam") == 0) {
+        bname[strlen(bname)-4] = 0;
+    }
+
+    return bname;
+}
+
 #endif /* _PILEUP_H_ */
