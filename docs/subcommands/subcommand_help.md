@@ -7,12 +7,12 @@ permalink: docs/subcommands
 
 # BISCUIT Subcommands
 
-Usage for all BISCUIT subcommands as of BISCUIT version 1.4.0 (printed with either `biscuit` or `biscuit help`).
+Usage for available BISCUIT subcommands (printed with either `biscuit` or `biscuit help`).
 
 ```bash
 
 Program: BISCUIT (BISulfite-seq CUI Toolkit)
-Version: 1.6.0
+Version: 1.6.1
 Contact: Jacob Morrison <jacob.morrison@vai.org>
 
 Usage: biscuit <command> [options]
