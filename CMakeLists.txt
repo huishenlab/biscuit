@@ -72,10 +72,10 @@ ExternalProject_Add(sgsl
 find_package(LIBDEFLATE)
 if(LIBDEFLATE_FOUND)
     set(LIBDEFLATE_FLAG "--with-libdeflate")
-    message(STATUS "found libdeflate: ${DEFLATE_INCLUDE_DIR} ${LIBDEFLATE_FLAG}")
+    message(STATUS "found a system libdeflate. will build htslib with libdeflate")
 else()
     set(LIBDEFLATE_FLAG "--without-libdeflate")
-    message(STATUS "could not find libdeflate: ${DEFLATE_INCLUDE_DIR} ${LIBDEFLATE_FLAG}")
+    message(STATUS "could not find a system libdeflate. will build htslib without libdeflate")
 endif()
 
 # htslib
