@@ -53,3 +53,8 @@ if(Curses_FOUND)
 else()
     message(FATAL_ERROR "ncurses not found. Required for compilation")
 endif(Curses_FOUND)
+
+if(LIBDEFLATE_FOUND)
+    include_directories(${LIBDEFLATE_INCLUDE_DIRS})
+    target_link_libraries(biscuit ${LIBDEFLATE_LIBRARIES})
+endif()

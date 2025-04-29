@@ -25,6 +25,9 @@ project(biscuit
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
+# Find module paths
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+
 # Standard installation paths
 include(GNUInstallDirs)
 
@@ -65,6 +68,16 @@ ExternalProject_Add(sgsl
     BUILD_IN_SOURCE 1
     )
 
+# libdeflate
+find_package(LIBDEFLATE)
+if(LIBDEFLATE_FOUND)
+    set(LIBDEFLATE_FLAG "--with-libdeflate")
+    message(STATUS "found a system libdeflate. will build htslib with libdeflate")
+else()
+    set(LIBDEFLATE_FLAG "--without-libdeflate")
+    message(STATUS "could not find a system libdeflate. will build htslib without libdeflate")
+endif()
+
 # htslib
 find_package(CURL REQUIRED)
 set(SHA_CHECK ${SCRIPT_DIR}/confirm_download.sh)
@@ -84,7 +97,7 @@ if(APPLE)
             mv -f ${htslib_base} htslib
         SOURCE_DIR ${LIB_DIR}/htslib
         INSTALL_DIR ${LIB_DIR}/install
-        CONFIGURE_COMMAND ${LIB_DIR}/htslib/configure --prefix=<INSTALL_DIR> --disable-bz2 --disable-lzma --disable-libcurl
+        CONFIGURE_COMMAND ${LIB_DIR}/htslib/configure --prefix=<INSTALL_DIR> --disable-bz2 --disable-lzma --disable-libcurl ${LIBDEFLATE_FLAG}
         BUILD_COMMAND make lib-static
         INSTALL_COMMAND ""
         BUILD_IN_SOURCE 1
@@ -100,7 +113,7 @@ else()
             mv -f ${htslib_base} htslib
         SOURCE_DIR ${LIB_DIR}/htslib
         INSTALL_DIR ${LIB_DIR}/install
-        CONFIGURE_COMMAND ${LIB_DIR}/htslib/configure --prefix=<INSTALL_DIR> --disable-bz2 --disable-lzma --disable-libcurl
+        CONFIGURE_COMMAND ${LIB_DIR}/htslib/configure --prefix=<INSTALL_DIR> --disable-bz2 --disable-lzma --disable-libcurl ${LIBDEFLATE_FLAG}
         BUILD_COMMAND make lib-static
         INSTALL_COMMAND ""
         BUILD_IN_SOURCE 1
