@@ -26,24 +26,21 @@ jobs:
     # - name: Run tests
     #   run: make check
 
-  # macOS build is now failing because it can't find libdeflate. The only issue
-  # is that it shouldn't need to find libdefalte, because htslib isn't built
-  # with libdeflate. Will stop macOS build checks for the time being (15 Apr 2025).
-  #build-mac:
-  #  name: Check macOS Build
+  build-mac:
+    name: Check macOS Build
 
-  #  # macos-latest is now ARM-only, macos-13 is the most recent version that supports x86-64
-  #  runs-on: macos-13
+    # macos-latest is now ARM-only, macos-13 is the most recent version that supports x86-64
+    runs-on: macos-13
 
-  #  steps:
-  #  - uses: actions/checkout@v3
+    steps:
+    - uses: actions/checkout@v3
 
-  #  - name: Check build
-  #    run: mkdir build && cd build && cmake ../ -DCMAKE_INSTALL_PREFIX=../ && make && make install
+    - name: Check build
+      run: mkdir build && cd build && cmake ../ -DCMAKE_INSTALL_PREFIX=../ && make && make install
 
-  #  - name: Install Check
-  #    run: ./bin/biscuit version
+    - name: Install Check
+      run: ./bin/biscuit version
 
-  #  # These haven't been generated yet, so uncomment when ready
-  #  # - name: Run tests
-  #  #   run: make check
+    # These haven't been generated yet, so uncomment when ready
+    # - name: Run tests
+    #   run: make check
