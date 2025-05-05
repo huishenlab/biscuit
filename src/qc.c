@@ -63,16 +63,20 @@ void format_strand_report(FILE *fname, bsstrand_data_t *data) {
     fprintf(fname, "strand\\BS      BSW (f)      BSC (r)\n");
 
     fprintf(fname, "     R1 (f):   ");
-    for (i=0;i<2;++i) { fprintf(fname, "%-13d", data->strandcnt[i]); fprintf(fname, "\n"); }
+    for (i=0;i<2;++i) { fprintf(fname, "%-13d", data->strandcnt[i]); }
+    fprintf(fname, "\n");
 
     fprintf(fname, "     R1 (r):   ");
-    for (i=0;i<2;++i) { fprintf(fname, "%-13d", data->strandcnt[4+i]); fprintf(fname, "\n"); }
+    for (i=0;i<2;++i) { fprintf(fname, "%-13d", data->strandcnt[4+i]); }
+    fprintf(fname, "\n");
 
     fprintf(fname, "     R2 (f):   ");
-    for (i=0;i<2;++i) { fprintf(fname, "%-13d", data->strandcnt[8+i]); fprintf(fname, "\n"); }
+    for (i=0;i<2;++i) { fprintf(fname, "%-13d", data->strandcnt[8+i]); }
+    fprintf(fname, "\n");
 
     fprintf(fname, "     R2 (r):   ");
-    for (i=0;i<2;++i) { fprintf(fname, "%-13d", data->strandcnt[12+i]); fprintf(fname, "\n"); }
+    for (i=0;i<2;++i) { fprintf(fname, "%-13d", data->strandcnt[12+i]); }
+    fprintf(fname, "\n");
 }
 
 void format_bsconv_report(FILE *fname, bsconv_data_t *data) {
