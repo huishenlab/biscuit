@@ -648,20 +648,34 @@ int bwa_idx2mem(bwaidx_t *idx) {
  * SAM header routines *
  ***********************/
 void bwa_print_sam_hdr(const bntseq_t *bns, const char *hdr_line) {
-    int i, n_SQ = 0;
+    int i, n_HD = 0, n_SQ = 0;
     extern char *bwa_pg;
-    /* header line may contain the sequence information */
+
+    /* header line may contain file-level metadata or sequence information */
     if (hdr_line) {
+        // file-level metadata (HD line)
         const char *p = hdr_line;
+        while ((p = strstr(p, "@HD\t")) != 0) {
+            if (p == hdr_line || *(p-1) == '\n') ++n_HD;
+            p += 4;
+        }
+        // sequence information (SQ lines)
+        p = hdr_line;
         while ((p = strstr(p, "@SQ\t")) != 0) {
             if (p == hdr_line || *(p-1) == '\n') ++n_SQ;
             p += 4;
         }
     }
+    if (n_HD == 0) err_printf("@HD\tVN:1.6\tSO:unsorted\tGO:query\n");
+    else if (bwa_verbose >= 2) {
+        fprintf(stderr, "[W::%s] please don't include @HD with option -H. Continue anyway.\n", __func__);
+    }
     if (n_SQ == 0) {
         /* print sequence info from index */
         for (i=0; i<bns->n_seqs; ++i) {
-            err_printf("@SQ\tSN:%s\tLN:%d\n", bns->anns[i].name, bns->anns[i].len);
+            err_printf("@SQ\tSN:%s\tLN:%d", bns->anns[i].name, bns->anns[i].len);
+            if (bns->anns[i].is_alt) err_printf("\tAH:*\n");
+            else err_fputc('\n', stdout);
         }
     } else if (n_SQ != bns->n_seqs && bwa_verbose >= 2) {
         /* sequences in the header line on command option does not match index */
