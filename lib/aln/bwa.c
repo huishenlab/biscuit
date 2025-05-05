@@ -647,10 +647,6 @@ int bwa_idx2mem(bwaidx_t *idx) {
 /***********************
  * SAM header routines *
  ***********************/
-#define bntann1_lt(a,b) (strcmp((a)->name,(b)->name)<0)
-typedef bntann1_t *ksbntann1_t; /* because pointer will get confused */
-KSORT_INIT(bntann1, ksbntann1_t, bntann1_lt);
-
 void bwa_print_sam_hdr(const bntseq_t *bns, const char *hdr_line) {
   int i, n_SQ = 0;
   extern char *bwa_pg;
@@ -665,13 +661,9 @@ void bwa_print_sam_hdr(const bntseq_t *bns, const char *hdr_line) {
   if (n_SQ == 0) {
 
     /* print sequence info from index */
-    bntann1_t **annps = malloc(bns->n_seqs*sizeof(bntann1_t*));
-    for (i=0; i<bns->n_seqs; ++i) annps[i] = bns->anns+i;
-    ks_introsort(bntann1, bns->n_seqs, annps);
     for (i=0; i<bns->n_seqs; ++i) {
-      err_printf("@SQ\tSN:%s\tLN:%d\n", annps[i]->name, annps[i]->len);
+      err_printf("@SQ\tSN:%s\tLN:%d\n", bns->anns[i].name, bns->anns[i].len);
     }
-    free(annps);
 
     /* for (i = 0; i < bns->n_seqs; ++i) { */
     /*   /\* if (!bns->anns[i].bsstrand)       /\\* bisulfite adaption *\\/ *\/ */
