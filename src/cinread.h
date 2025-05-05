@@ -63,7 +63,7 @@ typedef struct {
 } cinread_conf_t;
 
 #define CIN_N_READS 2
-#define CIN_READ_LEN 301
+#define CIN_READ_LEN 302
 #define CIN_N_RET_STATES 3
 
 typedef struct cinread_data_t {
