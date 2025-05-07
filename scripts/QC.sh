@@ -146,29 +146,31 @@ function biscuitQC {
 
     if [[ "${run_cov_qc}" == true ]]; then
         # Build up list of BED files to process
-        BEDS=
+        BED_TOP=
         if [[ -f "${BISCUIT_TOPGC}" ]]; then
-            BEDS="${BEDS} -t ${BISCUIT_TOPGC}"
+            BED_TOP="-T ${BISCUIT_TOPGC}"
         else
             >&2 echo -ne "${BISCUIT_TOPGC} could not be found. covdist and "
             >&2 echo -ne "uniformity metrics related to top GC-content "
             >&2 echo -ne "deciles will not be generated\n"
         fi
 
+        BED_BOT=
         if [[ -f "${BISCUIT_TOPGC}" ]]; then
-            BEDS="${BEDS} -b ${BISCUIT_BOTGC}"
+            BED_BOT="-B ${BISCUIT_BOTGC}"
         else
             >&2 echo -ne "${BISCUIT_BOTGC} could not be found. covdist and "
             >&2 echo -ne "uniformity metrics related to bottom GC-content "
             >&2 echo -ne "deciles will not be generated\n"
         fi
 
-        BEDS="${BEDS} ${BISCUIT_CPGS}"
-
         biscuit qc_coverage \
-            -p ${outdir}/${sample} \
+            -P ${outdir}/${sample} \
             -@ "${n_threads}" \
-            ${BEDS} \
+            ${BED_TOP} \
+            ${BED_BOT} \
+            ${genome} \
+            ${BISCUIT_CPGS} \
             ${in_bam}
     fi
 

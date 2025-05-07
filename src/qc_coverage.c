@@ -320,7 +320,8 @@ static uint8_t *set_bit_array(htsFile *bed, tbx_t *tbx, int tid, uint32_t window
 // Function that is run by each thread, collects coverages across genome (factoring in CIGAR string), and then
 // turns the results into a hashmap for downstream processing
 static void *process_func(void *data) {
-    result_t *res  = (result_t*) data;
+    result_t *res = (result_t*) data;
+    covg_conf_t *conf = (covg_conf_t *) res->conf;
 
     // Open input file and check for existing BAM index
     htsFile   *in  = hts_open(res->bam_fn, "rb");
@@ -332,6 +333,9 @@ static void *process_func(void *data) {
     }
     bam_hdr_t *header = sam_hdr_read(in);
 
+    uint32_t flank = 1000;
+    refcache_t *rs = init_refcache(res->ref_fn, flank, flank);
+
     qc_cov_record_t rec;
     memset(&rec, 0, sizeof(qc_cov_record_t));
     qc_cov_window_t w;
@@ -340,6 +344,7 @@ static void *process_func(void *data) {
         if (w.tid == -1) break;
 
         char *chrm = header->target_name[w.tid];
+        refcache_fetch(rs, chrm, w.beg>flank ? w.beg-flank : 1, w.end+flank);
 
         // Tabulate coverages across window
         uint32_t *all_covgs = calloc(w.end - w.beg, sizeof(uint32_t));
@@ -353,16 +358,24 @@ static void *process_func(void *data) {
             bam1_core_t *c = &b->core;
 
             // Read-based filtering
-            // TODO: If I want to get the exact same results as from bedtools, I
-            //       will likely need to adjust my filters to match bedtools:
-            //       genomeCoverageBed/genomeCoverageBed.cpp:L303 and following
+            if (c->qual < conf->filt.min_mapq) continue;
+            if (c->l_qseq < 0 || (unsigned) c->l_qseq < conf->filt.min_read_len) continue;
             if (c->flag > 0) { // only when any flag is set
-                if (c->flag & BAM_FUNMAP) continue;
-                if (c->flag & BAM_FSECONDARY) continue;
-                if (c->flag & BAM_FQCFAIL) continue;
-                if (c->flag & BAM_FDUP) continue;
-                if (c->flag & BAM_FSUPPLEMENTARY) continue;
+                if (conf->filt.filter_secondary && c->flag & BAM_FSECONDARY) continue;
+                if (conf->filt.filter_duplicate && c->flag & BAM_FDUP) continue;
+                if (conf->filt.filter_ppair && c->flag & BAM_FPAIRED && !(c->flag & BAM_FPROPER_PAIR)) continue;
+                if (conf->filt.filter_qcfail && c->flag & BAM_FQCFAIL) continue;
             }
+
+            uint8_t *nm = bam_aux_get(b, "NM");
+            if (nm && bam_aux2i(nm) > conf->filt.max_nm) continue;
+
+            uint8_t *as = bam_aux_get(b, "AS");
+            if (as && bam_aux2i(as) < conf->filt.min_score) continue;
+
+            uint8_t bsstrand = get_bsstrand(rs, b, conf->filt.min_base_qual, 0);
+            uint32_t cnt_ret = cnt_retention(rs, b, bsstrand);
+            if (cnt_ret > conf->filt.max_retention) continue;
 
             // 0-based reference position
             uint32_t rpos = c->pos;
@@ -428,6 +441,7 @@ static void *process_func(void *data) {
     }
 
     // Final clean up
+    free_refcache(rs);
     bam_hdr_destroy(header);
     hts_idx_destroy(idx);
     hts_close(in);
@@ -437,6 +451,7 @@ static void *process_func(void *data) {
 
 void covg_conf_init(covg_conf_t *conf) {
     conf->bt = bisc_threads_init();
+    conf->filt = meth_filter_init();
 }
 
 // Print usage for tool
@@ -445,14 +460,23 @@ static int usage() {
     covg_conf_init(&conf);
 
     fprintf(stderr, "\n");
-    fprintf(stderr, "Usage: coverage [options] <cpgs.bed.gz> <in.bam>\n");
+    fprintf(stderr, "Usage: coverage [options] <ref.fa> <cpgs.bed.gz> <in.bam>\n");
     fprintf(stderr, "\n");
     fprintf(stderr, "Options:\n");
-    fprintf(stderr, "    -p STR    Prefix for output file names\n");
-    fprintf(stderr, "    -b STR    Bottom 10 percent GC content windows BED file\n");
-    fprintf(stderr, "    -t STR    Top 10 percent GC content windows BED file\n");
+    fprintf(stderr, "    -P STR    Prefix for output file names\n");
+    fprintf(stderr, "    -B STR    Bottom 10 percent GC content windows BED file\n");
+    fprintf(stderr, "    -T STR    Top 10 percent GC content windows BED file\n");
     fprintf(stderr, "    -s INT    Step size of windows [%d]\n", conf.bt.step);
     fprintf(stderr, "    -@ INT    Number of threads [%d]\n", conf.bt.n_threads);
+    fprintf(stderr, "Filter options:\n");
+    fprintf(stderr, "    -b INT    Minimum base quality [%u]\n", conf.filt.min_base_qual);
+    fprintf(stderr, "    -m INT    Minimum mapping quality [%u]\n", conf.filt.min_mapq);
+    fprintf(stderr, "    -a INT    Minimum alignment score (from AS-tag) [%u]\n", conf.filt.min_score);
+    fprintf(stderr, "    -t INT    Max cytosine retention in a read [%u]\n", conf.filt.max_retention);
+    fprintf(stderr, "    -l INT    Minimum read length [%u]\n", conf.filt.min_read_len);
+    fprintf(stderr, "    -u        NO filtering of duplicate reads\n");
+    fprintf(stderr, "    -p        NO filtering of improper pair\n");
+    fprintf(stderr, "    -n INT    Maximum NM tag [%d]\n", conf.filt.max_nm);
     fprintf(stderr, "    -h        Print usage\n");
     fprintf(stderr, "\n");
 
@@ -472,13 +496,22 @@ int main_qc_coverage(int argc, char *argv[]) {
     // Process command line arguments
     int c;
     if (argc < 2) { return usage(); }
-    while ((c=getopt(argc, argv, ":@:b:p:s:t:h")) >= 0) {
+    while ((c=getopt(argc, argv, ":@:B:P:T:a:b:l:m:n:s:t:chpu")) >= 0) {
         switch (c) {
             case '@': ensure_number(optarg); conf.bt.n_threads = atoi(optarg); break;
-            case 'b': bot_fn = optarg; break;
-            case 'p': prefix = optarg; break;
+            case 'B': bot_fn = optarg; break;
+            case 'P': prefix = optarg; break;
             case 's': ensure_number(optarg); conf.bt.step = atoi(optarg); break;
-            case 't': top_fn = optarg; break;
+            case 'T': top_fn = optarg; break;
+            case 't': conf.filt.max_retention = atoi(optarg); break;
+            case 'l': conf.filt.min_read_len = atoi(optarg); break;
+            case 'n': conf.filt.max_nm = atoi(optarg); break;
+            case 'b': conf.filt.min_base_qual = atoi(optarg); break;
+            case 'm': conf.filt.min_mapq = atoi(optarg); break;
+            case 'a': conf.filt.min_score = atoi(optarg); break;
+            case 'c': conf.filt.filter_secondary = 0; break;
+            case 'u': conf.filt.filter_duplicate = 0; break;
+            case 'p': conf.filt.filter_ppair = 0; break;
             case 'h': usage(); return 0;
             case ':': usage(); fprintf(stderr, "Option needs an argument: -%c\n", optopt); return 1;
             case '?': usage(); fprintf(stderr, "Unrecognized option: -%c\n", optopt); return 1;
@@ -487,13 +520,14 @@ int main_qc_coverage(int argc, char *argv[]) {
     }
 
     // Missing required arguments
-    if (optind + 2 > argc) {
+    if (optind + 3 > argc) {
         usage();
-        fprintf(stderr, "CpG BED file or BAM input is missing\n");
+        fprintf(stderr, "CpG BED file, reference FASTA, or BAM input is missing\n");
         return 1;
     }
 
     // Set required argument values
+    char *reffn = argv[optind++];
     char *cpg_bed_fn = argv[optind++];
     char *infn = argv[optind++];
 
@@ -531,9 +565,11 @@ int main_qc_coverage(int argc, char *argv[]) {
     result_t *results = calloc(conf.bt.n_threads, sizeof(result_t));
     int i;
     for (i=0; i<conf.bt.n_threads; ++i) {
+        results[i].conf = &conf;
+        results[i].bam_fn = infn;
+        results[i].ref_fn = reffn;
         results[i].q = wq;
         results[i].rq = writer_conf.q;
-        results[i].bam_fn = infn;
         pthread_create(&processors[i], NULL, process_func, &results[i]);
     }
 

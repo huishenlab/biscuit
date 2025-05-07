@@ -13,6 +13,7 @@
 // Command line interface configuration
 typedef struct {
     bisc_threads_t bt;  /* multithreading parameters */
+    meth_filter_t filt; /* filtering for reads */
 } covg_conf_t;
 
 void covg_conf_init(covg_conf_t *conf);
@@ -190,9 +191,11 @@ DEFINE_WQUEUE(qc_cov_window, qc_cov_window_t)
 
 // Information shared across threads
 typedef struct {
-    char             *bam_fn;      /* BAM filename */
-    wqueue_t(qc_cov_window) *q;           /* window queue */
-    wqueue_t(qc_cov_record) *rq;          /* records queue */
+    covg_conf_t             *conf;   /* config variables */
+    char                    *bam_fn; /* BAM filename */
+    char                    *ref_fn; /* reference filename */
+    wqueue_t(qc_cov_window) *q;      /* window queue */
+    wqueue_t(qc_cov_record) *rq;     /* records queue */
 } result_t;
 
 // Information needed for writing outputs
