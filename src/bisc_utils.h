@@ -56,6 +56,9 @@ static inline bisc_common_t bisc_common_init() {
 
 // Multithreading specific parameters
 // TODO: can probably merge this into bisc_common_t
+#define N_THREADS_DEFAULT 3
+#define STEP_SIZE_DEFAULT 100000
+
 typedef struct {
     int step;      /* step size of window dispatching */
     int n_threads; /* number of processing threads */
@@ -64,8 +67,8 @@ typedef struct {
 static inline bisc_threads_t bisc_threads_init() {
     bisc_threads_t out;
 
-    out.step = 100000;
-    out.n_threads = 3;
+    out.step = STEP_SIZE_DEFAULT;
+    out.n_threads = N_THREADS_DEFAULT;
 
     return out;
 }

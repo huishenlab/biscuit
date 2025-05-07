@@ -8,20 +8,14 @@
 #include "wzmisc.h"
 
 #include "khashl.h"
-
-#define N_THREADS_DEFAULT 1
-#define STEP_SIZE_DEFAULT 100000
+#include "bisc_utils.h"
 
 // Command line interface configuration
 typedef struct {
-    int step;
-    int n_threads;
+    bisc_threads_t bt;  /* multithreading parameters */
 } covg_conf_t;
 
-static void covg_conf_init(covg_conf_t *conf) {
-    conf->step = STEP_SIZE_DEFAULT;
-    conf->n_threads = N_THREADS_DEFAULT;
-}
+void covg_conf_init(covg_conf_t *conf);
 
 // Coverage table data
 typedef struct {

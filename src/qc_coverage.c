@@ -435,6 +435,10 @@ static void *process_func(void *data) {
     return 0;
 }
 
+void covg_conf_init(covg_conf_t *conf) {
+    conf->bt = bisc_threads_init();
+}
+
 // Print usage for tool
 static int usage() {
     covg_conf_t conf;
@@ -447,8 +451,8 @@ static int usage() {
     fprintf(stderr, "    -p STR    Prefix for output file names\n");
     fprintf(stderr, "    -b STR    Bottom 10 percent GC content windows BED file\n");
     fprintf(stderr, "    -t STR    Top 10 percent GC content windows BED file\n");
-    fprintf(stderr, "    -s INT    Step size of windows [%d]\n", conf.step);
-    fprintf(stderr, "    -@ INT    Number of threads [%d]\n", conf.n_threads);
+    fprintf(stderr, "    -s INT    Step size of windows [%d]\n", conf.bt.step);
+    fprintf(stderr, "    -@ INT    Number of threads [%d]\n", conf.bt.n_threads);
     fprintf(stderr, "    -h        Print usage\n");
     fprintf(stderr, "\n");
 
@@ -470,10 +474,10 @@ int main_qc_coverage(int argc, char *argv[]) {
     if (argc < 2) { return usage(); }
     while ((c=getopt(argc, argv, ":@:b:p:s:t:h")) >= 0) {
         switch (c) {
-            case '@': ensure_number(optarg); conf.n_threads = atoi(optarg); break;
+            case '@': ensure_number(optarg); conf.bt.n_threads = atoi(optarg); break;
             case 'b': bot_fn = optarg; break;
             case 'p': prefix = optarg; break;
-            case 's': ensure_number(optarg); conf.step = atoi(optarg); break;
+            case 's': ensure_number(optarg); conf.bt.step = atoi(optarg); break;
             case 't': top_fn = optarg; break;
             case 'h': usage(); return 0;
             case ':': usage(); fprintf(stderr, "Option needs an argument: -%c\n", optopt); return 1;
@@ -494,13 +498,13 @@ int main_qc_coverage(int argc, char *argv[]) {
     char *infn = argv[optind++];
 
     // Validate the number of threads and step size
-    if (conf.n_threads < 1) {
-        fprintf(stderr, "[WARNING] Number of threads is < 1. Setting to %i\n", N_THREADS_DEFAULT);
-        conf.n_threads = N_THREADS_DEFAULT;
+    if (conf.bt.n_threads < 1) {
+        fprintf(stderr, "[WARNING] Number of threads is < 1. Setting to default\n");
+        conf.bt.n_threads = N_THREADS_DEFAULT;
     }
-    if (conf.step < 1) {
-        fprintf(stderr, "[WARNING] Window step size is < 1. Setting to %i\n", STEP_SIZE_DEFAULT);
-        conf.step = STEP_SIZE_DEFAULT;
+    if (conf.bt.step < 1) {
+        fprintf(stderr, "[WARNING] Window step size is < 1. Setting to default\n");
+        conf.bt.step = STEP_SIZE_DEFAULT;
     }
 
     // Read input BAM to get chromosome sizes for setting windows
@@ -516,17 +520,17 @@ int main_qc_coverage(int argc, char *argv[]) {
     writer_conf_t writer_conf = {
         .has_top = (top_fn) ? 1 : 0,
         .has_bot = (bot_fn) ? 1 : 0,
-        .q = wqueue_init(qc_cov_record, conf.step),
+        .q = wqueue_init(qc_cov_record, conf.bt.step),
         .prefix = prefix ? prefix : NULL,
     };
     pthread_create(&writer, NULL, coverage_write_func, &writer_conf);
 
     // Setup multithreading
-    wqueue_t(qc_cov_window) *wq = wqueue_init(qc_cov_window, conf.step);
-    pthread_t *processors = calloc(conf.n_threads, sizeof(pthread_t));
-    result_t *results = calloc(conf.n_threads, sizeof(result_t));
+    wqueue_t(qc_cov_window) *wq = wqueue_init(qc_cov_window, conf.bt.step);
+    pthread_t *processors = calloc(conf.bt.n_threads, sizeof(pthread_t));
+    result_t *results = calloc(conf.bt.n_threads, sizeof(result_t));
     int i;
-    for (i=0; i<conf.n_threads; ++i) {
+    for (i=0; i<conf.bt.n_threads; ++i) {
         results[i].q = wq;
         results[i].rq = writer_conf.q;
         results[i].bam_fn = infn;
@@ -563,27 +567,27 @@ int main_qc_coverage(int argc, char *argv[]) {
     size_t j;
     for (j=0; j<header->n_targets; ++j) {
         uint32_t len = header->target_len[j];
-        for (wbeg=0; wbeg<len; wbeg += conf.step, block_id++) {
+        for (wbeg=0; wbeg<len; wbeg += conf.bt.step, block_id++) {
             w.tid = j;
             w.block_id = block_id;
             w.beg = wbeg;
-            w.end = wbeg + conf.step;
+            w.end = wbeg + conf.bt.step;
             if (w.end > len) w.end = len;
-            w.cpg = set_bit_array(cpg_bed, cpg_tbx, j, wbeg, wbeg+conf.step > len ? len : wbeg+conf.step, 2);
-            w.top = set_bit_array(top_bed, top_tbx, j, wbeg, wbeg+conf.step > len ? len : wbeg+conf.step, 3);
-            w.bot = set_bit_array(bot_bed, bot_tbx, j, wbeg, wbeg+conf.step > len ? len : wbeg+conf.step, 3);
+            w.cpg = set_bit_array(cpg_bed, cpg_tbx, j, wbeg, wbeg+conf.bt.step > len ? len : wbeg+conf.bt.step, 2);
+            w.top = set_bit_array(top_bed, top_tbx, j, wbeg, wbeg+conf.bt.step > len ? len : wbeg+conf.bt.step, 3);
+            w.bot = set_bit_array(bot_bed, bot_tbx, j, wbeg, wbeg+conf.bt.step > len ? len : wbeg+conf.bt.step, 3);
             wqueue_put(qc_cov_window, wq, &w);
         }
     }
 
     // "Windows" for telling thread pool we've reached the end of our queue
-    for (i=0; i<conf.n_threads; ++i) {
+    for (i=0; i<conf.bt.n_threads; ++i) {
         w.tid = -1;
         wqueue_put(qc_cov_window, wq, &w);
     }
 
     // Collect our threads back into serial processing
-    for (i=0; i<conf.n_threads; ++i) {
+    for (i=0; i<conf.bt.n_threads; ++i) {
         pthread_join(processors[i], NULL);
     }
 
