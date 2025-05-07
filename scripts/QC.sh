@@ -7,8 +7,7 @@
 ## showing the different BISCUIT QC metrics
 ##
 ## Notes:
-##   1.) biscuit, samtools, bedtools, and awk all must be in PATH for
-##       script to work
+##   1.) biscuit and GNU awk must be in PATH for script to work
 ##
 ## Created by:
 ##   Wanding Zhou
@@ -41,33 +40,44 @@
 ##   Jan 2023 -
 ##     - Fix bug so new versions of GNU parallel work
 ##     - Remove GNU parallel dependency
+##   May 2025 -
+##     - Incorporate new QC coverage subcommand
+##     - Split finding biscuit and awk
+##     - Minimum version of 1.7.0 must be used for biscuit
 ##
 ################################################################################
 
 set -euo pipefail
+
 # Improves sort/awk performance
 export LC_ALL=C
 
-# Check for biscuit, samtools, bedtools, awk in PATH
-function check_path {
-  if [[ `which biscuit 2>&1 > /dev/null` ]]; then
-      >&2 echo "biscuit does not exist in PATH"
-      exit 1
-  else
-      >&2 echo "Using biscuit found at: `which biscuit`"
-  fi
-  if [[ `which samtools 2>&1 > /dev/null` ]]; then
-      >&2 echo "samtools does not exist in PATH"
-      exit 1
-  else
-      >&2 echo "Using samtools found at: `which samtools`"
-  fi
-  if [[ `which bedtools 2>&1 > /dev/null` ]]; then
-      >&2 echo "bedtools does not exist in PATH"
-      exit 1
-  else
-      >&2 echo "Using bedtools found at: `which bedtools`"
-  fi
+# Check for biscuit in PATH
+function check_biscuit {
+    # Minimum version of BISCUIT to run qc_coverage
+    min_version=1.7
+
+    # BISCUIT uses major.minor.patch versioning, so we need to store the entire version string for printing to screen
+    v_complete=$(biscuit version 2>&1 >/dev/null | head -n1 | cut -f3 -d ' ')
+
+    # If we couldn't find BISCUIT, we won't get a number as output
+    if [[ ! "$v_complete" =~ ^[0-9]\.[0-9]*\.[0-9]*$ ]]; then
+        >&2 echo "Could not find biscuit"
+        exit 1
+    fi
+
+    v_maj_minr=$(echo "${v_complete}" | cut -f1-2 -d .)
+    check=$(echo "$v_maj_minr < $min_version" | bc -l)
+    if [ "$check" -eq 1 ]; then
+        >&2 echo "Found biscuit v$v_complete, but it does not meet minimum version needed (v$min_version)"
+        exit 1
+    fi
+
+    >&2 echo "Using biscuit v$v_complete found at: `which biscuit`"
+}
+
+# Check for GNU awk in PATH
+function check_awk {
   if [[ `which awk 2>&1 > /dev/null` ]]; then
       >&2 echo "awk does not exist in PATH"
       exit 1
@@ -114,7 +124,8 @@ function wait_for_jobs {
 # Workhorse function for processing BISCUIT QC
 function biscuitQC {
     # Simple check for necessary command line tools
-    check_path
+    check_awk
+    check_biscuit
 
     # Check variables and their associated files exist
     #check_variables
@@ -134,290 +145,31 @@ function biscuitQC {
     fi
 
     if [[ "${run_cov_qc}" == true ]]; then
-        # Create genomecov_all, genomecov_q40, genomecov_all_dup, genomecov_q40_dup
-        # Spawn these to the background
-        bedtools genomecov -bga -split -ibam ${in_bam} | sort -k1,1 -k2,2n -T ${outdir} > ${outdir}/${sample}_genomecov_all.tmp.bed &
-        samtools view -q 40 -b ${in_bam} | bedtools genomecov -bga -split -ibam stdin | sort -k1,1 -k2,2n -T ${outdir} > ${outdir}/${sample}_genomecov_q40.tmp.bed &
-        samtools view -f 0x400 -b ${in_bam} | bedtools genomecov -bga -split -ibam stdin | sort -k1,1 -k2,2n -T ${outdir} > ${outdir}/${sample}_genomecov_all_dup.tmp.bed &
-        samtools view -f 0x400 -q 40 -b ${in_bam} | bedtools genomecov -bga -split -ibam stdin | sort -k1,1 -k2,2n -T ${outdir} > ${outdir}/${sample}_genomecov_q40_dup.tmp.bed &
-
-        wait_for_jobs
-
-        # Create cpg_all, cpg_q40
-        bedtools intersect -sorted -wo -b ${outdir}/${sample}_genomecov_all.tmp.bed -a ${BISCUIT_CPGS} | bedtools groupby -g 1-3 -c 7 -o min > ${outdir}/${sample}_cpg_all.tmp.bed &
-        bedtools intersect -sorted -wo -b ${outdir}/${sample}_genomecov_q40.tmp.bed -a ${BISCUIT_CPGS} | bedtools groupby -g 1-3 -c 7 -o min > ${outdir}/${sample}_cpg_q40.tmp.bed &
-
-        wait_for_jobs
-
-        # Coverage distributions and uniformity
-        echo -e "BISCUITqc Uniformity Table" > ${outdir}/${sample}_cv_table.txt
-        echo -e "group\tmu\tsigma\tcv" >> ${outdir}/${sample}_cv_table.txt
-
-        echo -e "BISCUITqc Depth Distribution - All Bases" \
-            > ${outdir}/${sample}_covdist_all_base_table.txt
-        echo -e "depth\tcount" >> ${outdir}/${sample}_covdist_all_base_table.txt
-        cat ${outdir}/${sample}_genomecov_all.tmp.bed | \
-        awk -v output="${outdir}/${sample}_cv_table.txt" '{ cnt[$4] += $3-$2 } END {
-            for (cov in cnt) {
-                print int(cov)"\t"int(cnt[cov])
-                sum_cov += cnt[cov]*cov
-                sum_cnt += cnt[cov]
-            }
-            if (sum_cnt > 0 && sum_cov > 0) {
-                mu = sum_cov / sum_cnt
-                for (cov in cnt) { sum_var += cnt[cov]*((cov-mu)^2) }
-                sigma = sqrt(sum_var / sum_cnt)
-                print "all_base\t"mu"\t"sigma"\t"sigma/mu >> output
-            }
-        }' | \
-        sort -k1,1n -T ${outdir} >> ${outdir}/${sample}_covdist_all_base_table.txt
-
-        echo -e "BISCUITqc Depth Distribution - All CpGs" \
-            > ${outdir}/${sample}_covdist_all_cpg_table.txt
-        echo -e "depth\tcount" >> ${outdir}/${sample}_covdist_all_cpg_table.txt
-        cat ${outdir}/${sample}_cpg_all.tmp.bed | \
-        awk -v output="${outdir}/${sample}_cv_table.txt" '{ cnt[$4] += 1 } END {
-            for (cov in cnt) {
-                print int(cov)"\t"int(cnt[cov])
-                sum_cov += cnt[cov]*cov
-                sum_cnt += cnt[cov]
-            }
-            if (sum_cnt > 0 && sum_cov > 0) {
-                mu = sum_cov / sum_cnt
-                for (cov in cnt) { sum_var += cnt[cov]*((cov-mu)^2) }
-                sigma = sqrt(sum_var / sum_cnt)
-                print "all_cpg\t"mu"\t"sigma"\t"sigma/mu >> output
-            }
-        }' | \
-        sort -k1,1n -T ${outdir} >> ${outdir}/${sample}_covdist_all_cpg_table.txt
-
-        echo -e "BISCUITqc Depth Distribution - Q40 Bases" \
-            > ${outdir}/${sample}_covdist_q40_base_table.txt
-        echo -e "depth\tcount" >> ${outdir}/${sample}_covdist_q40_base_table.txt
-        cat ${outdir}/${sample}_genomecov_q40.tmp.bed | \
-        awk -v output="${outdir}/${sample}_cv_table.txt" '{ cnt[$4] += $3-$2 } END {
-            for (cov in cnt) {
-                print int(cov)"\t"int(cnt[cov])
-                sum_cov += cnt[cov]*cov
-                sum_cnt += cnt[cov]
-            }
-            if (sum_cnt > 0 && sum_cov > 0) {
-                mu = sum_cov / sum_cnt
-                for (cov in cnt) { sum_var += cnt[cov]*((cov-mu)^2) }
-                sigma = sqrt(sum_var / sum_cnt)
-                print "q40_base\t"mu"\t"sigma"\t"sigma/mu >> output
-            }
-        }' | \
-        sort -k1,1n -T ${outdir} >> ${outdir}/${sample}_covdist_q40_base_table.txt
-
-        echo -e "BISCUITqc Depth Distribution - Q40 CpGs" \
-            > ${outdir}/${sample}_covdist_q40_cpg_table.txt
-        echo -e "depth\tcount" >> ${outdir}/${sample}_covdist_q40_cpg_table.txt
-        cat ${outdir}/${sample}_cpg_q40.tmp.bed | \
-        awk -v output="${outdir}/${sample}_cv_table.txt" '{ cnt[$4] += 1 } END {
-            for (cov in cnt) {
-                print int(cov)"\t"int(cnt[cov])
-                sum_cov += cnt[cov]*cov
-                sum_cnt += cnt[cov]
-            }
-            if (sum_cnt > 0 && sum_cov > 0) {
-                mu = sum_cov / sum_cnt
-                for (cov in cnt) { sum_var += cnt[cov]*((cov-mu)^2) }
-                sigma = sqrt(sum_var / sum_cnt)
-                print "q40_cpg\t"mu"\t"sigma"\t"sigma/mu >> output
-            }
-        }' | \
-        sort -k1,1n -T ${outdir} >> ${outdir}/${sample}_covdist_q40_cpg_table.txt
-
-        if [[ -f "${BISCUIT_TOPGC}" && -f "${BISCUIT_BOTGC}" ]]; then
-            echo -e "BISCUITqc Depth Distribution - All Top GC Bases" \
-                > ${outdir}/${sample}_covdist_all_base_topgc_table.txt
-            echo -e "depth\tcount" \
-                >> ${outdir}/${sample}_covdist_all_base_topgc_table.txt
-            bedtools intersect -sorted \
-                -a ${outdir}/${sample}_genomecov_all.tmp.bed \
-                -b ${BISCUIT_TOPGC} | \
-            awk -v output="${outdir}/${sample}_cv_table.txt" '{ cnt[$4] += $3-$2 } END {
-                for (cov in cnt) {
-                    print int(cov)"\t"int(cnt[cov])
-                    sum_cov += cnt[cov]*cov
-                    sum_cnt += cnt[cov]
-                }
-                if (sum_cnt > 0 && sum_cov > 0) {
-                    mu = sum_cov / sum_cnt
-                    for (cov in cnt) { sum_var += cnt[cov]*((cov-mu)^2) }
-                    sigma = sqrt(sum_var / sum_cnt)
-                    print "all_base_topgc\t"mu"\t"sigma"\t"sigma/mu >> output
-                }
-            }' | \
-            sort -k1,1n -T ${outdir} \
-                >> ${outdir}/${sample}_covdist_all_base_topgc_table.txt
-
-            echo -e "BISCUITqc Depth Distribution - All Top GC CpGs" \
-                > ${outdir}/${sample}_covdist_all_cpg_topgc_table.txt
-            echo -e "depth\tcount" \
-                >> ${outdir}/${sample}_covdist_all_cpg_topgc_table.txt
-            bedtools intersect -sorted \
-                -a ${outdir}/${sample}_cpg_all.tmp.bed \
-                -b ${BISCUIT_TOPGC} | \
-            awk -v output="${outdir}/${sample}_cv_table.txt" '{ cnt[$4] += 1 } END {
-                for (cov in cnt) {
-                    print int(cov)"\t"int(cnt[cov])
-                    sum_cov += cnt[cov]*cov
-                    sum_cnt += cnt[cov]
-                }
-                if (sum_cnt > 0 && sum_cov > 0) {
-                    mu = sum_cov / sum_cnt
-                    for (cov in cnt) { sum_var += cnt[cov]*((cov-mu)^2) }
-                    sigma = sqrt(sum_var / sum_cnt)
-                    print "all_cpg_topgc\t"mu"\t"sigma"\t"sigma/mu >> output
-                }
-            }' | \
-            sort -k1,1n -T ${outdir} \
-                >> ${outdir}/${sample}_covdist_all_cpg_topgc_table.txt
-
-            echo -e "BISCUITqc Depth Distribution - Q40 Top GC Bases" \
-                > ${outdir}/${sample}_covdist_q40_base_topgc_table.txt
-            echo -e "depth\tcount" \
-                >> ${outdir}/${sample}_covdist_q40_base_topgc_table.txt
-            bedtools intersect -sorted \
-                -a ${outdir}/${sample}_genomecov_q40.tmp.bed \
-                -b ${BISCUIT_TOPGC} | \
-            awk -v output="${outdir}/${sample}_cv_table.txt" '{ cnt[$4] += $3-$2 } END {
-                for (cov in cnt) {
-                    print int(cov)"\t"int(cnt[cov])
-                    sum_cov += cnt[cov]*cov
-                    sum_cnt += cnt[cov]
-                }
-                if (sum_cnt > 0 && sum_cov > 0) {
-                    mu = sum_cov / sum_cnt
-                    for (cov in cnt) { sum_var += cnt[cov]*((cov-mu)^2) }
-                    sigma = sqrt(sum_var / sum_cnt)
-                    print "q40_base_topgc\t"mu"\t"sigma"\t"sigma/mu >> output
-                }
-            }' | \
-            sort -k1,1n -T ${outdir} \
-                >> ${outdir}/${sample}_covdist_q40_base_topgc_table.txt
-
-            echo -e "BISCUITqc Depth Distribution - Q40 Top GC CpGs" \
-                > ${outdir}/${sample}_covdist_q40_cpg_topgc_table.txt
-            echo -e "depth\tcount" \
-                >> ${outdir}/${sample}_covdist_q40_cpg_topgc_table.txt
-            bedtools intersect -sorted \
-                -a ${outdir}/${sample}_cpg_q40.tmp.bed \
-                -b ${BISCUIT_TOPGC} | \
-            awk -v output="${outdir}/${sample}_cv_table.txt" '{ cnt[$4] += 1 } END {
-                for (cov in cnt) {
-                    print int(cov)"\t"int(cnt[cov])
-                    sum_cov += cnt[cov]*cov
-                    sum_cnt += cnt[cov]
-                }
-                if (sum_cnt > 0 && sum_cov > 0) {
-                    mu = sum_cov / sum_cnt
-                    for (cov in cnt) { sum_var += cnt[cov]*((cov-mu)^2) }
-                    sigma = sqrt(sum_var / sum_cnt)
-                    print "q40_cpg_topgc\t"mu"\t"sigma"\t"sigma/mu >> output
-                }
-            }' | \
-            sort -k1,1n -T ${outdir} \
-                >> ${outdir}/${sample}_covdist_q40_cpg_topgc_table.txt
-
-            echo -e "BISCUITqc Depth Distribution - All Bot GC Bases" \
-                > ${outdir}/${sample}_covdist_all_base_botgc_table.txt
-            echo -e "depth\tcount" \
-                >> ${outdir}/${sample}_covdist_all_base_botgc_table.txt
-            bedtools intersect -sorted \
-                -a ${outdir}/${sample}_genomecov_all.tmp.bed \
-                -b ${BISCUIT_BOTGC} | \
-            awk -v output="${outdir}/${sample}_cv_table.txt" '{ cnt[$4] += $3-$2 } END {
-                for (cov in cnt) {
-                    print int(cov)"\t"int(cnt[cov])
-                    sum_cov += cnt[cov]*cov
-                    sum_cnt += cnt[cov]
-                }
-                if (sum_cnt > 0 && sum_cov > 0) {
-                    mu = sum_cov / sum_cnt
-                    for (cov in cnt) { sum_var += cnt[cov]*((cov-mu)^2) }
-                    sigma = sqrt(sum_var / sum_cnt)
-                    print "all_base_botgc\t"mu"\t"sigma"\t"sigma/mu >> output
-                }
-            }' | \
-            sort -k1,1n -T ${outdir} \
-                >> ${outdir}/${sample}_covdist_all_base_botgc_table.txt
-
-            echo -e "BISCUITqc Depth Distribution - All Bot GC CpGs" \
-                > ${outdir}/${sample}_covdist_all_cpg_botgc_table.txt
-            echo -e "depth\tcount" \
-                >> ${outdir}/${sample}_covdist_all_cpg_botgc_table.txt
-            bedtools intersect -sorted \
-                -a ${outdir}/${sample}_cpg_all.tmp.bed \
-                -b ${BISCUIT_BOTGC} | \
-            awk -v output="${outdir}/${sample}_cv_table.txt" '{ cnt[$4] += 1 } END {
-                for (cov in cnt) {
-                    print int(cov)"\t"int(cnt[cov])
-                    sum_cov += cnt[cov]*cov
-                    sum_cnt += cnt[cov]
-                }
-                if (sum_cnt > 0 && sum_cov > 0) {
-                    mu = sum_cov / sum_cnt
-                    for (cov in cnt) { sum_var += cnt[cov]*((cov-mu)^2) }
-                    sigma = sqrt(sum_var / sum_cnt)
-                    print "all_cpg_botgc\t"mu"\t"sigma"\t"sigma/mu >> output
-                }
-            }' | \
-            sort -k1,1n -T ${outdir} \
-                >> ${outdir}/${sample}_covdist_all_cpg_botgc_table.txt
-
-            echo -e "BISCUITqc Depth Distribution - Q40 Bot GC Bases" \
-                > ${outdir}/${sample}_covdist_q40_base_botgc_table.txt
-            echo -e "depth\tcount" \
-                >> ${outdir}/${sample}_covdist_q40_base_botgc_table.txt
-            bedtools intersect -sorted \
-                -a ${outdir}/${sample}_genomecov_q40.tmp.bed \
-                -b ${BISCUIT_BOTGC} | \
-            awk -v output="${outdir}/${sample}_cv_table.txt" '{ cnt[$4] += $3-$2 } END {
-                for (cov in cnt) {
-                    print int(cov)"\t"int(cnt[cov])
-                    sum_cov += cnt[cov]*cov
-                    sum_cnt += cnt[cov]
-                }
-                if (sum_cnt > 0 && sum_cov > 0) {
-                    mu = sum_cov / sum_cnt
-                    for (cov in cnt) { sum_var += cnt[cov]*((cov-mu)^2) }
-                    sigma = sqrt(sum_var / sum_cnt)
-                    print "q40_base_botgc\t"mu"\t"sigma"\t"sigma/mu >> output
-                }
-            }' | \
-            sort -k1,1n -T ${outdir} \
-                >> ${outdir}/${sample}_covdist_q40_base_botgc_table.txt
-
-            echo -e "BISCUITqc Depth Distribution - Q40 Bot GC CpGs" \
-                > ${outdir}/${sample}_covdist_q40_cpg_botgc_table.txt
-            echo -e "depth\tcount" \
-                >> ${outdir}/${sample}_covdist_q40_cpg_botgc_table.txt
-            bedtools intersect -sorted \
-                -a ${outdir}/${sample}_cpg_q40.tmp.bed \
-                -b ${BISCUIT_BOTGC} | \
-            awk -v output="${outdir}/${sample}_cv_table.txt" '{ cnt[$4] += 1 } END {
-                for (cov in cnt) {
-                    print int(cov)"\t"int(cnt[cov])
-                    sum_cov += cnt[cov]*cov
-                    sum_cnt += cnt[cov]
-                }
-                if (sum_cnt > 0 && sum_cov > 0) {
-                    mu = sum_cov / sum_cnt
-                    for (cov in cnt) { sum_var += cnt[cov]*((cov-mu)^2) }
-                    sigma = sqrt(sum_var / sum_cnt)
-                    print "q40_cpg_botgc\t"mu"\t"sigma"\t"sigma/mu >> output
-                }
-            }' | \
-            sort -k1,1n -T ${outdir} \
-                >> ${outdir}/${sample}_covdist_q40_cpg_botgc_table.txt
+        # Build up list of BED files to process
+        BEDS=
+        if [[ -f "${BISCUIT_TOPGC}" ]]; then
+            BEDS="${BEDS} -t ${BISCUIT_TOPGC}"
         else
-            >&2 echo -ne "Either ${BISCUIT_TOPGC} or ${BISCUIT_BOTGC} could not be "
-            >&2 echo -ne "found. covdist files and uniformity metrics related to "
-            >&2 echo -ne "top/bottom GC-content deciles will not be generated."
+            >&2 echo -ne "${BISCUIT_TOPGC} could not be found. covdist and "
+            >&2 echo -ne "uniformity metrics related to top GC-content "
+            >&2 echo -ne "deciles will not be generated\n"
         fi
+
+        if [[ -f "${BISCUIT_TOPGC}" ]]; then
+            BEDS="${BEDS} -b ${BISCUIT_BOTGC}"
+        else
+            >&2 echo -ne "${BISCUIT_BOTGC} could not be found. covdist and "
+            >&2 echo -ne "uniformity metrics related to bottom GC-content "
+            >&2 echo -ne "deciles will not be generated\n"
+        fi
+
+        BEDS="${BEDS} ${BISCUIT_CPGS}"
+
+        biscuit qc_coverage \
+            -p ${outdir}/${sample} \
+            -@ "${n_threads}" \
+            ${BEDS} \
+            ${in_bam}
     fi
 
     if [[ -f ${in_vcf} ]]; then
@@ -465,7 +217,7 @@ function biscuitQC {
 
 # Print helpful usage information
 function usage {
-    >&2 echo -e "\nUsage: QC.sh [-h,--help] [-s,--single-end] [-v,--vcf] [-o,--outdir] [-k,--keep-tmp-files] [-n,--no-cov-qc] assets_directory genome sample_name in_bam\n"
+    >&2 echo -e "\nUsage: QC.sh [options] assets_directory genome sample_name in_bam\n"
     >&2 echo -e "Required inputs:"
     >&2 echo -e "\tassets_directory    : Path to assets directory"
     >&2 echo -e "\tgenome              : Path to reference FASTA file used in alignment"
@@ -477,7 +229,8 @@ function usage {
     >&2 echo -e "\t-v,--vcf            : Path to VCF output from BISCUIT [DEFAULT: <unused>]"
     >&2 echo -e "\t-o,--outdir         : Output directory [DEFAULT: BISCUITqc]"
     >&2 echo -e "\t-k,--keep-tmp-files : Flag to keep temporary files for debugging [DEFAULT: Delete files]"
-    >&2 echo -e "\t-n,--no-cov-qc      : Do not perform coverage or coverage uniformity QC [DEFAULT: Runs coverage QC]\n"
+    >&2 echo -e "\t-n,--no-cov-qc      : Do not perform coverage or coverage uniformity QC [DEFAULT: Runs coverage QC]"
+    >&2 echo -e "\t-t,--n-threads      : Number of threads to use for coverage [DEFAULT: 1]\n"
 }
 
 # Initialize default values for optional inputs
@@ -486,11 +239,12 @@ outdir="BISCUITqc"
 keep_tmp=false
 single_end=false
 run_cov_qc=true
+n_threads=1
 
 # Process command line arguments
 OPTS=$(getopt \
-    --options hsv:o:kn \
-    --long help,single-end,vcf:,outdir:,keep-tmp-files,no-cov-qc \
+    --options sv:o:knt:h \
+    --long single-end,vcf:,outdir:,keep-tmp-files,no-cov-qc,n-threads:,help \
     --name "$(basename "$0")" \
     -- "$@"
 )
@@ -498,10 +252,6 @@ eval set -- ${OPTS}
 
 while true; do
     case "$1" in
-        -h|--help )
-            usage
-            exit 0
-            ;;
         -s|--single-end )
             single_end=true
             shift
@@ -521,6 +271,14 @@ while true; do
         -n|--no-cov-qc )
             run_cov_qc=false
             shift
+            ;;
+        -t|--n-threads )
+            n_threads=${2}
+            shift 2
+            ;;
+        -h|--help )
+            usage
+            exit 0
             ;;
         -- )
             shift
@@ -581,6 +339,7 @@ BISCUIT_BOTGC="${assets}/windows100bp.gc_content.bot10p.bed.gz"
 >&2 echo "Keep *.tmp.* files : ${keep_tmp}"
 >&2 echo "Run coverage QC    : ${run_cov_qc}"
 >&2 echo "Single-end data    : ${single_end}"
+>&2 echo "Number of threads  : ${n_threads}"
 >&2 echo "CPGS               : ${BISCUIT_CPGS}"
 >&2 echo "TOPGC              : ${BISCUIT_TOPGC}"
 >&2 echo "BOTGC              : ${BISCUIT_BOTGC}"
