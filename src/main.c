@@ -60,6 +60,7 @@ int main_bsconv(int argc, char *argv[]);
 int main_mergecg(int argc, char *argv[]);
 int main_rectangle(int argc, char *argv[]);
 int main_qc(int argc, char *argv[]);
+int main_qc_coverage(int argc, char *argv[]);
 int main_bc(int argc, char *argv[]);
 
 static int usage() {
@@ -96,6 +97,7 @@ static int usage() {
     fprintf(stderr, "    version      Print BISCUIT and library versions\n");
     fprintf(stderr, "    help         Print usage and exit\n");
     fprintf(stderr, "    qc           Generate QC files from BAM\n");
+    fprintf(stderr, "    qc_coverage  Generate coverage-specific QC files from BAM\n");
     fprintf(stderr, "    bc           Extract barcodes from FASTQ files\n");
     fprintf(stderr, "\n");
 
@@ -125,6 +127,7 @@ int main(int argc, char *argv[]) {
     else if (strcmp(argv[1], "bsconv") == 0) ret = main_bsconv(argc-1, argv+1);
     else if (strcmp(argv[1], "rectangle") == 0) ret = main_rectangle(argc-1, argv+1);
     else if (strcmp(argv[1], "qc") == 0) ret = main_qc(argc-1, argv+1);
+    else if (strcmp(argv[1], "qc_coverage") == 0) ret = main_qc_coverage(argc-1, argv+1);
     else if (strcmp(argv[1], "bc") == 0) ret = main_bc(argc-1, argv+1);
     else if (strcmp(argv[1], "help") == 0) {
         usage();
