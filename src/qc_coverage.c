@@ -341,7 +341,6 @@ static void *process_func(void *data) {
 
         char *chrm = header->target_name[w.tid];
 
-
         // Tabulate coverages across window
         uint32_t *all_covgs = calloc(w.end - w.beg, sizeof(uint32_t));
         uint32_t *q40_covgs = calloc(w.end - w.beg, sizeof(uint32_t));
@@ -512,20 +511,6 @@ int main_qc_coverage(int argc, char *argv[]) {
     }
     bam_hdr_t *header = sam_hdr_read(in);
 
-    // Sort sequence name by alphabetic order, chr1, chr10, chr11 ...
-    // TODO: Verify this isn't actually needed
-    target_v *targets = init_target_v(50);
-    target_t *t;
-    int i;
-    for (i=0; i<header->n_targets; ++i) {
-        t = next_ref_target_v(targets);
-        t->tid = i;
-        t->name = header->target_name[i];
-        t->len = header->target_len[i];
-    }
-
-    qsort(targets->buffer, targets->size, sizeof(target_t), compare_targets);
-
     // Setup writer
     pthread_t writer;
     writer_conf_t writer_conf = {
@@ -540,6 +525,7 @@ int main_qc_coverage(int argc, char *argv[]) {
     wqueue_t(qc_cov_window) *wq = wqueue_init(qc_cov_window, conf.step);
     pthread_t *processors = calloc(conf.n_threads, sizeof(pthread_t));
     result_t *results = calloc(conf.n_threads, sizeof(result_t));
+    int i;
     for (i=0; i<conf.n_threads; ++i) {
         results[i].q = wq;
         results[i].rq = writer_conf.q;
@@ -575,17 +561,17 @@ int main_qc_coverage(int argc, char *argv[]) {
     }
 
     size_t j;
-    for (j=0; j<targets->size; ++j) {
-        t = ref_target_v(targets, j);
-        for (wbeg=0; wbeg<t->len; wbeg += conf.step, block_id++) {
-            w.tid = t->tid;
+    for (j=0; j<header->n_targets; ++j) {
+        uint32_t len = header->target_len[j];
+        for (wbeg=0; wbeg<len; wbeg += conf.step, block_id++) {
+            w.tid = j;
             w.block_id = block_id;
             w.beg = wbeg;
             w.end = wbeg + conf.step;
-            if (w.end > t->len) w.end = t->len;
-            w.cpg = set_bit_array(cpg_bed, cpg_tbx, t->tid, wbeg, wbeg+conf.step > t->len ? t->len : wbeg+conf.step, 2);
-            w.top = set_bit_array(top_bed, top_tbx, t->tid, wbeg, wbeg+conf.step > t->len ? t->len : wbeg+conf.step, 3);
-            w.bot = set_bit_array(bot_bed, bot_tbx, t->tid, wbeg, wbeg+conf.step > t->len ? t->len : wbeg+conf.step, 3);
+            if (w.end > len) w.end = len;
+            w.cpg = set_bit_array(cpg_bed, cpg_tbx, j, wbeg, wbeg+conf.step > len ? len : wbeg+conf.step, 2);
+            w.top = set_bit_array(top_bed, top_tbx, j, wbeg, wbeg+conf.step > len ? len : wbeg+conf.step, 3);
+            w.bot = set_bit_array(bot_bed, bot_tbx, j, wbeg, wbeg+conf.step > len ? len : wbeg+conf.step, 3);
             wqueue_put(qc_cov_window, wq, &w);
         }
     }
@@ -618,7 +604,6 @@ int main_qc_coverage(int argc, char *argv[]) {
     tbx_destroy(cpg_tbx);
     hts_close(cpg_bed);
     wqueue_destroy(qc_cov_record, writer_conf.q);
-    free_target_v(targets);
     free(results);
     free(processors);
     wqueue_destroy(qc_cov_window, wq);
