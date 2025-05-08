@@ -355,7 +355,6 @@ static void *process_func(void *data) {
             bam1_core_t *c = &b->core;
 
             // Read-based filtering
-            if (c->qual < conf->filt.min_mapq) continue;
             if (c->l_qseq < 0 || (unsigned) c->l_qseq < conf->filt.min_read_len) continue;
             if (c->flag > 0) { // only when any flag is set
                 if (conf->filt.filter_secondary && c->flag & BAM_FSECONDARY) continue;
@@ -479,7 +478,6 @@ static int usage() {
     fprintf(stderr, "    -@ INT    Number of threads [%d]\n", conf.bt.n_threads);
     fprintf(stderr, "Filter options:\n");
     fprintf(stderr, "    -b INT    Minimum base quality [%u]\n", conf.filt.min_base_qual);
-    fprintf(stderr, "    -m INT    Minimum mapping quality [%u]\n", conf.filt.min_mapq);
     fprintf(stderr, "    -a INT    Minimum alignment score (from AS-tag) [%u]\n", conf.filt.min_score);
     fprintf(stderr, "    -t INT    Max cytosine retention in a read [%u]\n", conf.filt.max_retention);
     fprintf(stderr, "    -l INT    Minimum read length [%u]\n", conf.filt.min_read_len);
@@ -505,7 +503,7 @@ int main_qc_coverage(int argc, char *argv[]) {
     // Process command line arguments
     int c;
     if (argc < 2) { return usage(); }
-    while ((c=getopt(argc, argv, ":@:B:P:T:a:b:l:m:n:s:t:chpu")) >= 0) {
+    while ((c=getopt(argc, argv, ":@:B:P:T:a:b:l:n:s:t:chpu")) >= 0) {
         switch (c) {
             case '@': ensure_number(optarg); conf.bt.n_threads = atoi(optarg); break;
             case 'B': bot_fn = optarg; break;
@@ -516,7 +514,6 @@ int main_qc_coverage(int argc, char *argv[]) {
             case 'l': conf.filt.min_read_len = atoi(optarg); break;
             case 'n': conf.filt.max_nm = atoi(optarg); break;
             case 'b': conf.filt.min_base_qual = atoi(optarg); break;
-            case 'm': conf.filt.min_mapq = atoi(optarg); break;
             case 'a': conf.filt.min_score = atoi(optarg); break;
             case 'c': conf.filt.filter_secondary = 0; break;
             case 'u': conf.filt.filter_duplicate = 0; break;
