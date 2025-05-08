@@ -343,9 +343,6 @@ static void *process_func(void *data) {
         wqueue_get(qc_cov_window, res->q, &w);
         if (w.tid == -1) break;
 
-        char *chrm = header->target_name[w.tid];
-        refcache_fetch(rs, chrm, w.beg>flank ? w.beg-flank : 1, w.end+flank);
-
         // Tabulate coverages across window
         uint32_t *all_covgs = calloc(w.end - w.beg, sizeof(uint32_t));
         uint32_t *q40_covgs = calloc(w.end - w.beg, sizeof(uint32_t));
@@ -373,9 +370,21 @@ static void *process_func(void *data) {
             uint8_t *as = bam_aux_get(b, "AS");
             if (as && bam_aux2i(as) < conf->filt.min_score) continue;
 
-            uint8_t bsstrand = get_bsstrand(rs, b, conf->filt.min_base_qual, 0);
-            uint32_t cnt_ret = cnt_retention(rs, b, bsstrand);
-            if (cnt_ret > conf->filt.max_retention) continue;
+            // If the read is shorter than max_retention, then we can't ever have cnt_ret > max_retention
+            // Therefore, only do the calculation if it might actually be true
+            if (c->l_qseq < conf->filt.max_retention) {
+                // Moved cache fetching into if-statement as this is expensive and only needs be done for
+                // checking retention
+                // If max_retention is low enough that this function is called for every read, we do have
+                // extra calls being made to fetch, but refcache_fetch first checks to see if requested
+                // region is already cached, so not too expensive to have it here
+                char *chrm = header->target_name[w.tid];
+                refcache_fetch(rs, chrm, w.beg>flank ? w.beg-flank : 1, w.end+flank);
+
+                uint8_t bsstrand = get_bsstrand(rs, b, conf->filt.min_base_qual, 0);
+                uint32_t cnt_ret = cnt_retention(rs, b, bsstrand);
+                if (cnt_ret > conf->filt.max_retention) continue;
+            }
 
             // 0-based reference position
             uint32_t rpos = c->pos;
