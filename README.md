@@ -28,16 +28,34 @@ page.
 All releases of BISCUIT are available on
 [GitHub](https://github.com/huishenlab/biscuit/releases).
 
-Note, to use the BISCUIT QC script, the following tools must be installed and in
-the user's `PATH` environment variable:
+## Notable Dependencies
 
-  - BISCUIT
-  - [samtools](http://www.htslib.org/)
-  - [bedtools](https://bedtools.readthedocs.io/en/latest/index.html)
-  - [GNU awk](https://www.gnu.org/software/gawk/manual/gawk.html)
+When building BISCUIT, the following libraries are needed:
+
+- `zlib`
+- `pthreads`
+- `ncurses`
+- `libdeflate` (optional, but greatly improves the speed of `htslib`)
+- `curl`
 
 It is also useful to have [dupsifter](https://github.com/huishenlab/dupsifter)
 installed for marking duplicate reads during the alignment phase.
+
+For BASH scripts found in the `scripts/` directory, you will need the following
+dependencies in your `PATH` environment variable:
+
+- `QC.sh`
+  - BISCUIT
+  - [GNU awk](https://www.gnu.org/software/gawk/manual/gawk.html)
+  - [samtools](http://www.htslib.org/) (for v1.6.1 and earlier)
+  - [bedtools](https://bedtools.readthedocs.io/en/latest/index.html) (for v1.6.1 and earlier)
+- `build_biscuit_QC_assets.pl`
+  - perl
+  - [bgzip](http://www.htslib.org/) (for v1.7.0 and later)
+  - [tabix](http://www.htslib.org/) (for v1.7.0 and later)
+- `flip_pbat_strands.sh`
+  - [GNU awk](https://www.gnu.org/software/gawk/manual/gawk.html)
+  - [samtools](http://www.htslib.org/)
 
 # Usage and Documentation
 
