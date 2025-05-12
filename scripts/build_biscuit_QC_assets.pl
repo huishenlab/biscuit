@@ -179,7 +179,6 @@ foreach my $chr (sort keys %seq){
 
     my $result = index($str, $char, $offset);
     while ($result != -1) { # now get CpGs & print to bed
-        #~ print "Found $char at $result\n";
         my $end = $result+2;
         print $cpgBed "$chr\t$result\t$end\n";
         $nCpGs++;
@@ -219,18 +218,6 @@ foreach my $chr (sort keys %seq){
         my @nMatches = $substr =~ /n/gi;                  # number of Ns
 
         my $gcFrac = sprintf('%.2f', (scalar @gcMatches/$windowSize));
-        #my $gcFrac = sprintf('%f', (scalar @gcMatches/$windowSize));
-        #if ($gcFrac == "0.0") {
-        #    $gcFrac = "0"
-        #} else {
-        #    if ($gcFrac == "1.0") {
-        #        $gcFrac = "1"
-        #    } else {
-        #        $gcFrac =~ s/0+$//; # remove trailing zeroes
-        #    }
-        #}
-        #~ print STDOUT "Found a substr of length ", length($substr), " with GC-content: $gcFrac\n";
-        #~ print STDOUT "\t$substr\n";
 
         if ((scalar @nMatches == 0) and (length($substr) == $windowSize)) {
             $nWindows++;
@@ -249,7 +236,6 @@ if ($verbose) { print STDOUT "10% of $nWindows 100bp CpG windows is $tenPerc\n";
 # Get top/bottom 10% GC-content windows, sort, and compress
 # TODO: does not check if bgzip is available
 system("LC_ALL=C sort -k4,4n $outdir/gc_content.bed > $outdir/gc_content.sorted.bed");
-#system("LC_ALL=C sort -k4,4 -k1,1 -k2,2n $outdir/gc_content.bed > $outdir/gc_content.sorted.bed");
 system("head -n $tenPerc $outdir/gc_content.sorted.bed | LC_ALL=C sort -k1,1 -k2,2n | bgzip -c > $outdir/windows100bp.gc_content.bot10p.bed.gz");
 system("tail -n $tenPerc $outdir/gc_content.sorted.bed | LC_ALL=C sort -k1,1 -k2,2n | bgzip -c > $outdir/windows100bp.gc_content.top10p.bed.gz");
 
