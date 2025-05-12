@@ -66,7 +66,7 @@ Arguments:
 
 Dependencies:
 
-    - command line: head, tail, sort, bgzip (from htslib)
+    - command line: head, tail, sort, bgzip (from htslib), tabix (from htslib)
     - memory approximitating the size of your genome (whole reference is loaded)
 =cut
 use Getopt::Long qw(GetOptions);
@@ -241,6 +241,11 @@ system("tail -n $tenPerc $outdir/gc_content.sorted.bed | LC_ALL=C sort -k1,1 -k2
 
 # Compress CpG output file
 system("bgzip $outdir/cpg.bed");
+
+# Create tab-indexes
+system("tabix $outdir/windows100bp.gc_content.bot10p.bed.gz");
+system("tabix $outdir/windows100bp.gc_content.top10p.bed.gz");
+system("tabix cpg.bed.gz");
 
 # Remove intermediate files
 system("rm $outdir/gc_content.bed");
