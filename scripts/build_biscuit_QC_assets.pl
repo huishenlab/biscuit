@@ -243,9 +243,9 @@ system("tail -n $tenPerc $outdir/gc_content.sorted.bed | LC_ALL=C sort -k1,1 -k2
 system("bgzip $outdir/cpg.bed");
 
 # Create tab-indexes
-system("tabix $outdir/windows100bp.gc_content.bot10p.bed.gz");
-system("tabix $outdir/windows100bp.gc_content.top10p.bed.gz");
-system("tabix cpg.bed.gz");
+system("tabix -p bed $outdir/windows100bp.gc_content.bot10p.bed.gz");
+system("tabix -p bed $outdir/windows100bp.gc_content.top10p.bed.gz");
+system("tabix -p bed $outdir/cpg.bed.gz");
 
 # Remove intermediate files
 system("rm $outdir/gc_content.bed");
