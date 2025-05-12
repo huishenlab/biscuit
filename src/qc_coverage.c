@@ -117,6 +117,7 @@ static void *coverage_write_func(void *data) {
     writer_conf_t *c = (writer_conf_t*) data;
 
     maps_t *maps = init_maps();
+    filter_counts_t *counts = init_filter_counts();
     total_coverage_t covg_fracs = init_total_coverage();
 
     // Effectively a reduction algorithm on the hashmaps from the individual records
@@ -124,6 +125,8 @@ static void *coverage_write_func(void *data) {
         qc_cov_record_t rec;
         wqueue_get(qc_cov_record, c->q, &rec);
         if(rec.block_id == RECORD_QUEUE_END) break;
+
+        add_filter_counts(counts, rec.counts);
 
         merge(rec.maps->all_base, maps->all_base, &covg_fracs.all_base);
         merge(rec.maps->q40_base, maps->q40_base, &covg_fracs.q40_base);
@@ -142,6 +145,7 @@ static void *coverage_write_func(void *data) {
             merge(rec.maps->q40_cpg_bot, maps->q40_cpg_bot, &covg_fracs.q40_cpg_bot);
         }
 
+        destroy_filter_counts(rec.counts);
         destroy_maps(rec.maps);
     }
 
@@ -171,7 +175,26 @@ static void *coverage_write_func(void *data) {
     fflush(cv_table);
     fclose(cv_table);
 
+    FILE *fh_counts = fopen(names->counts, "w");
+    fprintf(fh_counts, "BISCUITqc Filtered Read Counts\ncategory\tcount\n");
+    fprintf(fh_counts, "n_reads_in_bam\t%u\n", counts->n_reads);
+    fprintf(fh_counts, "n_reads_passing_filters_all\t%u\n", counts->n_passed);
+    fprintf(fh_counts, "n_reads_passing_filters_q40\t%u\n", counts->n_q40);
+    fprintf(fh_counts, "n_unmapped_reads\t%u\n", counts->n_unmapped);
+    fprintf(fh_counts, "n_secondary_reads\t%u\n", counts->n_secondary);
+    fprintf(fh_counts, "n_duplicate_reads\t%u\n", counts->n_duplicate);
+    fprintf(fh_counts, "n_improper_pair_reads\t%u\n", counts->n_improper_pair);
+    fprintf(fh_counts, "n_qc_fail_reads\t%u\n", counts->n_qc_fail);
+    fprintf(fh_counts, "n_too_short_reads\t%u\n", counts->n_too_short);
+    fprintf(fh_counts, "n_too_many_mismatches\t%u\n", counts->n_nm_fail);
+    fprintf(fh_counts, "n_alignment_score_too_low\t%u\n", counts->n_bad_as);
+    fprintf(fh_counts, "n_too_many_retained_cytosines\t%u\n", counts->n_retention);
+
+    fflush(fh_counts);
+    fclose(fh_counts);
+
     destroy_output_names(names);
+    destroy_filter_counts(counts);
     destroy_maps(maps);
 
     return 0;
@@ -347,6 +370,9 @@ static void *process_func(void *data) {
         uint32_t *all_covgs = calloc(w.end - w.beg, sizeof(uint32_t));
         uint32_t *q40_covgs = calloc(w.end - w.beg, sizeof(uint32_t));
 
+        // Prep read filter counts
+        filter_counts_t *counts = init_filter_counts();
+
         // Iterate through reads that overlap window
         hts_itr_t *iter = sam_itr_queryi(idx, w.tid, w.beg>1?(w.beg-1):1, w.end);
         bam1_t *b = bam_init1();
@@ -354,20 +380,51 @@ static void *process_func(void *data) {
         while ((ret = sam_itr_next(in, iter, b))>0) {
             bam1_core_t *c = &b->core;
 
+            // Count all reads
+            counts->n_reads++;
+
+            // 0-based reference position
+            uint32_t rpos = c->pos;
+
             // Read-based filtering
-            if (c->l_qseq < 0 || (unsigned) c->l_qseq < conf->filt.min_read_len) continue;
+            if (c->l_qseq < 0 || (unsigned) c->l_qseq < conf->filt.min_read_len) {
+                if (w.beg < rpos) counts->n_too_short++;
+                continue;
+            }
             if (c->flag > 0) { // only when any flag is set
-                if (conf->filt.filter_secondary && c->flag & BAM_FSECONDARY) continue;
-                if (conf->filt.filter_duplicate && c->flag & BAM_FDUP) continue;
-                if (conf->filt.filter_ppair && c->flag & BAM_FPAIRED && !(c->flag & BAM_FPROPER_PAIR)) continue;
-                if (conf->filt.filter_qcfail && c->flag & BAM_FQCFAIL) continue;
+                if (c->flag & BAM_FUNMAP) {
+                    if (w.beg < rpos) counts->n_unmapped++;
+                    continue;
+                }
+                if (conf->filt.filter_secondary && c->flag & BAM_FSECONDARY) {
+                    if (w.beg < rpos) counts->n_secondary++;
+                    continue;
+                }
+                if (conf->filt.filter_duplicate && c->flag & BAM_FDUP) {
+                    if (w.beg < rpos) counts->n_duplicate++;
+                    continue;
+                }
+                if (conf->filt.filter_ppair && c->flag & BAM_FPAIRED && !(c->flag & BAM_FPROPER_PAIR)) {
+                    if (w.beg < rpos) counts->n_improper_pair++;
+                    continue;
+                }
+                if (conf->filt.filter_qcfail && c->flag & BAM_FQCFAIL) {
+                    if (w.beg < rpos) counts->n_qc_fail++;
+                    continue;
+                }
             }
 
             uint8_t *nm = bam_aux_get(b, "NM");
-            if (nm && bam_aux2i(nm) > conf->filt.max_nm) continue;
+            if (nm && bam_aux2i(nm) > conf->filt.max_nm) {
+                if (w.beg < rpos) counts->n_nm_fail++;
+                continue;
+            }
 
             uint8_t *as = bam_aux_get(b, "AS");
-            if (as && bam_aux2i(as) < conf->filt.min_score) continue;
+            if (as && bam_aux2i(as) < conf->filt.min_score) {
+                if (w.beg < rpos) counts->n_bad_as++;
+                continue;
+            }
 
             // If the read is shorter than max_retention, then we can't ever have cnt_ret > max_retention
             // Therefore, only do the calculation if it might actually be true
@@ -382,11 +439,17 @@ static void *process_func(void *data) {
 
                 uint8_t bsstrand = get_bsstrand(rs, b, conf->filt.min_base_qual, 0);
                 uint32_t cnt_ret = cnt_retention(rs, b, bsstrand);
-                if (cnt_ret > conf->filt.max_retention) continue;
+                if (cnt_ret > conf->filt.max_retention) {
+                    if (w.beg < rpos) counts->n_retention++;
+                    continue;
+                }
             }
 
-            // 0-based reference position
-            uint32_t rpos = c->pos;
+            // Count reads passing all filters
+            counts->n_passed++;
+            if (c->qual >= 40) {
+                if (w.beg < rpos) counts->n_q40++;
+            }
 
             // Process CIGAR string to find if a base is covered or not
             int i;
@@ -433,8 +496,9 @@ static void *process_func(void *data) {
         rec.maps = init_maps();
         format_coverage_data(rec.maps, all_covgs, q40_covgs, w.end-w.beg, w.cpg, w.top, w.bot);
 
-        // Set record block id and put output maps into output queue
+        // Set record block id and put output maps and read counts into output queue
         rec.block_id = w.block_id;
+        rec.counts = counts;
         wqueue_put2(qc_cov_record, res->rq, rec);
 
         // Clean up

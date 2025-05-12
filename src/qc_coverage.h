@@ -166,10 +166,65 @@ static inline void destroy_maps(maps_t *maps) {
 #define region_test(regs, i) regs[(i)>>3]&(1<<((i)&0x7))
 #define region_set(regs, i) regs[(i)>>3] |= 1<<((i)&0x7)
 
+// Read counts in file
+typedef struct {
+    uint32_t n_reads;         /* total number of reads in file */
+    uint32_t n_passed;        /* number of reads passing all filters */
+    uint32_t n_q40   ;        /* number of reads passing all filters with mapq >= 40 */
+    uint32_t n_unmapped;      /* number of unmapped reads */
+    uint32_t n_secondary;     /* number of secondary reads */
+    uint32_t n_duplicate;     /* number of duplicate reads */
+    uint32_t n_improper_pair; /* number of improperly paired PE reads */
+    uint32_t n_qc_fail;       /* number of QC-fail reads */
+    uint32_t n_too_short;     /* number of reads not achieving minimum read length */
+    uint32_t n_nm_fail;       /* number of reads over max NM value */
+    uint32_t n_bad_as;        /* number of reads with too low alignment score */
+    uint32_t n_retention;     /* number of reads with too much cytosine retention */
+} filter_counts_t;
+
+static inline filter_counts_t *init_filter_counts() {
+    filter_counts_t *out = calloc(1, sizeof(filter_counts_t));
+
+    out->n_reads = 0;
+    out->n_passed = 0;
+    out->n_q40 = 0;
+    out->n_unmapped = 0;
+    out->n_secondary = 0;
+    out->n_duplicate = 0;
+    out->n_improper_pair = 0;
+    out->n_qc_fail = 0;
+    out->n_too_short = 0;
+    out->n_nm_fail = 0;
+    out->n_bad_as = 0;
+    out->n_retention = 0;
+
+    return out;
+}
+
+static inline void destroy_filter_counts(filter_counts_t *to_destroy) {
+    free(to_destroy);
+}
+
+static inline void add_filter_counts(filter_counts_t *left, filter_counts_t *right) {
+    left->n_reads += right->n_reads;
+    left->n_passed += right->n_passed;
+    left->n_q40 += right->n_q40;
+    left->n_unmapped += right->n_unmapped;
+    left->n_secondary += right->n_secondary;
+    left->n_duplicate += right->n_duplicate;
+    left->n_improper_pair += right->n_improper_pair;
+    left->n_qc_fail += right->n_qc_fail;
+    left->n_too_short += right->n_too_short;
+    left->n_nm_fail += right->n_nm_fail;
+    left->n_bad_as += right->n_bad_as;
+    left->n_retention += right->n_retention;
+}
+
 // Information stored for each window
 typedef struct {
-    int64_t  block_id; /* ID of block processed by thread */
-    maps_t  *maps;     /* coverage hash maps */
+    int64_t          block_id; /* ID of block processed by thread */
+    maps_t          *maps;     /* coverage hash maps */
+    filter_counts_t *counts;   /* count filtered reads */
 } qc_cov_record_t;
 
 // Queue for processing records as they come in from various threads
@@ -221,6 +276,7 @@ typedef struct {
     char *q40_base_bot; /* Q40 Bottom GC content base coverage */
     char *all_cpg_bot;  /* All Bottom GC content cpg coverage */
     char *q40_cpg_bot;  /* Q40 Bottom GC content cpg coverage */
+    char *counts;       /* table of filtered read counts */
 } output_names_t;
 
 static inline output_names_t *init_output_names(char *prefix) {
@@ -243,6 +299,7 @@ static inline output_names_t *init_output_names(char *prefix) {
     out->q40_base_bot = calloc(len_prefix + 35, sizeof(char));
     out->all_cpg_bot  = calloc(len_prefix + 35, sizeof(char));
     out->q40_cpg_bot  = calloc(len_prefix + 35, sizeof(char));
+    out->counts       = calloc(len_prefix + 30, sizeof(char));
 
     if (prefix != NULL) {
         strcat(out->cv_table, prefix);
@@ -258,6 +315,7 @@ static inline output_names_t *init_output_names(char *prefix) {
         strcat(out->q40_base_bot, prefix);
         strcat(out->all_cpg_bot, prefix);
         strcat(out->q40_cpg_bot, prefix);
+        strcat(out->counts, prefix);
 
         strcat(out->cv_table, "_");
         strcat(out->all_base, "_");
@@ -272,6 +330,7 @@ static inline output_names_t *init_output_names(char *prefix) {
         strcat(out->q40_base_bot, "_");
         strcat(out->all_cpg_bot, "_");
         strcat(out->q40_cpg_bot, "_");
+        strcat(out->counts, "_");
     }
 
     strcat(out->cv_table, "cv_table.txt");
@@ -287,11 +346,13 @@ static inline output_names_t *init_output_names(char *prefix) {
     strcat(out->q40_base_bot, "covdist_q40_base_botgc_table.txt");
     strcat(out->all_cpg_bot, "covdist_all_cpg_botgc_table.txt");
     strcat(out->q40_cpg_bot, "covdist_q40_cpg_botgc_table.txt");
+    strcat(out->counts, "filtered_read_counts.txt");
 
     return out;
 }
 
 static inline void destroy_output_names(output_names_t *get_wrecked) {
+    free(get_wrecked->counts);
     free(get_wrecked->q40_cpg_bot);
     free(get_wrecked->all_cpg_bot);
     free(get_wrecked->q40_base_bot);
