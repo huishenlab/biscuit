@@ -13,6 +13,8 @@ Update Notes:
         - Clean up code for ease of maintaining
     21 Oct 2020 -
         - Update sorting for GC-content windows
+    12 May 2025 -
+        - Change gzip compression to bgzip compression for new qc_coverage subcommand
 
 Description:
 
@@ -37,7 +39,7 @@ of how they are created are:
         - Find top 10% of GC-content windows.
         - Copy the four columns (chromosome, start, end, and GC-content
           fraction) for these windows into windows100bp.gc_content.top10p.bed.
-        - Sort by position (sort -k1,1 -k2,2n) and gzip
+        - Sort by position (sort -k1,1 -k2,2n) and bgzip
           windows100bp.gc_content.top10p.bed to create your top 10% GC-content
           QC file.
 
@@ -48,7 +50,7 @@ of how they are created are:
           10% of NON-zero GC-content windows.
         - Copy the four columns (chromosome, start, end, and GC-content
           fraction) for these windows into windows100bp.gc_content.bot10p.bed.
-        - Sort by position (sort -k1,1 -k2,2n) and gzip
+        - Sort by position (sort -k1,1 -k2,2n) and bgzip
           windows100bp.gc_content.bot10p.bed to create your bottom 10%
           GC-content QC file.
 
@@ -64,7 +66,7 @@ Arguments:
 
 Dependencies:
 
-    - command line: head, tail, sort, gzip
+    - command line: head, tail, sort, bgzip (from htslib)
     - memory approximitating the size of your genome (whole reference is loaded)
 =cut
 use Getopt::Long qw(GetOptions);
@@ -245,13 +247,14 @@ my $tenPerc = sprintf('%.0f',0.1*$nWindows);
 if ($verbose) { print STDOUT "10% of $nWindows 100bp CpG windows is $tenPerc\n"; }
 
 # Get top/bottom 10% GC-content windows, sort, and compress
+# TODO: does not check if bgzip is available
 system("LC_ALL=C sort -k4,4n $outdir/gc_content.bed > $outdir/gc_content.sorted.bed");
 #system("LC_ALL=C sort -k4,4 -k1,1 -k2,2n $outdir/gc_content.bed > $outdir/gc_content.sorted.bed");
-system("head -n $tenPerc $outdir/gc_content.sorted.bed | LC_ALL=C sort -k1,1 -k2,2n | gzip -c > $outdir/windows100bp.gc_content.bot10p.bed.gz");
-system("tail -n $tenPerc $outdir/gc_content.sorted.bed | LC_ALL=C sort -k1,1 -k2,2n | gzip -c > $outdir/windows100bp.gc_content.top10p.bed.gz");
+system("head -n $tenPerc $outdir/gc_content.sorted.bed | LC_ALL=C sort -k1,1 -k2,2n | bgzip -c > $outdir/windows100bp.gc_content.bot10p.bed.gz");
+system("tail -n $tenPerc $outdir/gc_content.sorted.bed | LC_ALL=C sort -k1,1 -k2,2n | bgzip -c > $outdir/windows100bp.gc_content.top10p.bed.gz");
 
 # Compress CpG output file
-system("gzip $outdir/cpg.bed");
+system("bgzip $outdir/cpg.bed");
 
 # Remove intermediate files
 system("rm $outdir/gc_content.bed");
