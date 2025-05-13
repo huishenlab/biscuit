@@ -55,10 +55,10 @@ plan to always include `--no-cov-qc` when running `QC.sh`, you do not need to do
 **I have aligned my data to a reference genome that does not have QC asset files provided. What files do I need to run
 `QC.sh`?**
 
-> As of version 1.0.0, you will need three BED files. You will need a gzipped BED file with the locations of all
+> As of version 1.0.0, you will need three BED files. You will need a bgzipped BED file with the locations of all
 CpGs in your genome (called `cpg.bed.gz`). You will also need to break your genome into 100bp non-overlapping windows,
 calculate the GC-content for each window, then find the windows with the top and bottom 10% of GC-content. These regions
-will be placed into two separate gzipped BED files, `windows100bp.gc_content.bot10p.bed.gz` for the bottom 10% and
+will be placed into two separate bgzipped BED files, `windows100bp.gc_content.bot10p.bed.gz` for the bottom 10% and
 `windows100bp.gc_content.top10p.bed.gz` for the top 10%.  Make sure to sort each BED file using
 (`sort -k1,1 -k2,2n bedfile.bed`).
 
@@ -86,7 +86,7 @@ What is a more prescriptive way for creating these files?**
   5. Find top 10% of GC-content windows.
   6. Copy the four columns (chromosome, start, end, and GC-content fraction) for these windows into
   `windows100bp.gc_content.top10p.bed`.
-  7. Sort by position (`sort -k1,1 -k2,2n`) and gzip `windows100bp.gc_content.top10p.bed` to create your top 10%
+  7. Sort by position (`sort -k1,1 -k2,2n`) and bgzip/tabix `windows100bp.gc_content.top10p.bed` to create your top 10%
   GC-content QC file.
 
 > **windows100bp.gc_content.bot10p.bed.gz**
@@ -94,5 +94,5 @@ What is a more prescriptive way for creating these files?**
   2. Instead of finding the top 10% of GC-content windows, find the bottom 10% of GC-content windows.
   3. Copy the four columns (chromosome, start, end, and GC-content fraction) for these windows into
   `windows100bp.gc_content.bot10p.bed`.
-  4. Sort by position (`sort -k1,1 -k2,2n`) and gzip `windows100bp.gc_content.bot10p.bed` to create your bottom 10%
-  GC-content QC file.
+  4. Sort by position (`sort -k1,1 -k2,2n`) and bgzip/tabix `windows100bp.gc_content.bot10p.bed` to create your bottom
+  10% GC-content QC file.
