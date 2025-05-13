@@ -37,14 +37,14 @@ BISCUIT: an efficient, standards-compliant tool suite for simultaneous genetic a
 
 ## Quick Start
 
-In order to get started with performing analyses with BISCUIT, precompiled binaries are available for download on the
-[BISCUIT release page](https://github.com/huishenlab/biscuit/releases/latest). Note, binaries are only available for
-Linux and macOS. (See [Download and Install](#download-and-install) for more information about downloading and
-installing BISCUIT).
+BISCUIT is available through a variety of means. The easiest methods to acquire BISCUIT are via `bioconda` or through
+precompiled binaries available on the [BISCUIT release page](https://github.com/huishenlab/biscuit/releases/latest).
+Note, the precompiled binaries are only available for Linux and macOS. More information about downloading and installing
+BISCUIT can be found in the [Download and Install](#download-and-install) section below.
 
 The basic workflow to align and extract methylation information using BISCUIT is:
 1. Create an index of the reference genome (only needs to be done once for each reference).
-2. Align sequencing reads to the reference.
+2. Align sequenced reads to the reference.
 3. Create a pileup VCF of DNA methylation and genetic information.
 4. Extract DNA methylation into BED format.
 
@@ -56,13 +56,29 @@ biscuit index my_reference.fa
 
 # Align sequencing reads to the reference
 # Gzipped FASTQ files can also be used
-biscuit align -@ NTHREADS -R "my_rg" /path/to/my_reference.fa read1.fastq read2.fastq |
-    dupsifter /path/to/my_reference.fa | samtools sort -@ NTHREADS -o my_output.bam -O BAM -
+biscuit align \
+    -@ NTHREADS \
+    -R "my_rg" \
+    /path/to/my_reference.fa \
+    read1.fastq \
+    read2.fastq | \
+dupsifter /path/to/my_reference.fa | \
+samtools sort \
+    -@ NTHREADS \
+    -o my_output.bam \
+    -O BAM \
+    -
+
 samtools index my_output.bam
 
 # Create a pileup VCF of DNA methylation and genetic information
 # Also compresses and indexes the VCF
-biscuit pileup -@ NTHREADS -o my_pileup.vcf /path/to/my_reference.fa my_output.bam
+biscuit pileup \
+    -@ NTHREADS \
+    -o my_pileup.vcf \
+    /path/to/my_reference.fa \
+    my_output.bam
+
 bgzip -@ NTHREADS my_pileup.vcf
 tabix -p vcf my_pileup.vcf.gz
 
@@ -87,8 +103,9 @@ BISCUIT is available as a [precompiled binary](#download-precompiled-binaries) (
 ### Download Precompiled Binaries
 
 Precompiled binaries can be found on the [latest release page](https://github.com/huishenlab/biscuit/releases/latest) on
-GitHub. Currently, there are only precompiled binaries for the latest versions of Linux and macOS. You can also download
-the binaries directly from the terminal using the following one-liner:
+GitHub. Currently, there are only precompiled binaries for Linux and macOS. The macOS binary was compiled on an Intel
+CPU and will not work on an Apple silicone CPU. You can also download the binaries directly from the terminal using the
+following one-liner:
 
 On macOS,
 ```bash
@@ -125,8 +142,9 @@ These commands work on both macOS and Linux.
 #### Version 1.4.0 and Newer
 
 As of version 1.4.0, BISCUIT uses a CMake-based build system. Regardless of whether you use `git` or `curl` to download
-the source code, you will `cmake` (minimum version 3.21), `zlib`, `ncurses`, `pthread`, and `curl` installed to build
-BISCUIT.
+the source code, you will need `cmake` (minimum version 3.21), `zlib`, `ncurses`, `pthread`, and `curl` installed to
+build BISCUIT. Optionally, if `libdeflate` is installed on your system, BISCUIT will build `htslib` against
+`libdeflate`, which provides speed improvements over `zlib` in `htslib`.
 
 The source can be retrieved with either of these two commands:
 ```bash
@@ -141,16 +159,16 @@ unzip release-source.zip
 cd biscuit-release
 ```
 
-After retrieving the source code (regardless of retrieval method), building BISCUIT proceeds as follows:
+Regardless of how the source code is retrieved, building BISCUIT proceeds as follows:
 ```bash
 mkdir build && cd build
 cmake -DCMAKE_INSTALL_PREFIX=../ ../
 make && make install
 ```
-This will create a directory called `bin` in top level directory of BISCUIT where the `biscuit` binary and the QC, asset
-creator, and strand-flipping scripts can be found. You can also specify a different directory to install your files
-(replace `-DCMAKE_INSTALL_PREFIX=../` with `-DCMAKE_INSTALL_PREFIX=/path/to/your/other/location`). If you don't include
-the `-DCMAKE_INSTALL_PREFIX` option, you can specify the install location via:
+This will create a directory called `bin` in the top level directory of BISCUIT where the `biscuit` binary and the QC,
+asset creator, and strand-flipping scripts can be found. You can also specify a different directory to install your
+files (replace `-DCMAKE_INSTALL_PREFIX=../` with `-DCMAKE_INSTALL_PREFIX=/path/to/your/other/location`). If you don't
+include the `-DCMAKE_INSTALL_PREFIX` option, you can specify the install location via:
 `cmake --install --prefix /path/to/your/install/location`. If you don't run the install commands, the BISCUIT binary
 can be found in `build/src/biscuit` (relative to the top level directory of BISCUIT) and the scripts can be found in the
 `scripts/` directory.
@@ -176,7 +194,7 @@ Note, this requires that `conda` has been installed. To download with conda, run
 conda install -c bioconda biscuit
 ```
 
-This will also install both `QC.sh` and `build_biscuit_QC_assets.pl`.
+This will also install `QC.sh`, `build_biscuit_QC_assets.pl`, and `flip_pbat_strands.sh`.
 
 ### Download the Docker Container
 
@@ -236,6 +254,8 @@ the [BISCUIT Subcommands]({{ site.baseurl }}{% link docs/subcommands/subcommand_
   - `version` Print `biscuit` and library versions
   - `help` Print usage and exit
   - `qc` Generate QC files from BAM (see
+  [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}))
+  - `qc_coverage` Generate BISCUIT-specific coverage files for QC (see
   [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}))
   - `bc` Extract cell barcodes from reads (see [Extract Barcodes]({{ site.baseurl }}{% link docs/barcode_extract.md %}))
 
