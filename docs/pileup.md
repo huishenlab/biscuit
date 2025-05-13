@@ -21,6 +21,8 @@ bgzip -@ NTHREADS my_pileup.vcf
 tabix -p vcf my_pileup.vcf.gz
 ```
 
+You should use the same reference for `biscuit pileup` as was used to create the alignment.
+
 To get additional diagnostic information, include `-v 1` in the `biscuit pileup` call. Additional debug information can
 be including by using `-v 6` instead.
 
@@ -29,7 +31,7 @@ For more help on available flags, run `biscuit pileup` in the terminal or visit 
 
 ### Helpful Flag Definitions
 
-The VCF header contains descriptions of all INFO and FORMAT flags contained within the VCF file.  A few flags that are
+The VCF header contains descriptions of all INFO and FORMAT flags contained within the VCF file. A few flags that are
 useful to understand are:
 
   - **DP:** raw number of reads covering that position
