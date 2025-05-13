@@ -32,8 +32,8 @@ For more help with `index`, run `biscuit index` in the terminal or check out the
 
 After creating an index of the reference genome, the sequenced reads can be mapped to the reference genome. In
 conjunction with [samtools](https://github.com/samtools/samtools) and
-[dupsifter](https://github.com/huishenlab/dupsifter/tree/main), BISCUIT can be used to map, duplicate mark, sort, and
-index the provided reads.
+[dupsifter](https://github.com/huishenlab/dupsifter), BISCUIT can be used to map, duplicate mark, sort, and index the
+provided reads.
 
 The suggested one-line command to generate an aligned, duplicate marked, and sorted BAM is referred to as the
 [biscuitSifter]({{ site.baseurl }}{% link docs/alignment/biscuitsifter.md %}) pipeline:
@@ -153,7 +153,7 @@ on, then chromosomes with the name pattern `chrUn`, `_random`, `_hap`, or `_alt`
   - Separate seeding for parent and daughter strands for mapping efficiency
   - Indices make efficient use of disk-space and there is no need to store a bisulfite-converted reference
   - BWA-mem-like parameters that are visible to the users
-  - Few dependencies (`zlib` and `ncurses`)
+  - Few dependencies (`zlib`, `ncurses`, `pthread`, and `curl`)
   - Robust to OS build and stable multi-threading
   - Optional parent and daughter strand restriction for both single- and paired-end reads
   - Optional OT/OB strand restriction, tightly integrated in mapping

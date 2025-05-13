@@ -15,8 +15,8 @@ differs from how BWA defines it).
   - `NM` Number of non-cytosine-conversion mismatches. Note, this does not match exactly with the hts-spec for the NM
   tag. To recreate the exact NM tag as defined by the spec, add the values in the NM and ZC tags.
   - `MD` Location of mismatches, following samtools conventions.
-  - `ZC` Number of cytosine conversions.
-  - `ZR` Number of cytosine retentions.
+  - `ZC` Number of conversions (C&rarr;T for OT/CTOT reads or G&rarr;A for OB/CTOB).
+  - `ZR` Number of retentions (retained C's for OT/CTOT reads or G's for OB/CTOB).
   - `AS` Best alignment score.
   - `XS` Suboptimal alignment score. This is usually equal to or less than `AS`.  In rare cases, pairing could cause
   `XS` to be greater than `AS`.
