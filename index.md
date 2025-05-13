@@ -48,6 +48,8 @@ The basic workflow to align and extract methylation information using BISCUIT is
 3. Create a pileup VCF of DNA methylation and genetic information.
 4. Extract DNA methylation into BED format.
 
+*Note, it is important to use the same reference throughout to ensure consistency in chromosome order and naming.*
+
 Practically, the commands to run are:
 ```bash
 # Create index of the reference genome (only needs to be run once for each reference)
