@@ -35,6 +35,9 @@ running `bgzip` and `tabix` to compress and index your epiBED file. This is due 
 BAM file versus how it is handled in the epiBED file. The difference can cause some reads to not be coordinate sorted,
 which is required when bgzipping and tabixing.
 
+As mentioned elsewhere, it is important to use the same reference to create the epiBED files as was used during the
+alignment phase.
+
 For more help with `epiread`, run `biscuit epiread` in the terminal or check out the
 [epiread help page]({{ site.baseurl }}{% link docs/subcommands/biscuit_epiread.md %}).
 
