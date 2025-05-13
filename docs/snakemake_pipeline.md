@@ -11,32 +11,34 @@ analyses.
 ## Dependencies
 
 The following dependencies are downloaded when running with `--use-conda`, otherwise you must have these in your PATH.
-| Package        | Conda Version Downloaded | Notes                                           |
-|:---------------|:------------------------:|:------------------------------------------------|
-| `snakemake`    | 7.0+                     | Needed before running pipeline                  |
-| `biscuit`      | 1.2.0                    |                                                 |
-| `htslib`       | 1.17                     |                                                 |
-| `samtools`     | 1.17                     |                                                 |
-| `dupsifter`    | 1.2.0                    |                                                 |
-| `parallel`     | 20230322                 |                                                 |
-| `bedtools`     | 2.30.0                   |                                                 |
-| `preseq`       | 3.2.0                    | Must be compiled with htslib enabled            |
-| `fastqc`       | 0.12.1                   |                                                 |
-| `trim_galore`  | 0.6.10                   |                                                 |
-| `fastq_screen` | 0.15.3                   | Only required if running `fastq_screen`)        |
-| `bismark`      | 0.24.0                   | Only required if running `fastq_screen`)        |
-| `pigz`         | 2.6                      |                                                 |
-| `python`       | 3.11.3                   |                                                 |
-| `pandas`       | 2.0.0                    |                                                 |
-| `numpy`        | 1.24.2                   |                                                 |
-| `matplotlib`   | 3.7.1                    |                                                 |
-| `seaborn`      | 0.12.2                   |                                                 |
-| `multiqc`      | 1.14                     |                                                 |
-| `R`            | 4.2.3                    |                                                 |
-| `tidyverse`    | 2.0.0                    | Only required for plotting methylation controls |
-| `ggplot2`      | 3.4.2                    | Only required for plotting methylation controls |
-| `patchwork`    | 1.1.2                    | Only required for plotting methylation controls |
-| `viridislite`  | 0.4.1                    | Only required for plotting methylation controls |
+  - `snakemake` (version 8.0+, needed before running pipeline)
+  - `snakemake-executor-plugin-cluster-generic` (version 1.0.9, needed before running pipeline)
+  - `mamba` (version 2.1.0, needed before running pipeline)
+  - `biscuit` (version 1.6.1)
+  - `htslib` (version 1.21)
+  - `samtools` (version 1.21)
+  - `dupsifter` (version 1.3.0)
+  - `parallel` (version 20230322)
+  - `bedtools` (version 2.30.1)
+  - `perl` (version 5.32.1, only required if running `beta_bigwigs`)
+  - `ucsc-bedgraphtobigwig` (version 455, only required if running `beta_bigwigs`)
+  - `preseq` (version 3.2.0, must be compiled with htslib enabled)
+  - `fastqc` (version 0.12.1)
+  - `trim_galore` (version 0.6.10)
+  - `fastq_screen` (version 0.16.0, only required if running `fastq_screen`)
+  - `bismark` (version 0.24.2, only required if running `fastq_screen`)
+  - `pigz` (version 2.8   )
+  - `python` (version 3.13.3)
+  - `pandas` (version 2.2.3 )
+  - `numpy` (version 2.2.4 )
+  - `matplotlib` (version 3.10.1)
+  - `seaborn` (version 0.13.2)
+  - `multiqc` (version 1.28  )
+  - `R` (version 4.4.3 )
+  - `tidyverse` (version 2.0.0, only required for plotting methylation controls)
+  - `ggplot2` (version 3.5.2, only required for plotting methylation controls)
+  - `patchwork` (version 1.3.0, only required for plotting methylation controls)
+  - `viridislite` (version 0.4.2, only required for plotting methylation controls)
 
 Two things of note, 1) it is easiest when working with `snakemake` to install `mamba` using `conda` when running with
 `--use-conda`, and 2) it is preferable to install `snakemake` using `conda`, rather than using a module. This is due to
@@ -66,6 +68,7 @@ needed.
   - [default off] Find average methylation values in bins across genome
   - [default off] Find average methylation values in bins centered on specified regions
   - [default off] QC methylated and unmethylated controls
+  - [default off] Generate bigWigs from BISCUIT BED files
 
 Many options can be easily specified in the `config.yaml`! Otherwise, the commands in the Snakefile can also be modified
 to meet different needs.
@@ -76,9 +79,8 @@ any configuration needed for your pipeline run. That said, you can copy this con
 config file in your pipeline with `snakemake --configfile /my/new/config.yaml` or by changing the `CONFIG_FILE` variable
 in the SLURM submit script.
 
-  - [Clone the repo](https://github.com/huishenlab/Biscuit_Snakemake_Workflow/tree/master)
-    - SSH: `git clone git@github.com:huishenlab/Biscuit_Snakemake_Workflow.git`
-    - HTTPS: `git clone https://github.com/huishenlab/Biscuit_Snakemake_Workflow.git`
+  - [Clone the repo](https://github.com/huishenlab/Biscuit_Snakemake_Workflow)
+    - `git clone git@github.com:huishenlab/Biscuit_Snakemake_Workflow.git`
   - Place *gzipped* FASTQ files into `raw_data/`. Alternatively, you can specify the location of your *gzipped* FASTQ
   files in `config/config.yaml`.
   - Replace the example `config/samples.tsv` with your own sample sheet containing:
@@ -121,7 +123,7 @@ in the SLURM submit script.
     - `multiqc/` MultiQC output with BISCUIT, fastq_screen (if run), and trim_galore (if run) reports
     - `pileup/` VCF and merged CpG BED files that can be used as inputs to `biscuiteer::readBiscuit()`
     - `qc_vectors/` methylation control BED files and beta value/coverage figure
-    - `snps/` SNP BED files (included if generate_snps: 1 in `config.yaml`)
+    - `snps/` SNP BED files (included if `generate_snps: True` in `config.yaml`)
     - `trim_reads` trimmed FASTQ files and FastQC reports
   - Log files can be found in the `logs/` directory
   - Benchmarking files can be found in the `benchmarks/` directory
@@ -133,9 +135,9 @@ run the test dataset, copy the ten `.fq.gz` files in `bin/working_example_datase
 `bin/samples.tsv` file. This set of files should be mapped to the human genome.
 
 ## Useful Commands
-For more information on Snakemake: https://snakemake.readthedocs.io/en/stable/
+For more information on Snakemake: <https://snakemake.readthedocs.io/en/stable/>
 
-  - Perform a dry run of the commands that will be run by snakemake: `snakemake -npr`
+  - Perform a dry run of the commands that will be run by snakemake: `snakemake --dry-run`
   - Unlock the pipeline after a manually aborted run: `snakemake --unlock --cores 1`
   - Create a workflow diagram of your run: `snakemake --dag | dot -Tpng > my_dag.png`
   - Snakemake can also be run on the command line: `snakemake --use-conda --cores 1`
