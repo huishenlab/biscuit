@@ -16,11 +16,11 @@ files.*
 Cell barcodes are commonly used in scRNA-seq protocols to overcome DNA input issues and increase throughput by merging
 cDNA from separate wells into a single well.  In a similar manner, the single-cell WGBS (scWGBS) protocol, snmc-seq2,
 uses the same methodology for increasing throughput. While there aren't many scWGBS protocols that use cell barcoding,
-it seems likely barcodes (and unique molecular indexes (UMIs) down the road) are used more frequently in protocols.
+it seems likely barcodes (and unique molecular indexes (UMIs) down the road) will be used more frequently in protocols.
 
 BISCUIT provides the `biscuit bc` subcommand as a way to remove uncorrected cell barcodes from FASTQ files, which can
 either be written to new FASTQ files or fed directly into `biscuit align`. Further, the output from `biscuit bc` matches
-the output from the commonly used tool, [umi-tools](https://github.com/CGATOxford/UMI-tools), which allows for the user
+the output from the commonly used tool, [umi-tools](https://github.com/CGATOxford/UMI-tools), which allows the user
 to perform barcode correction with `umi-tools` and then use the resulting FASTQs as input to `biscuit align`.
 
 ## Barcode Extraction with BISCUIT
@@ -93,9 +93,9 @@ Barcode correction and extraction can be performed using `umi-tools` with the he
 
 ### Step 1: Add synthetic UMI with synthbar
 
-`umi-tools` expects both a cell barcode and a UMI. At this time, there are no scWGBS protocols that include UMIs;
-therefore, a synthetic barcode must be added to the read with the cell barcode in it. `synthbar` is a tool that can add
-synthetic barcodes to cells, but for our purposes can also be used to add a synthetic UMI:
+`umi-tools` expects at least a UMI in a read. At this time, there are no scWGBS protocols that include UMIs; therefore,
+a synthetic UMI sequence must be added to the read with the cell barcode in it. `synthbar` is a tool that can add
+synthetic sequences to cells and, for our purposes, can be used to add a synthetic UMI:
 ```
 synthbar -b AAAAAAAA barcoded_reads_R1.fastq.gz | \
 gzip > barcoded_with_umi_R1.fastq.gz
@@ -105,7 +105,7 @@ read.
 
 ### Step 2: Create Whitelist
 
-Using `umi-tools` requires to steps. The first step is to process your FASTQ with the cell barcodes in it and try to
+Using `umi-tools` requires two steps. The first step is to process your FASTQ with the cell barcodes in it and try to
 find the most likely true cell barcode:
 ```
 umi_tools whitelist \
