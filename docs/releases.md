@@ -12,8 +12,12 @@ details regarding each release, see the "Find it on GitHub" link under each rele
 
 **Note, releases starting at version 1.0.0 are not backwards compatible with version 0.3.16 and earlier.**
 
-  - **Version 1.6.1**
+  - **Version 1.7.0**
     - *Latest Release*
+    - Released: 12 May 2025
+    - [Find it on GitHub](https://github.com/huishenlab/biscuit/releases/tag/v1.7.0.20250512)
+
+  - **Version 1.6.1**
     - Released: 15 April 2025
     - [Find it on GitHub](https://github.com/huishenlab/biscuit/releases/tag/v1.6.1.20250415)
 

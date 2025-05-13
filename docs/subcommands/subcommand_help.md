@@ -12,7 +12,7 @@ Usage for available BISCUIT subcommands (printed with either `biscuit` or `biscu
 ```bash
 
 Program: BISCUIT (BISulfite-seq CUI Toolkit)
-Version: 1.6.1
+Version: 1.7.0
 Contact: Jacob Morrison <jacob.morrison@vai.org>
 
 Usage: biscuit <command> [options]
@@ -43,6 +43,7 @@ Command:
     version      Print BISCUIT and library versions
     help         Print usage and exit
     qc           Generate QC files from BAM
+    qc_coverage  Generate coverage-specific QC files from BAM
     bc           Extract barcodes from FASTQ files
 
 ```

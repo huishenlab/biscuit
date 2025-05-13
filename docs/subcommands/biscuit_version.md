@@ -1,13 +1,13 @@
 ---
 title: biscuit version
 parent: BISCUIT Subcommands
-nav_order: 15
+nav_order: 16
 permalink: /biscuit_version/
 ---
 
 # biscuit version
 ```bash
-BISCUIT Version: 1.6.1
+BISCUIT Version: 1.7.0
 
 Using:
         htslib : version 1.18
