@@ -206,6 +206,21 @@ static void usage() {
         fputs(tp_names[i], stderr);
     } fputs("\n", stderr);
     fputs("                      [QNAME,QPAIR,BSSTRAND,CRBASE,CQBASE]\n", stderr);
+    fprintf("        QNAME:      read name:")
+    fprintf("        QPAIR:      which read in pair");
+    fprintf("        STRAND:     forward or reverse strand");
+    fprintf("        BSSTRAND:   which original strand the read derives from");
+    fprintf("        MAPQ:       MAPQ score");
+    fprintf("        QBEG:       read start position");
+    fprintf("        QEND:       read end position");
+    fprintf("        CHRM:       chromosome");
+    fprintf("        CRPOS:      cytosine position on reference");
+    fprintf("        CGRPOS:     CpG position on reference (-1 if not applicable)");
+    fprintf("        CQPOS:      cytosine position on read");
+    fprintf("        CRBASE:     cytosine reference base");
+    fprintf("        CCTXT:      cytosine context, strand flipped");
+    fprintf("        CQBASE:     base called on read");
+    fprintf("        CRETENTION: retention (R) or conversion (C));");
     fprintf(stderr, "    -s        Consider secondary mapping [off]\n");
     fprintf(stderr, "    -o STR    Output file [stdout]\n");
     fprintf(stderr, "    -h        This help\n");
