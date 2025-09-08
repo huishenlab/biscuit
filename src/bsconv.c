@@ -254,7 +254,7 @@ int main_bsconv(int argc, char *argv[]) {
     bsconv_data_t d = {0};
     d.rs = init_refcache(reffn, 100, 100000);
     d.conf = &conf;
-    bam_filter(infn, outfn, reg, &d, call.s, bsconv_func);
+    bam_filter(infn, conf.print_in_tab ? 0 : outfn, reg, &d, call.s, bsconv_func);
 
     fprintf(stderr, "\n");
     fprintf(stderr, "[%s:%d] Processed %d reads, %d (%f%%) remains.\n",
