@@ -228,7 +228,7 @@ int main_qc(int argc, char *argv[]) {
 
     // bsconv data and config
     bsconv_conf_t conf_bsconv = {0};
-    conf_bsconv.max_cph = conf_bsconv.max_cpa = conf_bsconv.max_cpc = conf_bsconv.max_cpt = -1;
+    conf_bsconv.max_cph = conf_bsconv.max_cpa = conf_bsconv.max_cpc = conf_bsconv.max_cpt = conf_bsconv.max_cpy = -1;
     conf_bsconv.max_cph_frac = 1.0; conf_bsconv.max_cpy_frac = 1.0;
     conf_bsconv.no_printing = 1;
 
