@@ -27,6 +27,7 @@
 
 #include "cinread.h"
 
+// NOTE: If adding items to this list, then update the usage message!
 static const char *tp_names[] = {
     "QNAME",     // read name
     "QPAIR",     // which read in pair
@@ -187,7 +188,6 @@ int cinread_func(bam1_t *b, samFile *out, bam_hdr_t *hdr, void *data) {
 }
 
 static void usage() {
-
     unsigned i;
     fprintf(stderr, "\n");
     fprintf(stderr, "Usage: biscuit cinread [options] <ref.fa> <in.bam>\n");
@@ -199,28 +199,23 @@ static void usage() {
         if (i) fputs(", ", stderr);
         fputs(tgt_names[i], stderr);
     } fputs(") [cg]\n", stderr);
-    fprintf(stderr, "    -p STR    Content to print, \",\"-delimited:");
-    for(i=0; i<sizeof(tp_names)/sizeof(tp_names[0]); ++i) {
-        if (i%5 == 0) fputs("\n                  ", stderr);
-        else fputs(", ", stderr);
-        fputs(tp_names[i], stderr);
-    } fputs("\n", stderr);
-    fputs("                      [QNAME,QPAIR,BSSTRAND,CRBASE,CQBASE]\n", stderr);
-    fprintf("        QNAME:      read name:")
-    fprintf("        QPAIR:      which read in pair");
-    fprintf("        STRAND:     forward or reverse strand");
-    fprintf("        BSSTRAND:   which original strand the read derives from");
-    fprintf("        MAPQ:       MAPQ score");
-    fprintf("        QBEG:       read start position");
-    fprintf("        QEND:       read end position");
-    fprintf("        CHRM:       chromosome");
-    fprintf("        CRPOS:      cytosine position on reference");
-    fprintf("        CGRPOS:     CpG position on reference (-1 if not applicable)");
-    fprintf("        CQPOS:      cytosine position on read");
-    fprintf("        CRBASE:     cytosine reference base");
-    fprintf("        CCTXT:      cytosine context, strand flipped");
-    fprintf("        CQBASE:     base called on read");
-    fprintf("        CRETENTION: retention (R) or conversion (C));");
+    fprintf(stderr, "    -p STR    Content to print, \",\"-delimited: [QNAME,QPAIR,BSSTRAND,CRBASE,CQBASE]\n");
+    fprintf(stderr, "                  Options + Descriptions:\n");
+    fprintf(stderr, "                      QNAME:      read name\n");
+    fprintf(stderr, "                      QPAIR:      which read in pair\n");
+    fprintf(stderr, "                      STRAND:     forward or reverse strand\n");
+    fprintf(stderr, "                      BSSTRAND:   which original strand the read derives from\n");
+    fprintf(stderr, "                      MAPQ:       MAPQ score\n");
+    fprintf(stderr, "                      QBEG:       read start position\n");
+    fprintf(stderr, "                      QEND:       read end position\n");
+    fprintf(stderr, "                      CHRM:       chromosome\n");
+    fprintf(stderr, "                      CRPOS:      cytosine position on reference\n");
+    fprintf(stderr, "                      CGRPOS:     CpG position on reference (-1 if not applicable)\n");
+    fprintf(stderr, "                      CQPOS:      cytosine position on read\n");
+    fprintf(stderr, "                      CRBASE:     cytosine reference base\n");
+    fprintf(stderr, "                      CCTXT:      cytosine context, strand flipped\n");
+    fprintf(stderr, "                      CQBASE:     base called on read\n");
+    fprintf(stderr, "                      CRETENTION: retention (R) or conversion (C))\n");
     fprintf(stderr, "    -s        Consider secondary mapping [off]\n");
     fprintf(stderr, "    -o STR    Output file [stdout]\n");
     fprintf(stderr, "    -h        This help\n");
