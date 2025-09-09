@@ -39,8 +39,8 @@ BISCUIT: an efficient, standards-compliant tool suite for simultaneous genetic a
 
 BISCUIT is available through a variety of means. The easiest methods to acquire BISCUIT are via `bioconda` or through
 precompiled binaries available on the [BISCUIT release page](https://github.com/huishenlab/biscuit/releases/latest).
-Note, the precompiled binaries are only available for Linux and macOS. More information about downloading and installing
-BISCUIT can be found in the [Download and Install](#download-and-install) section below.
+Note, the precompiled binaries are only available for Linux and macOS (through version 1.7.0). More information about
+downloading and installing BISCUIT can be found in the [Download and Install](#download-and-install) section below.
 
 The basic workflow to align and extract methylation information using BISCUIT is:
 1. Create an index of the reference genome (only needs to be done once for each reference).
@@ -98,8 +98,8 @@ An overview of all available functionalities can be found below in the
 
 ## Download and Install
 
-BISCUIT is available as a [precompiled binary](#download-precompiled-binaries) (for macOS and Linux), as
-[source code](#download-source-code-and-compile) for compilation on your own machine, as a
+BISCUIT is available as a [precompiled binary](#download-precompiled-binaries) (for macOS through version 1.7.0 and
+Linux), as [source code](#download-source-code-and-compile) for compilation on your own machine, as a
 [conda recipe](#download-with-conda), or as a [Docker container](#download-the-docker-container).
 
 ### Download Precompiled Binaries
@@ -111,10 +111,12 @@ following one-liner:
 
 On macOS,
 ```bash
-curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/latest |
-    grep browser_download_url | grep darwin_amd64 | cut -d '"' -f 4) --output biscuit
+curl -OL https://github.com/huishenlab/biscuit/releases/download/vX.Y.Z.YYYYMMDD/biscuit_X_Y_Z_darwin_amd64
+mv biscuit_X_Y_Z_darwin_amd64 biscuit
 chmod +x biscuit
 ```
+where `X.Y.Z` is the version number and `YYYYMMDD` is the date of the release. Note, a MacOS release is only available
+through v1.7.0.
 
 On Linux,
 ```bash
@@ -147,6 +149,9 @@ As of version 1.4.0, BISCUIT uses a CMake-based build system. Regardless of whet
 the source code, you will need `cmake` (minimum version 3.21), `zlib`, `ncurses`, `pthread`, and `curl` installed to
 build BISCUIT. Optionally, if `libdeflate` is installed on your system, BISCUIT will build `htslib` against
 `libdeflate`, which provides speed improvements over `zlib` in `htslib`.
+
+It should be noted for Apple computers that BISCUIT can only be built from source on Intel chip computers. If you have a
+Mac with an M-series CPU, then it is suggested that you install BISCUIT via bioconda at this time.
 
 The source can be retrieved with either of these two commands:
 ```bash
