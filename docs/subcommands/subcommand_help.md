@@ -12,7 +12,7 @@ Usage for available BISCUIT subcommands (printed with either `biscuit` or `biscu
 ```bash
 
 Program: BISCUIT (BISulfite-seq CUI Toolkit)
-Version: 1.7.0
+Version: 1.7.1
 Contact: Jacob Morrison <jacob.morrison@vai.org>
 
 Usage: biscuit <command> [options]
