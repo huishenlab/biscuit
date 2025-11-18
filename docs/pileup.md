@@ -100,6 +100,37 @@ Otherwise, the possible values are:
   - **7:** conversion
   - **8:** reference base
 
+### Overview of the `*_meth_average.tsv` File
+
+In addition to the pileup VCF generated, BISCUIT also creates a summary TSV file with cytosine counts and mean
+methylation levels. The columns for WGBS datasets are as follows:
+
+1. **sample**: name of the sample in question (inferred from the name of the BAM)
+2. **chrm**: chromosome name
+3. **CGn**: number of CpGs with data on `chrm`
+4. **CGb**: Average CpG methylation level as a percentage (`100 * (sum of beta values in chrm) / CGn`)
+5. **CHGn**: same as column 3, but for CHG context
+6. **CHGb**: same as column 4, but for CHG context
+7. **CHHn**: same as column 3, but for CHH context
+8. **CHHb**: same as column 4, but for CHH context
+9. **CHn**: same as column 3, but for CH context (sum of columns 5 and 7)
+10. **CHb**: same as column 4, but for CH context (combined average of columns 5 and 7)
+
+For NOMe-seq, the columns are similar:
+
+1. **sample**: name of the sample in question (inferred from the name of the BAM)
+2. **chrm**: chromosome name
+3. **HCGn**: number of HCGs with data on `chrm`
+4. **HCGb**: Average HCG methylation level as a percentage (`100 * (sum of beta values in chrm) / HCGn`)
+5. **HCHGn**: same as column 3, but for HCHG context
+6. **HCHGb**: same as column 4, but for HCHG context
+7. **HCHHn**: same as column 3, but for HCHH context
+8. **HCHHb**: same as column 4, but for HCHH context
+9. **HCHn**: same as column 3, but for HCH context (sum of columns 5 and 7)
+10. **HCHb**: same as column 4, but for HCH context (combined average of columns 5 and 7)
+11. **GCHn**: same as column 3, but for GCH context
+12. **GCHb**: same as column 4, but for GCH context
+
 ## Generating Pileup for Multiple Samples
 
 BISCUIT has the ability to put mutation calls and DNA methylation measurements from multiple samples next to each other
