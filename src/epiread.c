@@ -600,6 +600,9 @@ static void *process_func(void *data) {
                 // Check for correct number of modifications
                 int n_all_mods = 0;
                 int *all_mods = bam_mods_recorded(mod_state, &n_all_mods);
+                if (n_all_mods == 0) {
+                    wzfatal("ERROR: no modifications found. Are you sure this is a modBAM?\n");
+                }
                 if (n_all_mods > 1) {
                     wzfatal("ERROR: too many modifications found. Only one modification allowed per read.\n");
                 }
