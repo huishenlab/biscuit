@@ -582,7 +582,7 @@ static void *process_func(void *data) {
         hts_base_mod_state *mod_state = NULL;
         hts_base_mod mod[5] = {0};
         int cutoff_score = (int)(conf->modbam_prob * 255);
-        int mod_pos, n_mods;
+        int n_mods;
         if (conf->use_modbam) {
             mod_state = hts_base_mod_state_alloc();
         }
