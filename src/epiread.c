@@ -600,22 +600,27 @@ static void *process_func(void *data) {
                 // Check for correct number of modifications
                 int n_all_mods = 0;
                 int *all_mods = bam_mods_recorded(mod_state, &n_all_mods);
-                if (n_all_mods == 0) {
+                if (n_all_mods == 1) {
+                    // Check for correct mod type ("m")
+                    int m_strand, m_implicit;
+                    char m_canonical;
+                    bam_mods_queryi(mod_state, 0, &m_strand, &m_implicit, &m_canonical);
+                    if (all_mods[0] != 'm') {
+                        wzfatal("ERROR: BISCUIT only works with 5mC methylation modifications ('m'). Instead, found one modification of type: '%c'\n", all_mods[0]);
+                    }
+                    if (m_canonical != 'C' && m_canonical != 'G') {
+                        wzfatal("ERROR: modification must fall on a C or G\n");
+                    }
+                } else if (n_all_mods == 0) {
                     wzfatal("ERROR: no modifications found. Are you sure this is a modBAM?\n");
-                }
-                if (n_all_mods > 1) {
-                    wzfatal("ERROR: too many modifications found. Only one modification allowed per read.\n");
-                }
+                } else {
+                    int i_mod;
+                    char codes[256] = { 0 };
+                    for (i_mod=0; i_mod<n_all_mods; i_mod++) {
+                        codes[i_mod] = all_mods[i_mod];
+                    }
 
-                // Already ensured we only have one modification (index = 0), check for correct mod type now
-                int m_strand, m_implicit;
-                char m_canonical;
-                bam_mods_queryi(mod_state, 0, &m_strand, &m_implicit, &m_canonical);
-                if (all_mods[0] != 'm') {
-                    wzfatal("ERROR: must be a methylation modification ('m')\n");
-                }
-                if (m_canonical != 'C' && m_canonical != 'G') {
-                    wzfatal("ERROR: modification must fall on a C or G\n");
+                    wzfatal("ERROR: found %i modifications: '%s'. BISCUIT can only handle 5mC ('m') methylation modifications.\n", n_all_mods, codes);
                 }
             }
 
