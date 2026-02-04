@@ -23,10 +23,16 @@
    SOFTWARE.
 */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include <assert.h>
+#ifdef __ARM_NEON
+#include "sse2neon.h"
+#else
 #include <emmintrin.h>
+#endif
 #include "ksw.h"
 
 #ifdef USE_MALLOC_WRAPPERS
