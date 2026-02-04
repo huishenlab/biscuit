@@ -27,6 +27,7 @@
 
 #include <unistd.h>
 #include <errno.h>
+#include <inttypes.h>
 #include "wzmisc.h"
 #include "refcache.h"
 #include "sam.h"

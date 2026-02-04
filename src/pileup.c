@@ -90,28 +90,28 @@ static void print_meth_average_1chrom(FILE *out, char *sample, char *chrom, doub
             fprintf(out, "\t%"PRId64"\t%1.3f%%", k_hcg, b_hcg / (double) k_hcg * 100);
 
             // HCHG - verify non-zero coverage when printing
-            fprintf(out, "\t%"PRId64"\t%1.3f%%", k_hchg);
+            fprintf(out, "\t%"PRId64, k_hchg);
             if (k_hchg > 0)
                 fprintf(out, "\t%1.3f%%", b_hchg / (double) k_hchg * 100);
             else
                 fprintf(out, "\t.");
 
             // HCHH - verify non-zero coverage when printing
-            fprintf(out, "\t%"PRId64"\t%1.3f%%", k_hchh);
+            fprintf(out, "\t%"PRId64, k_hchh);
             if (k_hchh > 0)
                 fprintf(out, "\t%1.3f%%", b_hchh / (double) k_hchh * 100);
             else
                 fprintf(out, "\t.");
 
             // HCH - verify non-zero coverage when printing
-            fprintf(out, "\t%"PRId64"\t%1.3f%%", k_hch);
+            fprintf(out, "\t%"PRId64, k_hch);
             if (k_hch > 0)
                 fprintf(out, "\t%1.3f%%", b_hch / (double) k_hch * 100);
             else
                 fprintf(out, "\t.");
 
             // GCH - verify non-zero coverage when printing
-            fprintf(out, "\t%"PRId64"\t%1.3f%%", k_gch);
+            fprintf(out, "\t%"PRId64, k_gch);
             if (k_gch > 0)
                 fprintf(out, "\t%1.3f%%", b_gch / (double) k_gch * 100);
             else

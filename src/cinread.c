@@ -126,8 +126,8 @@ int cinread_func(bam1_t *b, samFile *out, bam_hdr_t *hdr, void *data) {
                             switch(conf->tp_names[k]) {
                                 case TP_QNAME: fputs(bam_get_qname(b), conf->out); break;
                                 case TP_QPAIR: fputc((c->flag&BAM_FREAD2)?'2':'1', conf->out); break;
-                                case TP_QBEG: fprintf(conf->out, "%ld", c->pos+1); break;
-                                case TP_QEND: fprintf(conf->out, "%ld", bam_endpos(b)); break;
+                                case TP_QBEG: fprintf(conf->out, "%"PRId64, c->pos+1); break;
+                                case TP_QEND: fprintf(conf->out, "%"PRId64, bam_endpos(b)); break;
                                 case TP_STRAND: fputc((c->flag&BAM_FREVERSE)?'-':'+', conf->out); break;
                                 case TP_BSSTRAND: fputc(bsstrand?'-':'+', conf->out); break;
                                 case TP_MAPQ: fprintf(conf->out, "%d", c->qual); break;
