@@ -1,0 +1,12 @@
+# Python directories
+__pycache__/*
+
+# Data directories
+00_index/*
+01_align/*
+02_pileup/*
+03_vcf2bed/*
+04_mergecg/*
+
+# Configuration file
+config.toml
