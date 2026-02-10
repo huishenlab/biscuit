@@ -8,6 +8,7 @@ import run_align
 import run_pileup
 import run_vcf2bed
 import run_mergecg
+import run_bsconv
 
 # Define logging for entire program here
 def setup_logger():
@@ -81,6 +82,8 @@ def main():
         run_vcf2bed.main('03_vcf2bed', '02_pileup', OLD, NEW, conf['force']['vcf2bed'])
     if conf['run']['mergecg']:
         run_mergecg.main('04_mergecg', '03_vcf2bed', OLD, NEW, REF, conf['force']['mergecg'])
+    if conf['run']['bsconv']:
+        run_bsconv.main('05_bsconv', '01_align', OLD, NEW, REF, conf['force']['bsconv'])
 
     return None
 
