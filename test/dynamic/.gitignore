@@ -10,6 +10,7 @@ __pycache__/*
 05_bsconv/*
 06_bsstrand/*
 07_cinread/*
+XX_tview/*
 
 # Configuration file
 config.toml

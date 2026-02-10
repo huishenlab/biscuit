@@ -11,6 +11,7 @@ import run_mergecg
 import run_bsconv
 import run_bsstrand
 import run_cinread
+import run_tview
 
 # Define logging for entire program here
 def setup_logger():
@@ -90,6 +91,8 @@ def main():
         run_bsstrand.main('06_bsstrand', '01_align', OLD, NEW, REF, conf['force']['bsstrand'])
     if conf['run']['cinread']:
         run_cinread.main('07_cinread', '01_align', OLD, NEW, REF, conf['force']['cinread'])
+    if conf['run']['tview']:
+        run_tview.main('XX_tview', '01_align', OLD, NEW, REF, conf['force']['tview'])
 
     return None
 

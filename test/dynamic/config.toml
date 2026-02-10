@@ -7,6 +7,7 @@ run.mergecg = true
 run.bsconv = true
 run.bsstrand = true
 run.cinread = true
+run.tview = false # placeholder, leave as false
 
 # Whether to force rerun a step (true) or not (false)
 force.index = false
@@ -17,3 +18,4 @@ force.mergecg = false
 force.bsconv = false
 force.bsstrand = false
 force.cinread = false
+force.tview = false # placeholder, leave as false
