@@ -9,6 +9,7 @@ import run_pileup
 import run_vcf2bed
 import run_mergecg
 import run_bsconv
+import run_bsstrand
 
 # Define logging for entire program here
 def setup_logger():
@@ -84,6 +85,8 @@ def main():
         run_mergecg.main('04_mergecg', '03_vcf2bed', OLD, NEW, REF, conf['force']['mergecg'])
     if conf['run']['bsconv']:
         run_bsconv.main('05_bsconv', '01_align', OLD, NEW, REF, conf['force']['bsconv'])
+    if conf['run']['bsstrand']:
+        run_bsstrand.main('06_bsstrand', '01_align', OLD, NEW, REF, conf['force']['bsstrand'])
 
     return None
 

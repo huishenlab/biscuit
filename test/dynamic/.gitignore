@@ -8,6 +8,7 @@ __pycache__/*
 03_vcf2bed/*
 04_mergecg/*
 05_bsconv/*
+06_bsstrand/*
 
 # Configuration file
 config.toml

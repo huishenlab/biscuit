@@ -5,6 +5,7 @@ run.pileup = true
 run.vcf2bed = true
 run.mergecg = true
 run.bsconv = true
+run.bsstrand = true
 
 # Whether to force rerun a step (true) or not (false)
 force.index = false
@@ -13,3 +14,4 @@ force.pileup = false
 force.vcf2bed = false
 force.mergecg = false
 force.bsconv = false
+force.bsstrand = false
