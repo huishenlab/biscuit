@@ -10,6 +10,7 @@ import run_vcf2bed
 import run_mergecg
 import run_bsconv
 import run_bsstrand
+import run_cinread
 
 # Define logging for entire program here
 def setup_logger():
@@ -87,6 +88,8 @@ def main():
         run_bsconv.main('05_bsconv', '01_align', OLD, NEW, REF, conf['force']['bsconv'])
     if conf['run']['bsstrand']:
         run_bsstrand.main('06_bsstrand', '01_align', OLD, NEW, REF, conf['force']['bsstrand'])
+    if conf['run']['cinread']:
+        run_cinread.main('07_cinread', '01_align', OLD, NEW, REF, conf['force']['cinread'])
 
     return None
 

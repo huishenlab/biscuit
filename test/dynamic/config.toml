@@ -6,6 +6,7 @@ run.vcf2bed = true
 run.mergecg = true
 run.bsconv = true
 run.bsstrand = true
+run.cinread = true
 
 # Whether to force rerun a step (true) or not (false)
 force.index = false
@@ -15,3 +16,4 @@ force.vcf2bed = false
 force.mergecg = false
 force.bsconv = false
 force.bsstrand = false
+force.cinread = false

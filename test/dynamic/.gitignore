@@ -9,6 +9,7 @@ __pycache__/*
 04_mergecg/*
 05_bsconv/*
 06_bsstrand/*
+07_cinread/*
 
 # Configuration file
 config.toml
