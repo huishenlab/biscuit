@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 def run_bsconv(biscuit_path, dir, tag, bam_dir, ref, force):
     """Generate bisulfite conversion files."""
-    if not os.path.exists(f'{bam_dir}/{tag}.bam') or not os.path.exists(f'{bam_dir}/{tag.bam.csi'):
+    if not os.path.exists(f'{bam_dir}/{tag}.bam') or not os.path.exists(f'{bam_dir}/{tag}.bam.csi'):
         logger.error('Missing BAM or BAM index file. Rerun with `run.align = true`')
         sys.exit(1)
 
