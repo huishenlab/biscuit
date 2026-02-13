@@ -1,5 +1,6 @@
 import subprocess
 import logging
+import tarfile
 import urllib.request
 import sys
 import os
@@ -21,48 +22,37 @@ def setup_logger():
 
 logger = setup_logger()
 
-def get_fasta():
-    # Make directory where the reference FASTA will live
-    os.makedirs('data/ref', exist_ok=True)
+def get_test_files(version):
+    test_fname = 'biscuit_test_files.tar.gz'
 
-    CHR_GZ = 'chr22.fa.gz'
-    CHR = CHR_GZ.replace('.gz', '')
-
-    # Retrieve FASTA
-    logger.info(f'Downloading {CHR_GZ}')
+    logger.info('Downloading BISCUIT test files')
     try:
         urllib.request.urlretrieve(
-            url = f'https://hgdownload.soe.ucsc.edu/goldenpath/hg38/chromosomes/{CHR_GZ}',
-            filename = f'data/ref/{CHR_GZ}'
+            url = f'https://github.com/huishenlab/biscuit/releases/download/{version}/{test_fname}',
+            filename = test_fname
         )
     except Exception as e:
-        logging.error(f'Problem downloading {CHR_GZ} ({e})')
+        logger.error(f'Problem download biscuit test files ({e})')
         sys.exit(1)
     logger.info('Finished downloading')
 
-    # Decompress so that bgzip compression can happen
-    logger.info('Decompressing for eventual bgzip compression')
-    cmd1 = f'gunzip data/ref/{CHR_GZ}'
-    subprocess.run(cmd1.split(' '), stderr=subprocess.DEVNULL)
-    logger.info('Done with decompression')
+    logger.info('Extracting tarball')
+    tar = tarfile.open(test_fname, mode='r:gz')
+    tar.extractall()
+    logger.info('Extraction finished')
 
-    # bgzip compression
-    logger.info('bgzip compressing FASTA')
-    cmd2 = f'bgzip data/ref/{CHR}'
-    subprocess.run(cmd2.split(' '), stderr=subprocess.DEVNULL)
-    logger.info('Done with compression')
-
-    # FASTA index
-    logger.info('Indexing reference FASTA')
-    cmd3 = f'samtools faidx data/ref/{CHR_GZ}'
-    subprocess.run(cmd3.split(' '), stderr=subprocess.DEVNULL)
-    logger.info('Done with index creation')
+    logger.info('Cleaning up tarball')
+    try:
+        os.remove(test_fname)
+    except Exception as e:
+        logger.error(f'Error deleting tarball ({e})')
+        sys.exit(1)
+    logger.info('Successfully cleaned up tarball')
 
     return None
 
 def main():
-    # Get reference FASTA
-    get_fasta()
+    get_test_files('v1.7.1.20250908')
 
     return None
 
