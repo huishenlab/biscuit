@@ -25,33 +25,36 @@ def get_fasta():
     # Make directory where the reference FASTA will live
     os.makedirs('data/ref', exist_ok=True)
 
+    CHR_GZ = 'chr22.fa.gz'
+    CHR = CHR_GZ.replace('.gz', '')
+
     # Retrieve FASTA
-    logger.info('Downloading chr1.fa.gz')
+    logger.info(f'Downloading {CHR_GZ}')
     try:
         urllib.request.urlretrieve(
-            url = 'https://hgdownload.soe.ucsc.edu/goldenpath/hg38/chromosomes/chr1.fa.gz',
-            filename = 'data/ref/chr1.fa.gz'
+            url = f'https://hgdownload.soe.ucsc.edu/goldenpath/hg38/chromosomes/{CHR_GZ}',
+            filename = f'data/ref/{CHR_GZ}'
         )
     except Exception as e:
-        logging.error(f'Problem downloading chr1.fa.gz ({e})')
+        logging.error(f'Problem downloading {CHR_GZ} ({e})')
         sys.exit(1)
     logger.info('Finished downloading')
 
     # Decompress so that bgzip compression can happen
     logger.info('Decompressing for eventual bgzip compression')
-    cmd1 = 'gunzip data/ref/chr1.fa.gz'
+    cmd1 = f'gunzip data/ref/{CHR_GZ}'
     subprocess.run(cmd1.split(' '), stderr=subprocess.DEVNULL)
     logger.info('Done with decompression')
 
     # bgzip compression
     logger.info('bgzip compressing FASTA')
-    cmd2 = 'bgzip data/ref/chr1.fa'
+    cmd2 = f'bgzip data/ref/{CHR}'
     subprocess.run(cmd2.split(' '), stderr=subprocess.DEVNULL)
     logger.info('Done with compression')
 
     # FASTA index
     logger.info('Indexing reference FASTA')
-    cmd3 = 'samtools faidx data/ref/chr1.fa.gz'
+    cmd3 = f'samtools faidx data/ref/{CHR_GZ}'
     subprocess.run(cmd3.split(' '), stderr=subprocess.DEVNULL)
     logger.info('Done with index creation')
 
