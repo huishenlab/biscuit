@@ -45,13 +45,7 @@ def main():
     # Reference FASTA
     REF = '../data/ref/chr1.fa.gz'
     if not check_path(REF) or not check_path(f'{REF}.fai'):
-        print('Reference FASTA missing. Please run `get_fasta.sh` in ../data/ to retrieve.')
-        sys.exit(1)
-
-    # Previous BISCUIT version
-    OLD = '../data/biscuit_master/bin'
-    if not check_path(OLD) and not check_path(f'{OLD}/biscuit'):
-        print('Original BISCUIT not downloaded and/or compiled. Please run `get_biscuit.sh` in ../data to retrieve.')
+        print('Reference FASTA missing. Please move up a directory and run `setup_tests.py` to retrieve.')
         sys.exit(1)
 
     # New BISCUIT version
