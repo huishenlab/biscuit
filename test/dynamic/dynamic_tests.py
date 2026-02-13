@@ -86,6 +86,8 @@ def main():
     if conf['run']['tview']:
         run_tview.main(NEW, 'XX_tview', REF, '01_align', conf['force']['tview'])
 
+    logger.info('Finished testing')
+
     return None
 
 if __name__ == '__main__':
