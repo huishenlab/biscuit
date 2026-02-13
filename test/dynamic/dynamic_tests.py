@@ -62,31 +62,29 @@ def main():
     conf = read_config()
 
     logger.info(f'Reference path: {REF}')
-    logger.info(f'Old BISCUIT path: {OLD}')
     logger.info(f'New BISCUIT path: {NEW}')
     for outer_key, dic in conf.items():
         for inner_key, value in dic.items():
             logger.info(f'Runtime configuration: {outer_key}.{inner_key} = {value}')
-    #logger.info(f'Runtime configuration: {conf}')
 
     if conf['run']['index']:
-        run_index.main('00_index', REF, OLD, NEW, conf['force']['index'])
+        run_index.main(NEW, '00_index', REF, conf['force']['index'])
     if conf['run']['align']:
-        run_align.main('01_align', '00_index', OLD, NEW, conf['force']['align'])
+        run_align.main(NEW, '01_align', '00_index', conf['force']['align'])
     if conf['run']['pileup']:
-        run_pileup.main('02_pileup', REF, OLD, NEW, '01_align', conf['force']['pileup'])
+        run_pileup.main(NEW, '02_pileup', REF, '01_align', conf['force']['pileup'])
     if conf['run']['vcf2bed']:
-        run_vcf2bed.main('03_vcf2bed', '02_pileup', OLD, NEW, conf['force']['vcf2bed'])
+        run_vcf2bed.main(NEW, '03_vcf2bed', '02_pileup', conf['force']['vcf2bed'])
     if conf['run']['mergecg']:
-        run_mergecg.main('04_mergecg', '03_vcf2bed', OLD, NEW, REF, conf['force']['mergecg'])
+        run_mergecg.main(NEW, '04_mergecg', REF, '03_vcf2bed', conf['force']['mergecg'])
     if conf['run']['bsconv']:
-        run_bsconv.main('05_bsconv', '01_align', OLD, NEW, REF, conf['force']['bsconv'])
+        run_bsconv.main(NEW, '05_bsconv', REF, '01_align', conf['force']['bsconv'])
     if conf['run']['bsstrand']:
-        run_bsstrand.main('06_bsstrand', '01_align', OLD, NEW, REF, conf['force']['bsstrand'])
+        run_bsstrand.main(NEW, '06_bsstrand', REF, '01_align', conf['force']['bsstrand'])
     if conf['run']['cinread']:
-        run_cinread.main('07_cinread', '01_align', OLD, NEW, REF, conf['force']['cinread'])
+        run_cinread.main(NEW, '07_cinread', REF, '01_align', conf['force']['cinread'])
     if conf['run']['tview']:
-        run_tview.main('XX_tview', '01_align', OLD, NEW, REF, conf['force']['tview'])
+        run_tview.main(NEW, 'XX_tview', REF, '01_align', conf['force']['tview'])
 
     return None
 

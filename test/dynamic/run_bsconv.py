@@ -7,50 +7,49 @@ import compare_files
 
 logger = logging.getLogger(__name__)
 
-def run_bsconv(biscuit_path, dir, tag, bam_dir, ref, force):
+def run_bsconv(biscuit_dir, out_dir, prefix, ref_path, bam_dir, force):
     """Generate bisulfite conversion files."""
-    if not os.path.exists(f'{bam_dir}/{tag}.bam') or not os.path.exists(f'{bam_dir}/{tag}.bam.csi'):
+    if not os.path.exists(f'{bam_dir}/{prefix}.bam') or not os.path.exists(f'{bam_dir}/{prefix}.bam.csi'):
         logger.error('Missing BAM or BAM index file. Rerun with `run.align = true`')
         sys.exit(1)
 
     # If files exist and user doesn't force regeneration, skip processing
-    if os.path.exists(f'{dir}/{tag}.bsconv'):
+    if os.path.exists(f'{out_dir}/{prefix}.bsconv'):
         if not force:
-            logger.info(f'Found {tag} bsconv files in {dir}. Rerun with `force.bsconv = true` to regenerate these files')
+            logger.info(f'Found {prefix} bsconv files in {out_dir}. Rerun with `force.bsconv = true` to regenerate these files')
             return None
         else:
-            logger.info(f'Found {tag} bsconv files in {dir}, but `force.bsconv = true` - REGENERATING bsconv files')
+            logger.info(f'Found {prefix} bsconv files in {out_dir}, but `force.bsconv = true` - REGENERATING bsconv files')
 
-    logger.info(f'Running {tag} BISCUIT bsconv')
+    logger.info(f'Running {prefix} BISCUIT bsconv')
 
-    cmd = f'{biscuit_path}/biscuit bsconv {ref} {bam_dir}/{tag}.bam'
-    logger.debug(f'{tag} BISCUIT bsconv command: {cmd}')
-    with open(f'{dir}/{tag}.bsconv', 'w') as f:
+    cmd = f'{biscuit_dir}/biscuit bsconv {ref_path} {bam_dir}/{prefix}.bam'
+    logger.debug(f'{prefix} BISCUIT bsconv command: {cmd}')
+    with open(f'{out_dir}/{prefix}.bsconv', 'w') as f:
         subprocess.run(cmd.split(' '), stdout=f, stderr=subprocess.DEVNULL)
 
     return None
 
-def main(dir, bam_dir, old, new, ref, force):
+def main(biscuit_dir, out_dir, ref_path, bam_dir, force):
     logger.info('Starting bsconv testing')
 
-    if not os.path.exists(dir):
-        os.makedirs(dir)
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
 
-    run_bsconv(old, f'{dir}', 'old', bam_dir, ref, force)
-    run_bsconv(new, f'{dir}', 'new', bam_dir, ref, force)
+    run_bsconv(biscuit_dir, out_dir, 'new', ref_path, bam_dir, force)
 
-    if compare_files.compare_files('.bsconv', f'{dir}/old', f'{dir}/new'):
+    if compare_files.compare_files('.bsconv', f'../data/dynamic/{out_dir}/current', f'{out_dir}/new'):
         logger.info(f'*.bsconv match')
     else:
-        diffs = compare_files.compare_line_by_line('.bsconv', f'{dir}/old', f'{dir}/new')
+        diffs = compare_files.compare_line_by_line('.bsconv', f'../data/dynamic/{out_dir}/current', f'{out_dir}/new')
         n_diffs = 0
         for diff in diffs:
-            idx, l_old, l_new = diff
-            if l_old.startswith('@PG') and l_new.startswith('@PG'):
+            idx, l_current, l_new = diff
+            if l_current.startswith('@PG') and l_new.startswith('@PG'):
                 continue
             else:
                 n_diffs += 1
-                print(f'line {idx}\n\tOLD -- {l_old}\n\tNEW -- {l_new}')
+                print(f'line {idx}\n\tOLD -- {l_current}\n\tNEW -- {l_new}')
 
         if n_diffs > 0:
             logger.error(f'Mismatch in files: *.bsconv - see above for differences')
