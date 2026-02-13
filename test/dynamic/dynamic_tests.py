@@ -23,7 +23,7 @@ def setup_logger():
 
     at the top of its file to become children of this main logger
     """
-    FORMAT = "[{levelname:<7}] {asctime} - {name:<15} - {message}"
+    FORMAT = "[{levelname:<7}] {asctime} - {name:<12} :: {funcName:<15} - {message}"
     logging.basicConfig(format=FORMAT, style="{", level=logging.INFO)
 
     return logging.getLogger(__name__)
