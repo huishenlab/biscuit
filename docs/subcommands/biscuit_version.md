@@ -7,7 +7,7 @@ permalink: /biscuit_version/
 
 # biscuit version
 ```bash
-BISCUIT Version: 1.7.1
+BISCUIT Version: 1.8.0
 
 Using:
         htslib : version 1.18
