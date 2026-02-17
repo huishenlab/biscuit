@@ -104,19 +104,33 @@ Linux), as [source code](#download-source-code-and-compile) for compilation on y
 
 ### Download Precompiled Binaries
 
-Precompiled binaries can be found on the [latest release page](https://github.com/huishenlab/biscuit/releases/latest) on
-GitHub. Currently, there are only precompiled binaries for Linux and macOS. The macOS binary was compiled on an Intel
-CPU and will not work on an Apple silicone CPU. You can also download the binaries directly from the terminal using the
-following one-liner:
+Precompiled binaries for Linux and macOS can be found on the
+[latest release page](https://github.com/huishenlab/biscuit/releases/latest) on GitHub.
+
+*Note*, starting with Version 1.8.0, the macOS binary is built for the Apple M-series (arm64) CPU, while Version 1.7.0
+and below macOS binaries were built for the Intel (x86_64) CPU. A precompiled macOS binary is not available for Version
+1.7.1 as this was in the transition period between Intel and M-series builds.
+
+You can also download the binaries directly from the terminal using the following one-liner:
 
 On macOS,
 ```bash
+# Latest release
+curl -OL $(curl -s https://api.github.com/repos/huishenlab/biscuit/releases/latest |
+    grep browser_download_url | grep darwin_arm64 | cut -d '"' -f 4) --output biscuit
+chmod +x biscuit
+
+# Specify version (Version 1.8.0 and newer)
+curl -OL https://github.com/huishenlab/biscuit/releases/download/vX.Y.Z.YYYYMMDD/biscuit_X_Y_Z_darwin_arm64
+mv biscuit_X_Y_Z_darwin_arm64 biscuit
+chmod +x biscuit
+
+# Specify version (Version 1.7.0 and older)
 curl -OL https://github.com/huishenlab/biscuit/releases/download/vX.Y.Z.YYYYMMDD/biscuit_X_Y_Z_darwin_amd64
 mv biscuit_X_Y_Z_darwin_amd64 biscuit
 chmod +x biscuit
 ```
-where `X.Y.Z` is the version number and `YYYYMMDD` is the date of the release. Note, a MacOS release is only available
-through v1.7.0.
+where `X.Y.Z` is the version number and `YYYYMMDD` is the date of the release.
 
 On Linux,
 ```bash
