@@ -29,8 +29,7 @@ jobs:
   build-mac:
     name: Check macOS Build
 
-    # macos-latest is now ARM-only, macos-13 is the most recent version that supports x86-64
-    runs-on: macos-13
+    runs-on: macos-latest
 
     steps:
     - uses: actions/checkout@v3
