@@ -14,7 +14,7 @@ The following dependencies are downloaded when running with `--use-conda`, other
   - `snakemake` (version 8.0+, needed before running pipeline)
   - `snakemake-executor-plugin-cluster-generic` (version 1.0.9, needed before running pipeline)
   - `mamba` (version 2.1.0, needed before running pipeline)
-  - `biscuit` (version 1.7.1)
+  - `biscuit` (version 1.8.0)
   - `htslib` (version 1.22.1)
   - `samtools` (version 1.22.1)
   - `dupsifter` (version 1.3.0)
