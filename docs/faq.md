@@ -34,6 +34,25 @@ $ bash flip_pbat_strands.sh -h
 ```
 for more details on usage.
 
+**I have `alt` or `hap" contigs in my reference FASTA and noticed that I need a `.alt` file for BISCUIT to handle
+these correctly. How do I create a BISCUIT-compliant `.alt` file?**
+
+> Some reference providers pre-generated `.alt` file. These likely will work in BISCUIT, particularly if they work in
+`bwa mem`. If they do not, you may generate a `.alt` file with the following command:
+
+```bash
+grep -E "_alt|_hap" my_reference.fa > my_reference.fa.alt
+```
+
+This will write any contig names with `_alt` or `_hap` into `my_reference.fa.alt`. Note, it is important the base file
+name (everything prior to `.alt`) matches with the reference prefix used when running `biscuit align`. Typically, this
+will be the name of the reference file itself. However, users who generated a BISCUIT index with a different prefix must
+be aware of this when creating a `.alt` file.
+
+Also note, `grep` will output the entire header line (including the `>` and any sequence descirptions) for each contig
+into the `.alt` file. BISCUIT accounts for these additional characters when parsing the contig name to match against the
+pre-generated BISCUIT index.
+
 ## Installation Questions
 
 **I ran `git clone git@github.com:huishenlab/biscuit.git`, but when trying to compile the executable, I get an error
