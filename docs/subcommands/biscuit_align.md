@@ -54,7 +54,6 @@ Scoring options:
 Input/output options:
     -1 STR          Align a single read STR
     -2 STR          Align a read STR paired with -1 read
-    -i              Turn off autoinference of ALT chromosomes
     -p              Smart pairing (ignores in2.fq)
     -R STR          Read group header line (such as '@RG\tID:foo\tSM:bar')
     -F              Suppress SAM header output
