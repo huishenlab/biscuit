@@ -1,9 +1,8 @@
 /* annotate bisulfite conversion of reads
- * 
- * The MIT License (MIT)
+ * * The MIT License (MIT)
  *
  * Copyright (c) 2016-2020 Wanding.Zhou@vai.org
- *               2021-2026 Jacob.Morrison@vai.org
+ * 2021-2026 Jacob.Morrison@vai.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -68,6 +67,7 @@ int bsconv_func(bam1_t *b, samFile *out, bam_hdr_t *hdr, void *data) {
             case BAM_CEQUAL:
             case BAM_CDIFF:
                 for(j=0; j<oplen; ++j) {
+                    uint32_t current_qpos = qpos + j;
                     rb = refcache_getbase_upcase(d->rs, rpos+j);
 
                     // avoid looking at the wrong strand
@@ -78,8 +78,14 @@ int bsconv_func(bam1_t *b, samFile *out, bam_hdr_t *hdr, void *data) {
                     // filter by context
                     fivenuc_context(d->rs, rpos+j, rb, fivenuc);
 
+                    // Exclude terminal bases from filtering counts if within -5 or -3 windows
+                    if (current_qpos < (uint32_t)conf->ignore_5prime || 
+                        current_qpos >= (uint32_t)(c->l_qseq - conf->ignore_3prime)) {
+                        continue;
+                    }
+
                     // count retention and conversion
-                    qb = toupper(bscall(b, qpos+j));
+                    qb = toupper(bscall(b, current_qpos));
                     if (bsstrand && rb == 'G') {
                         if (qb == 'G') retn[nt256char_to_nt256int8_table[(unsigned char)fivenuc[3]]]++;
                         else if (qb == 'A') conv[nt256char_to_nt256int8_table[(unsigned char)fivenuc[3]]]++;
@@ -203,8 +209,10 @@ static void usage() {
     fprintf(stderr, "    -c INT      Filter: maximum CpC retention [Inf]\n");
     fprintf(stderr, "    -t INT      Filter: maximum CpT retention [Inf]\n");
     fprintf(stderr, "    -x INT      Filter: maximum CpY retention [Inf]\n");
+    fprintf(stderr, "    -5 INT      Ignore INT bases from 5' end of read for filtering [0]\n");
+    fprintf(stderr, "    -3 INT      Ignore INT bases from 3' end of read for filtering [0]\n");
     fprintf(stderr, "    -p          Print in tab-separated format, print order:\n");
-    fprintf(stderr, "                    CpA_R, CpA_C, CpC_R, CpC_C, CpG_R, CpG_C, CpT_R, CpT_C\n");
+    fprintf(stderr, "                CpA_R, CpA_C, CpC_R, CpC_C, CpG_R, CpG_C, CpT_R, CpT_C\n");
     fprintf(stderr, "    -v          Show filtered reads instead of remaining reads\n");
     fprintf(stderr, "    -h          This help\n");
     fprintf(stderr, "\n");
@@ -218,12 +226,15 @@ int main_bsconv(int argc, char *argv[]) {
     conf.max_cph_frac = 1.0;
     conf.max_cpy_frac = 1.0;
     conf.print_in_tab = 0;
-    conf.no_printing = 0; // only needed for qc at this time, so don't provide a command line argument to change this for now
+    conf.no_printing = 0; 
+    conf.ignore_5prime = 0;
+    conf.ignore_3prime = 0;
 
     kstring_t call = generate_command_line_string(argc, argv);
 
     if (argc < 2) { usage(); return 1; }
-    while ((c = getopt(argc, argv, ":g:m:ac:f:y:pt:x:uvh")) >= 0) {
+    // Added 5: and 3: to the getopt string
+    while ((c = getopt(argc, argv, ":g:m:ac:f:y:pt:x:uvh5:3:")) >= 0) {
         switch (c) {
             case 'g': reg = optarg; break;
             case 'm': conf.max_cph = atoi(optarg); break;
@@ -236,6 +247,8 @@ int main_bsconv(int argc, char *argv[]) {
             case 'u': conf.filter_u = 1; break;
             case 'p': conf.print_in_tab = 1; break;
             case 'v': conf.show_filtered = 1; break;
+            case '5': conf.ignore_5prime = atoi(optarg); break;
+            case '3': conf.ignore_3prime = atoi(optarg); break;
             case 'h': usage(); return 1;
             case ':': usage(); wzfatal("Option needs an argument: -%c\n", optopt); break;
             case '?': usage(); wzfatal("Unrecognized option: -%c\n", optopt); break;

@@ -49,6 +49,8 @@ typedef struct {
     int show_filtered;
     int print_in_tab;
     int no_printing;
+    int ignore_5prime;
+    int ignore_3prime;
 } bsconv_conf_t;
 
 typedef struct bsconv_data_t {
