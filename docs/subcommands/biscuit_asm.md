@@ -1,7 +1,7 @@
 ---
 title: biscuit asm
 parent: BISCUIT Subcommands
-nav_order: 12
+nav_order: 13
 permalink: /biscuit_asm/
 ---
 

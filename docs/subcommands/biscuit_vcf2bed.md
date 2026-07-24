@@ -1,7 +1,7 @@
 ---
 title: biscuit vcf2bed
 parent: BISCUIT Subcommands
-nav_order: 8
+nav_order: 9
 permalink: /biscuit_vcf2bed/
 ---
 

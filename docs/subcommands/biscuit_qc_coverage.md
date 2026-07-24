@@ -1,7 +1,7 @@
 ---
 title: biscuit qc_coverage
 parent: BISCUIT Subcommands
-nav_order: 14
+nav_order: 15
 permalink: /biscuit_qc_coverage/
 ---
 

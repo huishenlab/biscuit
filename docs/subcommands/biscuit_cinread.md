@@ -1,7 +1,7 @@
 ---
 title: biscuit cinread
 parent: BISCUIT Subcommands
-nav_order: 6
+nav_order: 7
 permalink: /biscuit_cinread/
 ---
 

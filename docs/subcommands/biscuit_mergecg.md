@@ -1,7 +1,7 @@
 ---
 title: biscuit mergecg
 parent: BISCUIT Subcommands
-nav_order: 9
+nav_order: 10
 permalink: /biscuit_mergecg/
 ---
 

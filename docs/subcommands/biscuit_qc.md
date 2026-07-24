@@ -1,7 +1,7 @@
 ---
 title: biscuit qc
 parent: BISCUIT Subcommands
-nav_order: 13
+nav_order: 14
 permalink: /biscuit_qc/
 ---
 

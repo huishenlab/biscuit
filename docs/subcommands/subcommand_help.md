@@ -12,7 +12,7 @@ Usage for available BISCUIT subcommands (printed with either `biscuit` or `biscu
 ```bash
 
 Program: BISCUIT (BISulfite-seq CUI Toolkit)
-Version: 1.9.0
+Version: 1.10.0
 Contact: Jacob Morrison <jacob.morrison@vai.org>
 
 Usage: biscuit <command> [options]
@@ -27,6 +27,7 @@ Command:
     tview        Text alignment viewer with bisulfite coloring
     bsstrand     Validate/correct bisulfite conversion strand label (YD tag)
     bsconv       Summarize/filter reads by bisulfite conversion (ZN tag)
+    postalt      Prefer primary chromosomes over unplaced/alt contigs (XA)
     cinread      Print cytosine-read pair in a long form
 
  -- Base summary
