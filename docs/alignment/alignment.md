@@ -161,6 +161,22 @@ will preferentially align reads to contigs not marked as ALT. If no `my_referenc
 will be treated as equally valid. [The FAQ page]({{ site.baseurl }}{% link docs/faq.md %}) contains information on how
 to create a `my_reference.fa.alt` file if you do not have one.
 
+As of version 1.10.0, BISCUIT provides the `biscuit postalt` subcommand to modify an output BAM from `biscuit align` to
+prefer primary chromosomes over alternative/decoy chromosomes:
+```bash
+biscuit postalt \
+    --unplaced \
+    <in.bam> \
+    [out.bam]
+```
+When a read's primary alignment is on a non-primary chromosome (as defined by an input regular expression) and its XA
+tag contains a equal/near-equal score on a primary chromsome, BISCUIT will promote the alignment in the XA tag to the
+primary alignment of the read and demote the original alignment to the XA tag. It will then recalculate the mapping
+quality (MAPQ) score for the new primary alignment.
+
+`biscuit postalt` provides an opt-in method for prioritizing primary chromosomes over unplaced/unlocalized contigs
+without impacting the behavior of `biscuit align`.
+
 ## Other Alignment Features
 
   - Asymmetric scoring for C &rarr; T and G &rarr; A is used in local mapping

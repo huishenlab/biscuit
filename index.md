@@ -271,7 +271,7 @@ terminal. Help for each subcommand can be found by running `biscuit <subcommand>
   - `bsconv` Investigate bisulfite conversion rate (see
   [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}) under the Read Mapping tab)
   - `postalt` Prefer primary chromosomes over unplaced/alt contigs (see
-  [Understand the output BAM]({{ site.baseurl }}{% link docs/alignment/understand_bam.md %}) under the Read Mapping tab)
+  [Read Mapping]({{ site.baseurl }}{% link docs/alignment/alignment.md %}))
   - `cinread` Print cytosine-read pair in a long form (see
   [Quality Control]({{ site.baseurl }}{% link docs/alignment/QC.md %}) under the Read Mapping tab)
 
