@@ -3,29 +3,26 @@ title: Barcode Extraction
 nav_order: 2
 ---
 
-*Note: The initial version of BISCUIT that included the `bc` subcommand (version 1.3.0) used a different scheme for
-storing and extracting cell barcodes which means using `umi-tools` is incompatible with version 1.3.0. All versions from
-1.3.1-dev onward use the same scheme as `umi-tools`. This also means that barcodes extracted with version 1.3.0 must
-be aligned with version 1.3.0 to ensure proper inclusion of barcodes in the SAM entry. While the mechanics of using
-`biscuit bc` described on this page will also work for version 1.3.0, please note there will be some minor differences
-in the BAM produced (e.g., CR tag used instead of CB) and `biscuit align` will not work with `umi-tools`-corrected FASTQ
-files.*
-
 # Extracting Cell Barcodes from scWGBS Protocols
 
 Cell barcodes are commonly used in scRNA-seq protocols to overcome DNA input issues and increase throughput by merging
 cDNA from separate wells into a single well.  In a similar manner, the single-cell WGBS (scWGBS) protocol, snmc-seq2,
-uses the same methodology for increasing throughput. While there aren't many scWGBS protocols that use cell barcoding,
-it seems likely barcodes (and unique molecular indexes (UMIs) down the road) will be used more frequently in protocols.
+uses the same methodology for increasing throughput. While most current scWGBS protocols do not use cell barcodes, it is
+possible (some may say likely) that cell barcodes and unique molecular indexes (UMIs) will be used more frequently in
+future protocols.
 
 BISCUIT provides the `biscuit bc` subcommand as a way to remove uncorrected cell barcodes from FASTQ files, which can
-either be written to new FASTQ files or fed directly into `biscuit align`. Further, the output from `biscuit bc` matches
-the output from the commonly used tool, [umi-tools](https://github.com/CGATOxford/UMI-tools), which allows the user
-to perform barcode correction with `umi-tools` and then use the resulting FASTQs as input to `biscuit align`.
+either be written to new FASTQ files or fed directly into `biscuit align`. The output from `biscuit bc` is compatible
+with [umi-tools](https://github.com/CGATOxford/UMI-tools) which allows the user to use `umi-tools` for barcode
+correction and then pass the resulting FASTQs as input to `biscuit align`.
+
+**NOTE: It is suggested to not used BISCUIT version 1.3.0 for extracting cell barcodes as it is not compatible with
+`umi-tools` and contains minor differences in the SAM entry from later versions of BISCUIT (version 1.3.1-dev onward).
+Please use at least BISCUIT 1.4.0 when utilizing `biscuit bc`.**
 
 ## Barcode Extraction with BISCUIT
 
-As an overview, `biscuit bc` takes FASTQs as input and outputs the processed reads to standard out:
+`biscuit bc` takes FASTQs as input and outputs the processed reads to standard out:
 ```
 # Single-end data
 biscuit bc read1.fq.gz
@@ -37,8 +34,7 @@ For paired-end data, the output is printed in an interleaved form (i.e., read 1 
 **It is important to include both FASTQs as input for paired-end data, as the barcode and an artificial UMI (needed for
 compatibility with `umi-tools`) are written to the read name of both read 1 and read 2.**
 
-You can set the geometry of where the cell barcode is with the `-m/--mate`, `-s/--bc-start`, and `-l/--bc-length`
-options.
+You can set the the cell barcode location with the `-m/--mate`, `-s/--bc-start`, and `-l/--bc-length` options.
 ```
 biscuit bc -m 1 -s 1 -l 8 read1.fq.gz read2.fq.gz
 ```
@@ -58,7 +54,7 @@ For more help on available flags, run `biscuit bc` in the terminal or visit the
 
 ### Passing Ouput to `biscuit align`
 
-You can pass the output of `biscuit bc` straight to `biscuit align`:
+The output of `biscuit bc` can be passed straight to `biscuit align`:
 ```
 # Single-end data
 biscuit bc read1.fq.gz | \
@@ -93,8 +89,8 @@ Barcode correction and extraction can be performed using `umi-tools` with the he
 
 ### Step 1: Add synthetic UMI with synthbar
 
-`umi-tools` expects at least a UMI in a read. At this time, there are no scWGBS protocols that include UMIs; therefore,
-a synthetic UMI sequence must be added to the read with the cell barcode in it. `synthbar` is a tool that can add
+`umi-tools` requires reads to have a UMI. At this time, there are no scWGBS protocols that include UMIs; therefore, a
+synthetic UMI sequence must be added to the read with the cell barcode in it. `synthbar` is a tool that can add
 synthetic sequences to cells and, for our purposes, can be used to add a synthetic UMI:
 ```
 synthbar -b AAAAAAAA barcoded_reads_R1.fastq.gz | \
@@ -118,7 +114,7 @@ Here, `NNNNNNNNCCCCCCC` specifies a an 8 basepair UMI followed by a 7 basepair c
 
 ### Step 3: Correct and Extract Barcodes
 
-The results from `whitelist.txt` are then fed into the code that extracts the UMI and cell barcode into the readname:
+The results from `whitelist.txt` are then fed into the code that extracts the UMI and cell barcode into the read name:
 ```
 umi_tools extract \
     --bc-pattern=NNNNNNNNCCCCCCC \
