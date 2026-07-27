@@ -12,7 +12,9 @@ additional coloring, a reference FASTA file is required for `biscuit tview` so t
 identified.
 
 ```bash
-$ biscuit tview my_input.bam /path/to/my_reference.fa
+biscuit tview \
+    my_input.bam \
+    /path/to/my_reference.fa
 ```
 
 ![tview screenshot](/biscuit/assets/2017_05_02_biscuit_tview_figure.png)
