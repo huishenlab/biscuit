@@ -177,6 +177,9 @@ quality (MAPQ) score for the new primary alignment.
 `biscuit postalt` provides an opt-in method for prioritizing primary chromosomes over unplaced/unlocalized contigs
 without impacting the behavior of `biscuit align`.
 
+For more help with `postalt`, run `biscuit postalt` in the terminal or check out the
+[postalt help page]({{ site.baseurl }}{% link docs/subcommands/biscuit_postalt.md %}).
+
 ## Other Alignment Features
 
   - Asymmetric scoring for C &rarr; T and G &rarr; A is used in local mapping
