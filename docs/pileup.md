@@ -16,15 +16,16 @@ call if the SNP interferes with the determination of cytosine retention or conve
 A tabix-indexed VCF can be created with BISCUIT and [bgzip](https://www.htslib.org/doc/bgzip.html) /
 [tabix](https://www.htslib.org/doc/tabix.html):
 ```bash
-biscuit pileup -@ NTHREADS -o my_pileup.vcf /path/to/my_reference.fa my_output.bam
+biscuit pileup \
+    -@ NTHREADS \
+    -o my_pileup.vcf \
+    /path/to/my_reference.fa \
+    my_output.bam
 bgzip -@ NTHREADS my_pileup.vcf
 tabix -p vcf my_pileup.vcf.gz
 ```
 
 You should use the same reference for `biscuit pileup` as was used to create the alignment.
-
-To get additional diagnostic information, include `-v 1` in the `biscuit pileup` call. Additional debug information can
-be including by using `-v 6` instead.
 
 For more help on available flags, run `biscuit pileup` in the terminal or visit the
 [pileup help page]({{ site.baseurl }}{% link docs/subcommands/biscuit_pileup.md %}).
@@ -47,15 +48,22 @@ useful to understand are:
 
 ### Example Output with Diagnostic Information
 
-Note, when `biscuit pileup` is run with diagnostic information included the resulting VCF is not standard-compliant.
-Therefore, it is not recommended that `-v 1` is included when performing analyses.
+The `-v` option provides extra information when generating the pileup VCF. `-v 1` will include extra diagnostic
+information regarding the methylation and SNP calls. The output VCF, however, will no longer be standard-compliant, so
+it is recommended to not run with `-v 1` when performing analysis. `-v 6` will output debug information for resolving
+issues when running `biscuit pileup`.
 
 The following example shows output `biscuit pileup` in a low coverage, low quality region, with additional diagnostic
 information included.
 
 ```
 # Example command run in BISCUIT
-biscuit pileup -@ NTHREADS -o diagnostic.vcf -v 1 /path/to/my_reference.fa output.bam
+biscuit pileup \
+    -@ NTHREADS \
+    -o diagnostic.vcf \
+    -v 1 \
+    /path/to/my_reference.fa \
+    my_output.bam
 
 # Output line from VCF file
 chr1    2361154    .    C    .    5    LowQual    NS=1;CX=CG;N5=ACCGG \
@@ -72,10 +80,10 @@ header. In brief, the DIAGNOSE data in the above example shows:
   - Retention-mutation status internally determined by BISCUIT (`Sta0=1`) See
   [Codes for Retention Mutation Status](#codes-for-retention-mutation-status) for a description of possible values.
   - Phred-scaled base qualities for bases in question (`Bq0=F`)
-  - Whether the read is on the forward (`+`) or reverse (`-`) (`Str0=+`)
+  - Whether the read is on the forward (`+`) or reverse (`-`) strand (`Str0=+`)
   - Position along the read where the bases are (`Pos0=44`)
   - Number of retained (i.e., methylated) cytosines on each read (`Rret0=23`)
-  - While not shown, information for reads on the Crick (OB/CTOB) strand can be found in the `Bs1`, `Sta0`, etc. tags
+  - While not shown, information for reads on the Crick (OB/CTOB) strand can be found in the `Bs1`, `Sta1`, etc. tags
 
 When running with the `-v 1` option, BISCUIT will also print positions with no SNP or cytosine methylation, which allows
 for differentiating between "no mutation" and "no coverage."
@@ -136,8 +144,13 @@ For NOMe-seq, the columns are similar:
 BISCUIT has the ability to put mutation calls and DNA methylation measurements from multiple samples next to each other
 in the output VCF by providing `biscuit pileup` with more than one input BAM.
 ```bash
-biscuit pileup -@ NTHREADS -o my_combined_pileup.vcf /path/to/my_reference.fa \
-    my_output_1.bam my_output_2.bam [...]
+biscuit pileup \
+    -@ NTHREADS \
+    -o my_combined_pileup.vcf \
+    /path/to/my_reference.fa \
+    my_output_1.bam \
+    my_output_2.bam \
+    [...]
 bgzip -@ NTHREADS my_combined_pileup.vcf
 tabix -p vcf my_combined_pileup.vcf.gz
 ```
@@ -147,8 +160,13 @@ tabix -p vcf my_combined_pileup.vcf.gz
 BISCUIT can call somatic mutations by providing a tumor and matched normal BAM to `pileup`. To run in *somatic mode*,
 run `biscuit pileup` with the `-S` flag:
 ```bash
-biscuit pileup -@ NTHREADS -S -o somatic_mode.vcf /path/to/my_reference.fa \
-    -T tumor.bam -I normal.bam
+biscuit pileup \
+    -@ NTHREADS \
+    -S \
+    -o somatic_mode.vcf \
+    /path/to/my_reference.fa \
+    -T tumor.bam \
+    -I normal.bam
 bgzip -@ NTHREADS somatic_mode.vcf
 tabix -p vcf somatic_mode.vcf.gz
 ```
