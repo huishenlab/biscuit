@@ -34,7 +34,7 @@ $ bash flip_pbat_strands.sh -h
 ```
 for more details on usage.
 
-**I have `alt` or `hap" contigs in my reference FASTA and noticed that I need a `.alt` file for BISCUIT to handle
+**I have `alt` or `hap` contigs in my reference FASTA and noticed that I need a `.alt` file for BISCUIT to handle
 these correctly. How do I create a BISCUIT-compliant `.alt` file?**
 
 > Some reference providers pre-generated `.alt` file. These likely will work in BISCUIT, particularly if they work in
@@ -44,12 +44,12 @@ these correctly. How do I create a BISCUIT-compliant `.alt` file?**
 grep -E "_alt|_hap" my_reference.fa > my_reference.fa.alt
 ```
 
-This will write any contig names with `_alt` or `_hap` into `my_reference.fa.alt`. Note, it is important the base file
+> This will write any contig names with `_alt` or `_hap` into `my_reference.fa.alt`. Note, it is important the base file
 name (everything prior to `.alt`) matches with the reference prefix used when running `biscuit align`. Typically, this
 will be the name of the reference file itself. However, users who generated a BISCUIT index with a different prefix must
 be aware of this when creating a `.alt` file.
 
-Also note, `grep` will output the entire header line (including the `>` and any sequence descirptions) for each contig
+> Also note, `grep` will output the entire header line (including the `>` and any sequence descriptions) for each contig
 into the `.alt` file. BISCUIT accounts for these additional characters when parsing the contig name to match against the
 pre-generated BISCUIT index.
 
@@ -58,7 +58,7 @@ pre-generated BISCUIT index.
 **I ran `git clone git@github.com:huishenlab/biscuit.git`, but when trying to compile the executable, I get an error
 message.**
 
-> After version 1.4.0, make sure you `zlib`, `ncurses`, and `pthread` installed. If prior to version 1.4.0, make sure
+> After version 1.4.0, make sure `zlib`, `ncurses`, and `pthread` are installed. If prior to version 1.4.0, make sure
 you included `--recursive` when running `git clone`.
 
 ## Quality Control Related Questions
@@ -66,10 +66,10 @@ you included `--recursive` when running `git clone`.
 **I downloaded one of the pre-compiled binaries for BISCUIT, but want to run QC on my data. Where can I find the QC
 script?**
 
-> You can downloaded the `QC.sh` script from the
-[BISCUIT release page](https://github.com/huishenlab/biscuit/releases/latest). Supplementary QC asset files will be
-needed to run the script and can be found for the hg19, hg38, and mm10 genomes alongside the QC script. Note, if you
-plan to always include `--no-cov-qc` when running `QC.sh`, you do not need to download or create the asset files.
+> The `QC.sh` script is available on the [BISCUIT release page](https://github.com/huishenlab/biscuit/releases/latest).
+Supplementary QC asset files are needed to run the script and can be found for the hg19, hg38, and mm10 genomes
+alongside the QC script. Note, if you plan to always include `--no-cov-qc` when running `QC.sh`, you do not need to
+download or create the asset files.
 
 **I have aligned my data to a reference genome that does not have QC asset files provided. What files do I need to run
 `QC.sh`?**
@@ -81,8 +81,8 @@ will be placed into two separate bgzipped BED files, `windows100bp.gc_content.bo
 `windows100bp.gc_content.top10p.bed.gz` for the top 10%.  Make sure to sort each BED file using
 (`sort -k1,1 -k2,2n bedfile.bed`).
 
-> There is now a Perl script that can generate the asset files needed to run QC for BISCUIT. The
-`build_biscuit_QC_assets.pl` script requires the name of the output directory to save the assets files to and the path
+> Alternatively, there is a Perl script (`build_biscuit_QC_assets.pl`) that can generate the asset files needed to run
+QC for BISCUIT. The inputs for the script are the name of the output directory to save the assets files to and the path
 to the reference genome.
 
 **I need to generate my own QC asset files and really want to make them myself without running the provided Perl script.
@@ -90,12 +90,10 @@ What is a more prescriptive way for creating these files?**
 
 > **cpg.bed.gz**
   1. Find positions of all CpGs in genome reference FASTA.
-  2. Put positions in
-  [BED format](https://en.wikipedia.org/wiki/BED_(file_format)). You only need
-  the chromosome, start, and end positions. Note, the BED format uses 0-based
-  indexing, so make sure to number the first base as 0.
+  2. Put positions in [BED format](https://en.wikipedia.org/wiki/BED_(file_format)). You only need the chromosome,
+  start, and end positions. Note, the BED format uses 0-based indexing, so make sure to number the first base as 0.
   3. Sort the BED file by chromosome position (`sort -k1,1 -k2,2n cpg.bed`).
-  4. Gzip your sorted BED file and you now have your `cpg.bed.gz` QC file.
+  4. Bgzip/tabix your sorted BED file and you now have your `cpg.bed.gz` QC file.
 
 > **windows100bp.gc_content.top10p.bed.gz**
   1. Group genome reference FASTA into 100 bp windows.
