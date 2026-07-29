@@ -21,11 +21,11 @@ definitions provided here in the same way throughout the BISCUIT documentation.
   chromosome.
   - **CpG (CG) Dinucleotide:** A cytosine-guanine dinucleotide (often referred to as just CpG). Most DNA methylation
   occurs in at CpG sites.
-  - **CpH (CH) Dinucleotide:** A dinucleotide of a cytosine followed by a adenine, thymine, or another cytosine (i.e.,
-  not a guanine). Most of these are unmethylated, although there is some biological instances of CpA methylation.
+  - **CpH (CH) Dinucleotide:** A dinucleotide of a cytosine followed by an adenine, thymine, or another cytosine (i.e.,
+  not a guanine). Most of these are unmethylated, although there are some biological instances of CpA methylation.
   - **CpG Terminology:**
-    - *CpG Island:* Region of about 200 bp (or longer) in length with a GC percentage greater than 50% and has an
-    observed to expected CpG ratio greater than 60%.
+    - *CpG Island:* Region of about 200 bp (though sometimes longer) in length with a GC-content greater than 50% and
+    has an observed to expected CpG ratio greater than 60%.
     - *CpG Shore:* Region up to 2 kb upstream/downstream from a CpG island.
     - *CpG Shelf:* Region between 2 and 4 kb upstream/downstream from a CpG island.
     - *CpG Open Sea:* Isolated CpGs in the genome between CpG shelves.
@@ -35,7 +35,8 @@ definitions provided here in the same way throughout the BISCUIT documentation.
   - **Whole Genome Bisulfite Sequencing (WGBS):** Method of whole genome DNA sequencing that provides additional
   information regarding the DNA methylation status of single cytosine bases. In this method, DNA is treated with sodium
   bisulfite prior to sequencing, which converts unmethylated cytosines into uracils and leaves the methylated cytosines
-  unconverted. Following sequencing, the unmethylated cytosines (which were converted to uracils), appear as thymines.
+  unconverted. PCR amplification modifies the uracils into thymines, which produces a genetic difference following
+  sequencing. Methylated cytosines will be C's in the sequenced data, while unmethylated cytosines will be T's.
   - **Whole Genome (DNA) Methylation Sequencing (WGMS):** With the invention of EM-seq, sodium bisulfite is no longer
   the only method for targeting DNA methylation using whole genome sequencing. WGMS serves as an umbrella term for
   describing both WGBS and EM-seq.
@@ -47,7 +48,7 @@ definitions provided here in the same way throughout the BISCUIT documentation.
   bisulfite or enzyme treatment, which can lead to an overestimate of the methylation levels in the sample.
   - **Over Conversion:** Occurs when the sodium bisulfite or enzyme treatment begins converting methylated cytosines,
   which can lead to an underestimate of the methylation levels in the sample.
-  - **Directional Library:** Library preparation format where only read 1 derives from the OT (or OB) strands and read 2
+  - **Directional Library:** Library preparation format where read 1 derives from only the OT (or OB) strands and read 2
   derives from the CTOT (or CTOB) strands.
   - **Non-directional Library:** Library preparation format where read 1 derives from any of the four possible strands
   (OT/OB/CTOT/CTOB) and read 2 derives from the corresponding complement strand (CTOT/CTOB/OT/OB, respectively). Reads
