@@ -70,8 +70,8 @@ needed.
   - [default off] QC methylated and unmethylated controls
   - [default off] Generate bigWigs from BISCUIT BED files
 
-Many options can be easily specified in the `config.yaml`! Otherwise, the commands in the Snakefile can also be modified
-to meet different needs.
+The `config.yaml` file controls many options for the snakemake pipeline. Additionally, the commands in the Snakefile can
+be modified to meet different needs.
 
 ## Running the Workflow
 For ease of reference, the configuration file `config/config.yaml` will be referred to throughout as the file to define
@@ -104,8 +104,8 @@ in the SLURM submit script.
     - Turn on optional rules in `config/config.yaml` (change from False to True)
     - If you are using environmental modules on your system, you can set the locations in the corresponding location. By
     default, the pipeline will use `conda`/`mamba` to download the required packages. Note, if using the modules and a
-    module is not available, snakemake gives a warning but will run successfully *as long as the required executables are
-    in PATH*.
+    module is not available, snakemake gives a warning but will run successfully *as long as the required executables
+    are in PATH*.
   - Modify SLURM submit script as needed (new config file in `CONFIG_FILE`, etc.).
   - Then submit the workflow to an HPC using something similar to `bin/run_snakemake_workflow.slurm` (e.g.,
   `sbatch bin/run_snakemake_workflow.slurm`). `bin/run_snakemake_workflow.slurm` works for a SLURM queue
