@@ -13,9 +13,11 @@ file:
 ```bash
 $ biscuit vcf2bed -t cg my_pileup.vcf.gz > my_pileup.bed
 ```
-For BISCUIT version 1.5.0 and earlier, the minimum coverage by default is 3. This setting was good for traditional WGBS;
-however, for low input and single cell protocols, this option should be changed to 1 (`biscuit vcf2bed -k 1 ...`).
-BISCUIT version 1.6.0 and later have the default value switched to 1 to avoid confusion for the user.
+The `-k` option provides the ability to filter out low coverage loci by selecting the minimum number of reads that cover
+a locus for it to be included in the output BED file. In BISCUIT version 1.6.0, the default minimum coverage was changed
+from 3 (earlier versions) to 1 (newer versions). The original setting was reasonable for traditional bulk WGBS
+protocols; however, for low input and single cell protocols, the minimum coverage should be set to 1
+(`biscuit vcf2bed -k 1 ...`). This change in default value was made to reduce confusion for the user.
 
 The `-t` flag can be used to retrieve mutation and other information, including
 
@@ -43,20 +45,17 @@ The columns for the other `-t` options (i.e., all methylation-related options) a
   1. Chromosome
   2. Start position (0-based)
   3. End position
-  4. Methylation fraction
+  4. Methylation fraction (beta value)
   5. Coverage
 
-Columns 4 and 5 are repeated for each sample in the VCF file. If the `-e` option is included, then four columns are
-inserted between columns 3 and 4 listed above:
+Columns 4 and 5 are repeated for each sample in the VCF file. The `-e` flag includes additional information about the
+sequence context for each row by inserting four columns between columns 3 and 4 listed above:
 
   - Reference base
   - Cytosine group (CG, CHG, CHH)
   - 2-base context (CA, CC, CG, CT)
   - 5-base context
   
-Information about the sequence context for each row can be included by adding the `-e` flag to the command, while
-filtering out low coverage rows can be done using the `-k` flag.
-
 For more help on available flags, run `biscuit vcf2bed` in the terminal or visit the
 [vcf2bed help page]({{ site.baseurl }}{% link docs/subcommands/biscuit_vcf2bed.md %}).
 
@@ -65,7 +64,9 @@ For more help on available flags, run `biscuit vcf2bed` in the terminal or visit
 At times, it might be desirable to merge the methylation status across the C and G in a CpG dinucleotide context.
 BISCUIT provides an easy-to-use subcommand, `mergecg`, to do this:
 ```bash
-$ biscuit mergecg /path/to/my_reference.fa my_pileup.bed
+$ biscuit mergecg \
+    /path/to/my_reference.fa \
+    my_pileup.bed
 ```
 
 For more help on available flags, run `biscuit mergecg` in the terminal or visit the
@@ -73,8 +74,8 @@ For more help on available flags, run `biscuit mergecg` in the terminal or visit
 
 ## Towards the Bismark COV format
 
-Starting in version 1.3.0, BISCUIT can output a format that can be easily worked into the Bismark COV file format for
-easy use in downstream tools that expect such a file. To produce this file, run
+Starting in version 1.3.0, `biscuit vcf2bed` can output its results in a form that can be easily worked into the Bismark
+COV file format for use in downstream tools that expect such a file. To produce this format, run
 ```
 biscuit vcf2bed -c my_pileup.vcf.gz > my_beta_m_u.bed
 ```
@@ -96,6 +97,7 @@ awk -v OFS='\t' '{ print $1, $2+1, $3, $4, $5, $6 }' > my_beta_m_u.cov
 
 # Create from already processed file
 biscuit vcf2bed -c my_pileup.vcf.gz > my_beta_m_u.bed
+
 awk -v OFS='\t' '{ print $1, $2+1, $3, $4, $5, $6 }' my_beta_m_u.bed > my_beta_m_u.cov
 ```
 
@@ -106,6 +108,5 @@ biscuit vcf2bed my_pileup.vcf.gz | \
 biscuit mergecg -c /path/to/my_reference.fa - | \
 awk -v OFS='\t' '{ print $1, $2+1, $3-1, $4, $5, $6 }' > my_merged_beta_m_u.cov
 ```
-
 Note, the `-c` flag is *only* included in the `biscuit mergecg` call. If you would prefer a BED-compliant file, remove
 the AWK command.
