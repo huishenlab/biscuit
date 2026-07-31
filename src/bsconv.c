@@ -1,4 +1,5 @@
 /* annotate bisulfite conversion of reads
+ *
  * The MIT License (MIT)
  *
  * Copyright (c) 2016-2020 Wanding.Zhou@vai.org
@@ -233,7 +234,6 @@ int main_bsconv(int argc, char *argv[]) {
     kstring_t call = generate_command_line_string(argc, argv);
 
     if (argc < 2) { usage(); return 1; }
-    // Added 5: and 3: to the getopt string
     while ((c = getopt(argc, argv, ":g:m:ac:f:y:pt:x:uvh5:3:")) >= 0) {
         switch (c) {
             case 'g': reg = optarg; break;
