@@ -55,7 +55,8 @@ export LC_ALL=C
 # Check for biscuit in PATH
 function check_biscuit {
     # Minimum version of BISCUIT to run qc_coverage
-    min_version=1.7
+    min_v_major=1
+    min_v_minor=7
 
     # BISCUIT uses major.minor.patch versioning, so we need to store the entire version string for printing to screen
     v_complete=$(biscuit version 2>&1 >/dev/null | head -n1 | cut -f3 -d ' ')
@@ -66,10 +67,12 @@ function check_biscuit {
         exit 1
     fi
 
-    v_maj_minr=$(echo "${v_complete}" | cut -f1-2 -d .)
-    check=$(echo "$v_maj_minr < $min_version" | bc -l)
-    if [ "$check" -eq 1 ]; then
-        >&2 echo "Found biscuit v$v_complete, but it does not meet minimum version needed (v$min_version)"
+    v_major=$(echo "${v_complete}" | cut -f1 -d .)
+    v_minor=$(echo "${v_complete}" | cut -f2 -d .)
+    check1=$(echo "$v_major >= $min_v_major" | bc -l)
+    check2=$(echo "$v_minor >= $min_v_minor" | bc -l)
+    if [ "$check1" -eq 0 ] || [ "$check2" -eq 0 ]; then
+        >&2 echo "Found biscuit v$v_complete, but it does not meet minimum version needed (v$min_v_major.$min_v_minor.0)"
         exit 1
     fi
 
