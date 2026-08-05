@@ -20,6 +20,8 @@ Options:
     -c INT      Filter: maximum CpC retention [Inf]
     -t INT      Filter: maximum CpT retention [Inf]
     -x INT      Filter: maximum CpY retention [Inf]
+    -5 INT      Minimum distance to 5' end of a read (bases closer to the start will not be considered) [0]
+    -3 INT      Minimum distance to 3' end of a read (bases closer to the end will not be considered) [0]
     -p          Print in tab-separated format, print order:
                     CpA_R, CpA_C, CpC_R, CpC_C, CpG_R, CpG_C, CpT_R, CpT_C
     -v          Show filtered reads instead of remaining reads

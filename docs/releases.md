@@ -14,7 +14,8 @@ details regarding each release, see the "Find it on GitHub" link under each rele
 
 | Version | Release Date | GitHub Link | Latest Release? |
 |:-------:|:------------:|:-----------:|:---------------:|
-| **1.10.0** | 24 July 2026      | [Find it on GitHub](https://github.com/huishenlab/biscuit/releases/tag/v1.10.0.20260724) | Yes |
+| **1.10.1** | 4 August 2026     | [Find it on GitHub](https://github.com/huishenlab/biscuit/releases/tag/v1.10.1.20260804) | Yes |
+| **1.10.0** | 24 July 2026      | [Find it on GitHub](https://github.com/huishenlab/biscuit/releases/tag/v1.10.0.20260724) | --- |
 | **1.9.0**  | 24 June 2026      | [Find it on GitHub](https://github.com/huishenlab/biscuit/releases/tag/v1.9.0.20260624)  | --- |
 | **1.8.1**  | 11 May 2026       | [Find it on GitHub](https://github.com/huishenlab/biscuit/releases/tag/v1.8.1.20260511)  | --- |
 | **1.8.0**  | 17 February 2026  | [Find it on GitHub](https://github.com/huishenlab/biscuit/releases/tag/v1.8.0.20260217)  | --- |
