@@ -151,7 +151,7 @@ int bsstrand_func(bam1_t *b, samFile *out, bam_hdr_t *header, void *data) {
     }
 
     // R1_FOR, R1_REV, R2_FOR, R2_REV
-    d->strandcnt[(c->flag & BAM_FREAD1 ? 0 : 1) * 8 +
+    d->strandcnt[(c->flag & BAM_FREAD2 ? 1 : 0) * 8 +
         (c->flag & BAM_FREVERSE ? 1 : 0) * 4 + tag]++;
 
     if (conf->output_count) {

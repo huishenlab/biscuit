@@ -155,7 +155,9 @@ int process_qc(char *input_bam, qc_conf_t conf, bsstrand_data_t *data_bsstrand, 
                 }
             }
 
-            if (!(c->flag & BAM_FDUP) && (c->flag & BAM_FPAIRED) && (c->flag & BAM_FPROPER_PAIR) && (c->qual >= 40))
+            if (!(c->flag & BAM_FDUP) && (c->qual >= 40) &&
+                (conf.single_end ||
+                 ((c->flag & BAM_FPAIRED) && (c->flag & BAM_FPROPER_PAIR))))
                 bsconv_func(b, 0, header, data_bsconv);
         }
 
