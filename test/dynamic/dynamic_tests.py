@@ -135,6 +135,8 @@ def main():
         run_qc_coverage.main(NEW, '09_qc_coverage', REF, BOT, TOP, CPG, '01_align', conf['force']['qc_coverage'])
     if conf['run']['se_align']:
         run_se_align.main(NEW, '10_se_align', '00_index', conf['force']['se_align'])
+    if conf['run']['se_pileup']:
+        run_pileup.main(NEW, '11_se_pileup', REF, '10_se_align', conf['force']['se_pileup'])
     if conf['run']['tview']:
         run_tview.main(NEW, 'XX_tview', REF, '01_align', conf['force']['tview'])
 

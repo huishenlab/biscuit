@@ -13,6 +13,7 @@ __pycache__/*
 08_qc/*
 09_qc_coverage/*
 10_se_align/*
+11_se_pileup/*
 XX_tview/*
 
 # Configuration file
