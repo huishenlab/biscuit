@@ -11,6 +11,7 @@ run.qc = true
 run.qc_coverage = true
 run.se_align = true
 run.se_pileup = true
+run.se_vcf2bed = true
 run.tview = false # placeholder, leave as false
 
 # Whether to force rerun a step (true) or not (false)
@@ -26,6 +27,7 @@ force.qc = false
 force.qc_coverage = false
 force.se_align = false
 force.se_pileup = false
+force.se_vcf2bed = false
 force.tview = false # placeholder, leave as false
 
 # Verbosity level - print differences between files (true) or not (false)

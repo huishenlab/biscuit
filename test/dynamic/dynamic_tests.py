@@ -137,6 +137,8 @@ def main():
         run_se_align.main(NEW, '10_se_align', '00_index', conf['force']['se_align'])
     if conf['run']['se_pileup']:
         run_pileup.main(NEW, '11_se_pileup', REF, '10_se_align', conf['force']['se_pileup'])
+    if conf['run']['se_vcf2bed']:
+        run_vcf2bed.main(NEW, '12_se_vcf2bed', '11_se_pileup', conf['force']['se_vcf2bed'])
     if conf['run']['tview']:
         run_tview.main(NEW, 'XX_tview', REF, '01_align', conf['force']['tview'])
 
