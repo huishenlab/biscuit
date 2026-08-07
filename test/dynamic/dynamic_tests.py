@@ -15,6 +15,7 @@ import run_cinread
 import run_qc
 import run_qc_coverage
 import run_tview
+import run_se_align
 
 # Define logging for entire program here
 def setup_logger():
@@ -88,6 +89,7 @@ def main():
         logging.getLogger('run_qc').setLevel(logging.DEBUG)
         logging.getLogger('run_qc_coverage').setLevel(logging.DEBUG)
         logging.getLogger('run_tview').setLevel(logging.DEBUG)
+        logging.getLogger('run_se_align').setLevel(logging.DEBUG)
 
     # Reference FASTA
     REF, BOT, TOP, CPG = get_reference_files()
@@ -131,6 +133,8 @@ def main():
         run_qc.main(NEW, '08_qc', REF, '01_align', conf['force']['qc'])
     if conf['run']['qc_coverage']:
         run_qc_coverage.main(NEW, '09_qc_coverage', REF, BOT, TOP, CPG, '01_align', conf['force']['qc_coverage'])
+    if conf['run']['se_align']:
+        run_se_align.main(NEW, '10_se_align', '00_index', conf['force']['se_align'])
     if conf['run']['tview']:
         run_tview.main(NEW, 'XX_tview', REF, '01_align', conf['force']['tview'])
 

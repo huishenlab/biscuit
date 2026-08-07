@@ -9,6 +9,7 @@ run.bsstrand = true
 run.cinread = true
 run.qc = true
 run.qc_coverage = true
+run.se_align = true
 run.tview = false # placeholder, leave as false
 
 # Whether to force rerun a step (true) or not (false)
@@ -22,6 +23,7 @@ force.bsstrand = false
 force.cinread = false
 force.qc = false
 force.qc_coverage = false
+force.se_align = false
 force.tview = false # placeholder, leave as false
 
 # Verbosity level - print differences between files (true) or not (false)
