@@ -13,6 +13,7 @@ import run_bsconv
 import run_bsstrand
 import run_cinread
 import run_qc
+import run_qc_coverage
 import run_tview
 
 # Define logging for entire program here
@@ -43,6 +44,29 @@ def read_config():
 
     return data
 
+def get_reference_files():
+    REF = '../data/ref/chr22.fa.gz'
+    if not check_path(REF) or not check_path(f'{REF}.fai'):
+        logger.error('Reference FASTA missing. Please move up a directory and run `setup_tests.py` to retrieve.')
+        sys.exit(1)
+
+    BOT = '../data/ref/chr22.gc.bot10p.bed.gz'
+    if not check_path(BOT) or not check_path(f'{BOT}.tbi'):
+        logger.error('Bottom 10% GC content file missing. Please move up a directory and run `setup_tests.py` to retrieve.')
+        sys.exit(1)
+
+    TOP = '../data/ref/chr22.gc.top10p.bed.gz'
+    if not check_path(TOP) or not check_path(f'{TOP}.tbi'):
+        logger.error('Top 10% GC content file missing. Please move up a directory and run `setup_tests.py` to retrieve.')
+        sys.exit(1)
+
+    CPG = '../data/ref/chr22.cpg.bed.gz'
+    if not check_path(CPG) or not check_path(f'{CPG}.tbi'):
+        logger.error('CpG BED file missing. Please move up a directory and run `setup_tests.py` to retrieve.')
+        sys.exit(1)
+
+    return REF, BOT, TOP, CPG
+
 def main():
     # Runtime configuration
     conf = read_config()
@@ -62,13 +86,11 @@ def main():
         logging.getLogger('run_bsstrand').setLevel(logging.DEBUG)
         logging.getLogger('run_cinread').setLevel(logging.DEBUG)
         logging.getLogger('run_qc').setLevel(logging.DEBUG)
+        logging.getLogger('run_qc_coverage').setLevel(logging.DEBUG)
         logging.getLogger('run_tview').setLevel(logging.DEBUG)
 
     # Reference FASTA
-    REF = '../data/ref/chr22.fa.gz'
-    if not check_path(REF) or not check_path(f'{REF}.fai'):
-        logger.error('Reference FASTA missing. Please move up a directory and run `setup_tests.py` to retrieve.')
-        sys.exit(1)
+    REF, BOT, TOP, CPG = get_reference_files()
 
     # New BISCUIT version
     NEW = None
@@ -107,6 +129,8 @@ def main():
         run_cinread.main(NEW, '07_cinread', REF, '01_align', conf['force']['cinread'])
     if conf['run']['qc']:
         run_qc.main(NEW, '08_qc', REF, '01_align', conf['force']['qc'])
+    if conf['run']['qc_coverage']:
+        run_qc_coverage.main(NEW, '09_qc_coverage', REF, BOT, TOP, CPG, '01_align', conf['force']['qc_coverage'])
     if conf['run']['tview']:
         run_tview.main(NEW, 'XX_tview', REF, '01_align', conf['force']['tview'])
 
