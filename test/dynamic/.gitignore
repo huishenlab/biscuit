@@ -10,6 +10,7 @@ __pycache__/*
 05_bsconv/*
 06_bsstrand/*
 07_cinread/*
+08_qc/*
 XX_tview/*
 
 # Configuration file

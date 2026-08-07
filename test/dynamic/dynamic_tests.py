@@ -12,6 +12,7 @@ import run_mergecg
 import run_bsconv
 import run_bsstrand
 import run_cinread
+import run_qc
 import run_tview
 
 # Define logging for entire program here
@@ -60,6 +61,7 @@ def main():
         logging.getLogger('run_bsconv').setLevel(logging.DEBUG)
         logging.getLogger('run_bsstrand').setLevel(logging.DEBUG)
         logging.getLogger('run_cinread').setLevel(logging.DEBUG)
+        logging.getLogger('run_qc').setLevel(logging.DEBUG)
         logging.getLogger('run_tview').setLevel(logging.DEBUG)
 
     # Reference FASTA
@@ -103,6 +105,8 @@ def main():
         run_bsstrand.main(NEW, '06_bsstrand', REF, '01_align', conf['force']['bsstrand'])
     if conf['run']['cinread']:
         run_cinread.main(NEW, '07_cinread', REF, '01_align', conf['force']['cinread'])
+    if conf['run']['qc']:
+        run_qc.main(NEW, '08_qc', REF, '01_align', conf['force']['qc'])
     if conf['run']['tview']:
         run_tview.main(NEW, 'XX_tview', REF, '01_align', conf['force']['tview'])
 

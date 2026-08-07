@@ -7,6 +7,7 @@ run.mergecg = true
 run.bsconv = true
 run.bsstrand = true
 run.cinread = true
+run.qc = true
 run.tview = false # placeholder, leave as false
 
 # Whether to force rerun a step (true) or not (false)
@@ -18,6 +19,7 @@ force.mergecg = false
 force.bsconv = false
 force.bsstrand = false
 force.cinread = false
+force.qc = false
 force.tview = false # placeholder, leave as false
 
 # Verbosity level - print differences between files (true) or not (false)
