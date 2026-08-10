@@ -13,6 +13,7 @@ run.se_align = true
 run.se_pileup = true
 run.se_vcf2bed = true
 run.se_mergecg = true
+run.se_bsconv = true
 run.tview = false # placeholder, leave as false
 
 # Whether to force rerun a step (true) or not (false)
@@ -30,6 +31,7 @@ force.se_align = false
 force.se_pileup = false
 force.se_vcf2bed = false
 force.se_mergecg = false
+force.se_bsconv = false
 force.tview = false # placeholder, leave as false
 
 # Verbosity level - print differences between files (true) or not (false)
