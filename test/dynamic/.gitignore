@@ -17,6 +17,7 @@ __pycache__/*
 12_se_vcf2bed/*
 13_se_mergecg/*
 14_se_bsconv/*
+15_se_bsstrand/*
 XX_tview/*
 
 # Configuration file

@@ -143,6 +143,8 @@ def main():
         run_mergecg.main(NEW, '13_se_mergecg', REF, '12_se_vcf2bed', conf['force']['se_mergecg'])
     if conf['run']['se_bsconv']:
         run_bsconv.main(NEW, '14_se_bsconv', REF, '10_se_align', conf['force']['se_bsconv'])
+    if conf['run']['se_bsstrand']:
+        run_bsstrand.main(NEW, '15_se_bsstrand', REF, '10_se_align', conf['force']['se_bsstrand'])
     if conf['run']['tview']:
         run_tview.main(NEW, 'XX_tview', REF, '01_align', conf['force']['tview'])
 
