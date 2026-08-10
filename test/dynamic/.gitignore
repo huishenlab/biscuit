@@ -15,6 +15,7 @@ __pycache__/*
 10_se_align/*
 11_se_pileup/*
 12_se_vcf2bed/*
+13_se_mergecg/*
 XX_tview/*
 
 # Configuration file
