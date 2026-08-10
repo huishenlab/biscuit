@@ -147,6 +147,8 @@ def main():
         run_bsstrand.main(NEW, '15_se_bsstrand', REF, '10_se_align', conf['force']['se_bsstrand'])
     if conf['run']['se_cinread']:
         run_cinread.main(NEW, '16_se_cinread', REF, '10_se_align', conf['force']['se_cinread'])
+    if conf['run']['se_qc_coverage']:
+        run_qc_coverage.main(NEW, '18_se_qc_coverage', REF, BOT, TOP, CPG, '10_se_align', conf['force']['se_qc_coverage'])
     if conf['run']['tview']:
         run_tview.main(NEW, 'XX_tview', REF, '01_align', conf['force']['tview'])
 

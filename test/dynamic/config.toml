@@ -16,6 +16,7 @@ run.se_mergecg = true
 run.se_bsconv = true
 run.se_bsstrand = true
 run.se_cinread = true
+run.se_qc_coverage = true
 run.tview = false # placeholder, leave as false
 
 # Whether to force rerun a step (true) or not (false)
@@ -36,6 +37,7 @@ force.se_mergecg = false
 force.se_bsconv = false
 force.se_bsstrand = false
 force.se_cinread = false
+force.se_qc_coverage = false
 force.tview = false # placeholder, leave as false
 
 # Verbosity level - print differences between files (true) or not (false)
