@@ -18,6 +18,7 @@ __pycache__/*
 13_se_mergecg/*
 14_se_bsconv/*
 15_se_bsstrand/*
+16_se_cinread/*
 XX_tview/*
 
 # Configuration file

@@ -145,6 +145,8 @@ def main():
         run_bsconv.main(NEW, '14_se_bsconv', REF, '10_se_align', conf['force']['se_bsconv'])
     if conf['run']['se_bsstrand']:
         run_bsstrand.main(NEW, '15_se_bsstrand', REF, '10_se_align', conf['force']['se_bsstrand'])
+    if conf['run']['se_cinread']:
+        run_cinread.main(NEW, '16_se_cinread', REF, '10_se_align', conf['force']['se_cinread'])
     if conf['run']['tview']:
         run_tview.main(NEW, 'XX_tview', REF, '01_align', conf['force']['tview'])
 
