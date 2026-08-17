@@ -50,6 +50,8 @@ def main(biscuit_dir, out_dir, ref_path, align_dir, force):
                 if ext == '.vcf':
                     if l_current.startswith('##program') and l_new.startswith('##program'):
                         continue
+                    if l_current.startswith('##reference') and l_new.startswith('##reference'):
+                        continue
                     elif l_current.startswith('##source') and l_new.startswith('##source'):
                         continue
                     elif l_current.startswith('#CHROM') and l_new.startswith('#CHROM'):
@@ -79,6 +81,6 @@ def main(biscuit_dir, out_dir, ref_path, align_dir, force):
             elif ext == '.vcf_meth_average.tsv':
                 logger.warning(f'Mismatch only in sample name(s) in files: *{ext}')
             elif ext == '.vcf':
-                logger.warning(f'Mismatch only in program line, source version, and sample name(s) in files: *{ext}')
+                logger.warning(f'Mismatch only in program line, reference, source version, and sample name(s) in files: *{ext}')
 
     return None

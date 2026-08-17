@@ -16,7 +16,7 @@ def check_index_exists(idx_path, prefix):
 
     return True
 
-def run_align(biscuit_dir, out_dir, prefix, idx_path, fq_dir, force):
+def run_align(biscuit_dir, out_dir, prefix, idx_path, fqs, force):
     if not check_index_exists(idx_path, prefix):
         logger.error('Missing index files. Rerun with `run.index = true`')
         sys.exit(1)
@@ -33,13 +33,13 @@ def run_align(biscuit_dir, out_dir, prefix, idx_path, fq_dir, force):
     logger.info(f'Running {prefix} BISCUIT alignment')
 
     # Basic BISCUIT alignment output
-    cmd1 = f'{biscuit_dir}/biscuit align {idx_path}/{prefix} {fq_dir}/simulated_1.fastq.gz {fq_dir}/simulated_2.fastq.gz'
+    cmd1 = f'{biscuit_dir}/biscuit align {idx_path}/{prefix} {fqs}'
     logger.debug(f'{prefix} BISCUIT alignment command: {cmd1}')
     with open(f'{out_dir}/{prefix}.sam', 'w') as f, open(f'{out_dir}/{prefix}.sam.err', 'w') as err:
         subprocess.run(cmd1.split(' '), stdout=f, stderr=err)
 
     # Verbose BISCUIT alignment output
-    cmd2 = f'{biscuit_dir}/biscuit align -v 4 {idx_path}/{prefix} {fq_dir}/simulated_1.fastq.gz {fq_dir}/simulated_2.fastq.gz'
+    cmd2 = f'{biscuit_dir}/biscuit align -v 4 {idx_path}/{prefix} {fqs}'
     logger.debug(f'{prefix} BISCUIT alignment command: {cmd2}')
     with open(f'{out_dir}/{prefix}.debug', 'w') as f, open(f'{out_dir}/{prefix}.debug.err', 'w') as err:
         subprocess.run(cmd2.split(' '), stdout=f, stderr=err)
@@ -52,16 +52,17 @@ def run_align(biscuit_dir, out_dir, prefix, idx_path, fq_dir, force):
 
     return None
 
-def main(biscuit_dir, out_dir, idx_path, force):
+def main(biscuit_dir, out_dir, idx_path, fqs, single_end, force):
     logger.info('Starting align testing')
 
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
-    run_align(biscuit_dir, out_dir, 'new', idx_path, '../data', force)
+    run_align(biscuit_dir, out_dir, 'new', idx_path, fqs, force)
 
     # Check alignment accuracy before comparing files to ensure we get this comparison
-    check_alignments.main(f'../data/dynamic/{out_dir}/current.sam', f'{out_dir}/new.sam')
+    if not single_end:
+        check_alignments.main(f'../data/dynamic/{out_dir}/current.sam', f'{out_dir}/new.sam')
 
     for ext in ['.sam', '.debug']:
         if compare_files.compare_files(ext, f'../data/dynamic/{out_dir}/current', f'{out_dir}/new'):

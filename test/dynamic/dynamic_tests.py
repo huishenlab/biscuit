@@ -15,8 +15,6 @@ import run_cinread
 import run_qc
 import run_qc_coverage
 import run_tview
-import run_se_align
-import run_se_qc
 
 # Define logging for entire program here
 def setup_logger():
@@ -78,20 +76,22 @@ def main():
         logger.debug('Exact mismatches will be shown')
 
         # Set imported module logging levels
-        logging.getLogger('run_index').setLevel(logging.DEBUG)
-        logging.getLogger('run_align').setLevel(logging.DEBUG)
-        logging.getLogger('check_alignments').setLevel(logging.DEBUG)
-        logging.getLogger('run_pileup').setLevel(logging.DEBUG)
-        logging.getLogger('run_vcf2bed').setLevel(logging.DEBUG)
-        logging.getLogger('run_mergecg').setLevel(logging.DEBUG)
-        logging.getLogger('run_bsconv').setLevel(logging.DEBUG)
-        logging.getLogger('run_bsstrand').setLevel(logging.DEBUG)
-        logging.getLogger('run_cinread').setLevel(logging.DEBUG)
-        logging.getLogger('run_qc').setLevel(logging.DEBUG)
-        logging.getLogger('run_qc_coverage').setLevel(logging.DEBUG)
-        logging.getLogger('run_tview').setLevel(logging.DEBUG)
-        logging.getLogger('run_se_align').setLevel(logging.DEBUG)
-        logging.getLogger('run_se_qc').setLevel(logging.DEBUG)
+        MODULES = [
+            'run_index',
+            'run_align',
+            'check_alignments',
+            'run_pileup',
+            'run_vcf2bed',
+            'run_mergecg',
+            'run_bsconv',
+            'run_bsstrand',
+            'run_cinread',
+            'run_qc',
+            'run_qc_coverage',
+            'run_tview',
+        ]
+        for mod in MODULES:
+            logging.getLogger(mod).setLevel(logging.DEBUG)
 
     # Reference FASTA
     REF, BOT, TOP, CPG = get_reference_files()
@@ -115,46 +115,62 @@ def main():
         except AttributeError: # not a dictionary
             logger.info(f'Runtime configuration: {outer_key} = {dic}')
 
+    # Index only needs to be run one time
     if conf['run']['index']:
-        run_index.main(NEW, '00_index', REF, conf['force']['index'])
-    if conf['run']['align']:
-        run_align.main(NEW, '01_align', '00_index', conf['force']['align'])
-    if conf['run']['pileup']:
-        run_pileup.main(NEW, '02_pileup', REF, '01_align', conf['force']['pileup'])
-    if conf['run']['vcf2bed']:
-        run_vcf2bed.main(NEW, '03_vcf2bed', '02_pileup', conf['force']['vcf2bed'])
-    if conf['run']['mergecg']:
-        run_mergecg.main(NEW, '04_mergecg', REF, '03_vcf2bed', conf['force']['mergecg'])
-    if conf['run']['bsconv']:
-        run_bsconv.main(NEW, '05_bsconv', REF, '01_align', conf['force']['bsconv'])
-    if conf['run']['bsstrand']:
-        run_bsstrand.main(NEW, '06_bsstrand', REF, '01_align', conf['force']['bsstrand'])
-    if conf['run']['cinread']:
-        run_cinread.main(NEW, '07_cinread', REF, '01_align', conf['force']['cinread'])
-    if conf['run']['qc']:
-        run_qc.main(NEW, '08_qc', REF, '01_align', conf['force']['qc'])
-    if conf['run']['qc_coverage']:
-        run_qc_coverage.main(NEW, '09_qc_coverage', REF, BOT, TOP, CPG, '01_align', conf['force']['qc_coverage'])
-    if conf['run']['se_align']:
-        run_se_align.main(NEW, '10_se_align', '00_index', conf['force']['se_align'])
-    if conf['run']['se_pileup']:
-        run_pileup.main(NEW, '11_se_pileup', REF, '10_se_align', conf['force']['se_pileup'])
-    if conf['run']['se_vcf2bed']:
-        run_vcf2bed.main(NEW, '12_se_vcf2bed', '11_se_pileup', conf['force']['se_vcf2bed'])
-    if conf['run']['se_mergecg']:
-        run_mergecg.main(NEW, '13_se_mergecg', REF, '12_se_vcf2bed', conf['force']['se_mergecg'])
-    if conf['run']['se_bsconv']:
-        run_bsconv.main(NEW, '14_se_bsconv', REF, '10_se_align', conf['force']['se_bsconv'])
-    if conf['run']['se_bsstrand']:
-        run_bsstrand.main(NEW, '15_se_bsstrand', REF, '10_se_align', conf['force']['se_bsstrand'])
-    if conf['run']['se_cinread']:
-        run_cinread.main(NEW, '16_se_cinread', REF, '10_se_align', conf['force']['se_cinread'])
-    if conf['run']['se_qc']:
-        run_se_qc.main(NEW, '17_se_qc', REF, '10_se_align', conf['force']['se_qc'])
-    if conf['run']['se_qc_coverage']:
-        run_qc_coverage.main(NEW, '18_se_qc_coverage', REF, BOT, TOP, CPG, '10_se_align', conf['force']['se_qc_coverage'])
-    if conf['run']['tview']:
-        run_tview.main(NEW, 'XX_tview', REF, '01_align', conf['force']['tview'])
+        run_index.main(NEW, '000_index', REF, conf['force']['index'])
+
+    # Loop through test types and run any requested tests
+    type_to_fqs = {
+        'wgbs_pe': '../data/sim_pe_wgbs_1.fastq.gz ../data/sim_pe_wgbs_2.fastq.gz',
+        'wgbs_se': '../data/sim_se_wgbs.fastq.gz',
+        'wgs_pe': '../data/sim_pe_wgs_1.fastq.gz ../data/sim_pe_wgs_2.fastq.gz',
+        'wgs_se': '../data/sim_se_wgs.fastq.gz',
+    }
+    for key in conf['type']:
+        if conf['type'][key]:
+            logger.info(f'Starting tests for test type: {key}')
+            if conf['run']['align']:
+                run_align.main(
+                    NEW, f'{key}_00_align', '000_index', type_to_fqs[key], 'se' in key, conf['force']['align']
+                )
+            if conf['run']['pileup']:
+                run_pileup.main(
+                    NEW, f'{key}_01_pileup', REF, f'{key}_00_align', conf['force']['align']
+                )
+            if conf['run']['vcf2bed']:
+                run_vcf2bed.main(
+                    NEW, f'{key}_02_vcf2bed', f'{key}_01_pileup', conf['force']['vcf2bed']
+                )
+            if conf['run']['mergecg']:
+                run_mergecg.main(
+                    NEW, f'{key}_03_mergecg', REF, f'{key}_02_vcf2bed', conf['force']['mergecg']
+                )
+            if conf['run']['bsconv']:
+                run_bsconv.main(
+                    NEW, f'{key}_04_bsconv', REF, f'{key}_00_align', conf['force']['bsconv']
+                )
+            if conf['run']['bsstrand']:
+                run_bsstrand.main(
+                    NEW, f'{key}_05_bsstrand', REF, f'{key}_00_align', conf['force']['bsstrand']
+                )
+            if conf['run']['cinread']:
+                run_cinread.main(
+                    NEW, f'{key}_06_cinread', REF, f'{key}_00_align', conf['force']['cinread']
+                )
+            if conf['run']['qc']:
+                run_qc.main(
+                    NEW, f'{key}_07_qc', REF, f'{key}_00_align', 'se' in key, conf['force']['qc']
+                )
+            if conf['run']['qc_coverage']:
+                run_qc_coverage.main(
+                    NEW, f'{key}_08_qc_coverage', REF, BOT, TOP, CPG, f'{key}_00_align', conf['force']['qc_coverage']
+                )
+            if conf['run']['tview']:
+                run_tview.main(
+                    NEW, f'{key}_XX_tview', REF, f'{key}_00_align', conf['force']['tview']
+                )
+        else:
+            logger.info(f'Skipping tests for test type: {key}')
 
     logger.info('Finished testing')
 

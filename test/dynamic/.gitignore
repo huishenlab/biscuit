@@ -2,25 +2,16 @@
 __pycache__/*
 
 # Data directories
-00_index/*
-01_align/*
-02_pileup/*
-03_vcf2bed/*
-04_mergecg/*
-05_bsconv/*
-06_bsstrand/*
-07_cinread/*
-08_qc/*
-09_qc_coverage/*
-10_se_align/*
-11_se_pileup/*
-12_se_vcf2bed/*
-13_se_mergecg/*
-14_se_bsconv/*
-15_se_bsstrand/*
-16_se_cinread/*
-17_se_qc/*
-18_se_qc_coverage/*
+000_index/*
+*_00_align/*
+*_01_pileup/*
+*_02_vcf2bed/*
+*_03_mergecg/*
+*_04_bsconv/*
+*_05_bsstrand/*
+*_06_cinread/*
+*_07_qc/*
+*_08_qc_coverage/*
 XX_tview/*
 
 # Configuration file

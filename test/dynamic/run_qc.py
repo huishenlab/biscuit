@@ -17,7 +17,7 @@ EXTS = [
     '_totalReadConversionRate.txt',
 ]
 
-def run_qc(biscuit_dir, out_dir, prefix, ref_path, bam_dir, force):
+def run_qc(biscuit_dir, out_dir, prefix, ref_path, bam_dir, single_end, force):
     """Generate qc files."""
     if not os.path.exists(f'{bam_dir}/{prefix}.bam') or not os.path.exists(f'{bam_dir}/{prefix}.bam.csi'):
         logger.error('Missing BAM or BAM index file. Rerun with `run.align = true`')
@@ -33,21 +33,26 @@ def run_qc(biscuit_dir, out_dir, prefix, ref_path, bam_dir, force):
     logger.info(f'Running {prefix} BISCUIT qc')
 
     cmd = f'{biscuit_dir}/biscuit qc {ref_path} {bam_dir}/{prefix}.bam {out_dir}/{prefix}'
+    if single_end:
+        cmd = f'{biscuit_dir}/biscuit qc -s {ref_path} {bam_dir}/{prefix}.bam {out_dir}/{prefix}'
     logger.debug(f'{prefix} BISCUIT qc command: {cmd}')
     with open(f'{out_dir}/{prefix}.err', 'w') as err:
         subprocess.run(cmd.split(' '), stderr=err)
 
     return None
 
-def main(biscuit_dir, out_dir, ref_path, bam_dir, force):
+def main(biscuit_dir, out_dir, ref_path, bam_dir, single_end, force):
     logger.info('Starting qc testing')
 
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
-    run_qc(biscuit_dir, out_dir, 'new', ref_path, bam_dir, force)
+    run_qc(biscuit_dir, out_dir, 'new', ref_path, bam_dir, single_end, force)
 
     for ext in EXTS:
+        if ext == '_isize_table.txt' and single_end:
+            continue
+
         if compare_files.compare_files(ext, f'../data/dynamic/{out_dir}/current', f'{out_dir}/new'):
             logger.info(f'*{ext} match')
         else:
