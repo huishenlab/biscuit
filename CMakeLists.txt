@@ -47,7 +47,7 @@ include(ExternalProject)
 # Utils
 ExternalProject_Add(utils
     GIT_REPOSITORY https://github.com/huishenlab/utils
-    GIT_TAG 5f4aeabb42229440a99a5286f8052d3e5dc665cb
+    GIT_TAG 97c2d655d55a6b759e56d3d54c4596b05a4d8857
     DOWNLOAD_DIR ${LIB_DIR}
     SOURCE_DIR ${LIB_DIR}/utils
     CONFIGURE_COMMAND ""
