@@ -39,10 +39,28 @@
 
 #include "refcache.h"
 
+// Conversion chemistry used to prepare the input data
+typedef enum {
+    CHEM_BISULFITE = 0, /* unmethylated C reads as T */
+    CHEM_EMSEQ,         /* unmethylated C reads as T */
+    CHEM_TAPS,          /* methylated C reads as T */
+    CHEM_5BASE          /* methylated C reads as T (Illumina 5-base) */
+} chemistry_t;
+
+// Parse a chemistry name, returns -1 if the name is not recognized
+int parse_chemistry(const char *name);
+const char *chemistry_name(chemistry_t chem);
+
+// Whether a cytosine read as T was methylated (TAPS, 5-base) rather than unmethylated (bisulfite, EM-seq)
+static inline int methylated_c_converts(chemistry_t chem) {
+    return chem == CHEM_TAPS || chem == CHEM_5BASE;
+}
+
 // Common parameters used in biscuit subcommands
 typedef struct {
-    uint8_t is_nome:1; /* input data is NOMe-seq */
-    uint8_t verbose:1; /* print out extra information during processing */
+    uint8_t is_nome:1;     /* input data is NOMe-seq */
+    uint8_t verbose:1;     /* print out extra information during processing */
+    chemistry_t chemistry; /* conversion chemistry of input data */
 } bisc_common_t;
 
 static inline bisc_common_t bisc_common_init() {
@@ -50,6 +68,7 @@ static inline bisc_common_t bisc_common_init() {
 
     out.is_nome = 0;
     out.verbose = 0;
+    out.chemistry = CHEM_BISULFITE;
 
     return out;
 }

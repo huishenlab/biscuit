@@ -23,12 +23,32 @@
  * SOFTWARE.
 **/
 
+#include <strings.h>
 #include "bisc_utils.h"
 
 const char nt256int8_to_methcode[NSTATUS_METH] = "RCN";     // R: retention, C: conversion, N: NA
 const char nt256int8_to_basecode[NSTATUS_BASE] = "ACGTNYR"; // Y is [CT] and R is [GA]
 const char *cytosine_context[]      = {"CG" ,"CHG" ,"CHH" ,"CG" ,"CHG","CHH","CN"};
 const char *cytosine_context_nome[] = {"HCG","HCHG","HCHH","GCG","GCH","GCH","CN"};
+
+// Also accepts alternate spellings used by other tools (emseq, 5-base, illumina-5base)
+int parse_chemistry(const char *name) {
+    if (strcasecmp(name, "bisulfite") == 0) return CHEM_BISULFITE;
+    if (strcasecmp(name, "em-seq") == 0 || strcasecmp(name, "emseq") == 0) return CHEM_EMSEQ;
+    if (strcasecmp(name, "taps") == 0) return CHEM_TAPS;
+    if (strcasecmp(name, "5base") == 0 || strcasecmp(name, "5-base") == 0 ||
+            strcasecmp(name, "illumina-5base") == 0) return CHEM_5BASE;
+    return -1;
+}
+
+const char *chemistry_name(chemistry_t chem) {
+    switch (chem) {
+        case CHEM_EMSEQ: return "em-seq";
+        case CHEM_TAPS:  return "taps";
+        case CHEM_5BASE: return "5base";
+        default:         return "bisulfite";
+    }
+}
 
 cytosine_context_t fivenuc_context(refcache_t *rs, uint32_t rpos, char rb, char *fivenuc) {
     /* get five nucleotide context sequence */

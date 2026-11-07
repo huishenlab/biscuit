@@ -25,6 +25,7 @@
 **/
 
 #include <errno.h>
+#include <getopt.h>
 #include "pileup.h"
 
 typedef struct {
@@ -658,7 +659,8 @@ static void plp_format(refcache_t *rs, char *chrm, uint32_t rpos, pileup_data_v 
         /* CV, BT */
         if (any_methcallable) {
             if (methcallable[sid]) {
-                beta = (double) cnts_meth1[METH_RETENTION] / (double) (cnts_meth1[METH_RETENTION]+cnts_meth1[METH_CONVERSION]);
+                int n_meth = methylated_c_converts(conf->comm.chemistry) ? cnts_meth1[METH_CONVERSION] : cnts_meth1[METH_RETENTION];
+                beta = (double) n_meth / (double) (cnts_meth1[METH_RETENTION]+cnts_meth1[METH_CONVERSION]);
                 if (ctt != CTXT_NA) {
                     rec->betasum_context[sid*NCONTXTS+ctt] += beta;
                     rec->cnt_context[sid*NCONTXTS+ctt]++;
@@ -926,6 +928,8 @@ char *print_vcf_header(char *reffn, target_v *targets, char **argv, int argc, pi
     kputs("##fileformat=VCFv4.1\n", &header);
     ksprintf(&header, "##reference=%s\n", reffn);
     ksprintf(&header, "##source=biscuitV%s\n", PACKAGE_VERSION);
+    if (conf->comm.chemistry != CHEM_BISULFITE)
+        ksprintf(&header, "##chemistry=%s\n", chemistry_name(conf->comm.chemistry));
 
     unsigned j;
     for (j=0; j<targets->size; ++j) {
@@ -1019,6 +1023,8 @@ static int usage(pileup_conf_t *conf) {
     fprintf(stderr, "    -@ INT      Number of threads [%d]\n", conf->bt.n_threads);
     fprintf(stderr, "    -s INT      Step of window dispatching [%d]\n", conf->bt.step);
     fprintf(stderr, "    -N          NOMe-seq mode [off]\n");
+    fprintf(stderr, "    --chemistry STR\n");
+    fprintf(stderr, "                Conversion chemistry {bisulfite, em-seq, taps, 5base} [%s]\n", chemistry_name(conf->comm.chemistry));
     fprintf(stderr, "    -S          Somatic mode, must provide -T and -I arguments [off]\n");
     fprintf(stderr, "    -T STR      Somatic mode, tumor BAM\n");
     fprintf(stderr, "    -I STR      Somatic mode, normal BAM\n");
@@ -1054,6 +1060,9 @@ static int usage(pileup_conf_t *conf) {
     fprintf(stderr, "    -Q FLOAT    Prior probability for homozygous variant [%1.3f]\n", conf->prior2);
     fprintf(stderr, "    -h          This help\n");
     fprintf(stderr, "\n");
+    fprintf(stderr, "Note, bisulfite and em-seq read unmethylated cytosines as T, while taps and 5base (Illumina\n");
+    fprintf(stderr, "    5-base) read methylated cytosines as T. BT is the methylated fraction in all cases.\n");
+    fprintf(stderr, "\n");
 
     return 1;
 }
@@ -1069,13 +1078,24 @@ int main_pileup(int argc, char *argv[]) {
     pileup_conf_t conf;
     pileup_conf_init(&conf);
 
+    static const struct option loptions[] = {
+        {"chemistry", required_argument, NULL, 1000},
+        {NULL, 0, NULL, 0}
+    };
+
     if (argc<2) return usage(&conf);
-    while ((c=getopt(argc, argv, ":o:w:g:@:5:3:b:s:E:M:x:C:P:Q:t:n:m:a:l:T:I:SNrcdupv:h"))>=0) {
+    while ((c=getopt_long(argc, argv, ":o:w:g:@:5:3:b:s:E:M:x:C:P:Q:t:n:m:a:l:T:I:SNrcdupv:h", loptions, NULL))>=0) {
         switch (c) {
             case 'g': reg = optarg; break;
             case '@': conf.bt.n_threads = atoi(optarg); break;
             case 's': conf.bt.step = atoi(optarg); break;
             case 'N': conf.comm.is_nome = 1; break;
+            case 1000: {
+                int chem = parse_chemistry(optarg);
+                if (chem < 0) { usage(&conf); wzfatal("Unrecognized chemistry: %s\n", optarg); }
+                conf.comm.chemistry = (chemistry_t) chem;
+                break;
+            }
             case 'S': conf.somatic = 1; break;
             case 'T': tum = optarg; break;
             case 'I': nor = optarg; break;
@@ -1106,8 +1126,16 @@ int main_pileup(int argc, char *argv[]) {
             case 'Q': conf.prior2 = atof(optarg); break;
 
             case 'h': return usage(&conf);
-            case ':': usage(&conf); wzfatal("Option needs an argument: -%c\n", optopt); break;
-            case '?': usage(&conf); wzfatal("Unrecognized option: -%c\n", optopt); break;
+            case ':':
+                usage(&conf);
+                if (optopt == 1000) wzfatal("Option needs an argument: --chemistry\n");
+                wzfatal("Option needs an argument: -%c\n", optopt);
+                break;
+            case '?':
+                usage(&conf);
+                if (optopt) wzfatal("Unrecognized option: -%c\n", optopt);
+                wzfatal("Unrecognized option: %s\n", argv[optind-1]);
+                break;
             default:
                       return usage(&conf);
         }
