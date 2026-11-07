@@ -1043,7 +1043,7 @@ static int usage(pileup_conf_t *conf) {
     fprintf(stderr, "    -b INT      Minimum base quality [%u]\n", conf->filt.min_base_qual);
     fprintf(stderr, "    -m INT      Minimum mapping quality [%u]\n", conf->filt.min_mapq);
     fprintf(stderr, "    -a INT      Minimum alignment score (from AS-tag) [%u]\n", conf->filt.min_score);
-    fprintf(stderr, "    -t INT      Maximum cytosine retention in a read [%u]\n", conf->filt.max_retention);
+    fprintf(stderr, "    -t INT      Maximum cytosine retention in a read, bisulfite and em-seq only [%u]\n", conf->filt.max_retention);
     fprintf(stderr, "    -l INT      Minimum read length [%u]\n", conf->filt.min_read_len);
     fprintf(stderr, "    -5 INT      Minimum distance to 5' end of a read [%u]\n", conf->filt.min_dist_end_5p);
     fprintf(stderr, "    -3 INT      Minimum distance to 3' end of a read [%u]\n", conf->filt.min_dist_end_3p);
@@ -1081,6 +1081,7 @@ int main_pileup(int argc, char *argv[]) {
     char *nor = 0;
     char *outfn = 0;
     char *statsfn = 0;
+    int max_retention_set = 0;
     pileup_conf_t conf;
     pileup_conf_init(&conf);
 
@@ -1113,7 +1114,7 @@ int main_pileup(int argc, char *argv[]) {
             case 'b': conf.filt.min_base_qual = atoi(optarg); break;
             case 'm': conf.filt.min_mapq = atoi(optarg); break;
             case 'a': conf.filt.min_score = atoi(optarg); break;
-            case 't': conf.filt.max_retention = atoi(optarg); break;
+            case 't': conf.filt.max_retention = atoi(optarg); max_retention_set = 1; break;
             case 'l': conf.filt.min_read_len = atoi(optarg); break;
             case '5': conf.filt.min_dist_end_5p = atoi(optarg); break;
             case '3': conf.filt.min_dist_end_3p = atoi(optarg); break;
@@ -1145,6 +1146,14 @@ int main_pileup(int argc, char *argv[]) {
             default:
                       return usage(&conf);
         }
+    }
+
+    /* -t drops reads that look unconverted. When methylated C converts, an unconverted
+       read is indistinguishable from an unmethylated one, so the filter would only
+       remove unmethylated reads and inflate BT. */
+    if (max_retention_set && methylated_c_converts(conf.comm.chemistry)) {
+        usage(&conf);
+        wzfatal("-t cannot be used with --chemistry %s\n", chemistry_name(conf.comm.chemistry));
     }
 
     if (optind + 2 > argc && !conf.somatic) {
