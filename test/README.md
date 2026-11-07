@@ -17,6 +17,23 @@ for use in Sherman (see below), and the recompressed using BGZIP compression to 
 Simulated reads used to run the tests were created with [Sherman](https://github.com/FelixKrueger/Sherman). 1000 paired
 end reads with 150 bp length were created and used throughout.
 
+Illumina 5-base reads (`5base_pe.bam`, used to test `pileup --chemistry 5base`) are a 10 kb slice of the public NA12878
+100 ng demo sample (`Demo-5base-gDNA-Sample1-NA12878-100ng-B-B01`) from Illumina's "Illumina 5-Base DNA" BaseSpace
+project, aligned by DRAGEN 4.4.6 to GRCh38. Its chr22 matches the UCSC chr22 used here outside the masked
+pericentromere. Only the chr22 `@SQ` line is kept, `@PG` lines are dropped, as are reads whose mate maps to another
+contig. DRAGEN's `XG`/`XR`/`XM` tags are removed so the test covers taking the strand from read orientation:
+
+```
+samtools view --no-PG -h -T GRCh38_full_analysis_set_plus_decoy_hla.fa.gz NA12878-100ng-5base.cram \
+        chr22:20020000-20030000 \
+    | awk -F'\t' -v OFS='\t' '
+        /^@SQ/ { if ($2 == "SN:chr22") print $1, $2, $3; next }
+        /^@PG/ { next }
+        /^@/   { print; next }
+        $7 == "=" || $7 == "*" || $7 == "chr22" { gsub(/\t(XG|XR|XM):Z:[^\t]*/, ""); print }' \
+    | samtools sort --no-PG -o 5base_pe.bam --write-index -
+```
+
 To download and extract files for performing tests, run `python setup_tests.py`. For those interested in knowing how
 these files were created, the code is recreated below.
 

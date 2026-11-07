@@ -135,6 +135,34 @@ function create_data {
         ${adir}/current.bam
 }
 
+# For data that starts from an existing BAM rather than simulated FASTQs (only pileup and downstream are run)
+function create_bam_data {
+    # Inputs
+    log=${1}
+    tag=${2}
+    bam=${3}
+    opts=${4}
+
+    # Create output directories
+    pdir=dynamic/${tag}_01_pileup
+    vdir=dynamic/${tag}_02_vcf2bed
+    mdir=dynamic/${tag}_03_mergecg
+
+    mkdir -p ${pdir}
+    mkdir -p ${vdir}
+    mkdir -p ${mdir}
+
+    echo "Making ${tag} files" | tee --append ${log}
+    echo -e "\tbiscuit pileup" | tee --append ${log}
+    biscuit pileup ${opts} -o ${pdir}/current.vcf ${REF} ${bam}
+
+    echo -e "\tbiscuit vcf2bed" | tee --append ${log}
+    biscuit vcf2bed ${pdir}/current.vcf > ${vdir}/current.bed
+
+    echo -e "\tbiscuit mergecg" | tee --append ${log}
+    biscuit mergecg ${REF} ${vdir}/current.bed > ${mdir}/current.mergecg.bed
+}
+
 echo "Test data made with biscuit version:" | tee --append make_data.log
 biscuit version 2>&1 | tee --append make_data.log # Need to run separately as this outputs to stderr
 
@@ -158,3 +186,6 @@ create_data make_data.log wgbs_se "true" "sim_se_wgbs.fastq.gz"
 
 # WGS Single-end files
 create_data make_data.log wgs_se "true" "sim_se_wgs.fastq.gz"
+
+# Illumina 5-base Paired-end files (see README.md for how 5base_pe.bam was made)
+create_bam_data make_data.log 5base_pe 5base_pe.bam "--chemistry 5base"

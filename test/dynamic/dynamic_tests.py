@@ -126,8 +126,28 @@ def main():
         'wgs_pe': '../data/sim_pe_wgs_1.fastq.gz ../data/sim_pe_wgs_2.fastq.gz',
         'wgs_se': '../data/sim_se_wgs.fastq.gz',
     }
+    # Test types that start from an existing BAM, with the pileup options they need. Only pileup and the
+    # subcommands downstream of it are run for these.
+    type_to_bam = {
+        '5base_pe': ('../data/5base_pe.bam', '--chemistry 5base'),
+    }
     for key in conf['type']:
-        if conf['type'][key]:
+        if conf['type'][key] and key in type_to_bam:
+            logger.info(f'Starting tests for test type: {key}')
+            bam_path, pileup_opts = type_to_bam[key]
+            if conf['run']['pileup']:
+                run_pileup.main(
+                    NEW, f'{key}_01_pileup', REF, None, conf['force']['pileup'], bam_path, pileup_opts
+                )
+            if conf['run']['vcf2bed']:
+                run_vcf2bed.main(
+                    NEW, f'{key}_02_vcf2bed', f'{key}_01_pileup', conf['force']['vcf2bed']
+                )
+            if conf['run']['mergecg']:
+                run_mergecg.main(
+                    NEW, f'{key}_03_mergecg', REF, f'{key}_02_vcf2bed', conf['force']['mergecg']
+                )
+        elif conf['type'][key]:
             logger.info(f'Starting tests for test type: {key}')
             if conf['run']['align']:
                 run_align.main(

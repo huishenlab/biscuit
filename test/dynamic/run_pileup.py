@@ -9,9 +9,15 @@ logger = logging.getLogger(__name__)
 
 EXTS = ['.vcf', '.vcf_meth_average.tsv']
 
-def run_pileup(biscuit_dir, out_dir, prefix, ref_path, align_dir, force):
-    if not os.path.exists(f'{align_dir}/{prefix}.bam') or not os.path.exists(f'{align_dir}/{prefix}.bam.csi'):
-        logger.error('Missing BAM or BAM index. Rerun with `run.align = true`')
+def run_pileup(biscuit_dir, out_dir, prefix, ref_path, align_dir, force, bam_path=None, opts=''):
+    """Generate BISCUIT pileup files. bam_path overrides the BAM from align_dir; opts are extra pileup options."""
+    if bam_path is None:
+        bam_path = f'{align_dir}/{prefix}.bam'
+        if not os.path.exists(bam_path) or not os.path.exists(f'{bam_path}.csi'):
+            logger.error('Missing BAM or BAM index. Rerun with `run.align = true`')
+            sys.exit(1)
+    elif not os.path.exists(bam_path) or not os.path.exists(f'{bam_path}.csi'):
+        logger.error(f'Missing {bam_path} or its index. Please move up a directory and run `setup_tests.py` to retrieve.')
         sys.exit(1)
 
     # If files exist and user doesn't force regeneration, skip processing
@@ -24,19 +30,19 @@ def run_pileup(biscuit_dir, out_dir, prefix, ref_path, align_dir, force):
 
     logger.info(f'Running {prefix} BISCUIT pileup')
 
-    cmd = f'{biscuit_dir}/biscuit pileup -o {out_dir}/{prefix}.vcf {ref_path} {align_dir}/{prefix}.bam'
+    cmd = f'{biscuit_dir}/biscuit pileup {opts} -o {out_dir}/{prefix}.vcf {ref_path} {bam_path}'
     with open(f'{out_dir}/{prefix}.vcf.err', 'w') as err:
-        subprocess.run(cmd.split(' '), stderr=err)
+        subprocess.run(cmd.split(), stderr=err)
 
     return None
 
-def main(biscuit_dir, out_dir, ref_path, align_dir, force):
+def main(biscuit_dir, out_dir, ref_path, align_dir, force, bam_path=None, opts=''):
     logger.info('Starting pileup testing')
 
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
-    run_pileup(biscuit_dir, out_dir, 'new', ref_path, align_dir, force)
+    run_pileup(biscuit_dir, out_dir, 'new', ref_path, align_dir, force, bam_path, opts)
 
     for ext in EXTS:
         if compare_files.compare_files(ext, f'../data/dynamic/{out_dir}/current', f'{out_dir}/new'):

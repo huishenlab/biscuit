@@ -3,6 +3,7 @@ type.wgbs_pe = true
 type.wgbs_se = true
 type.wgs_pe = true
 type.wgs_se = true
+type.5base_pe = true
 
 # Tests to run (true = run, false = skip)
 # Will run requested tests for any test types selected to run
