@@ -757,7 +757,11 @@ static void *process_func(void *_result) {
             // loop over reads
             while ((ret = sam_itr_next(in, iter, b))>0) {
 
-                uint8_t bsstrand = get_bsstrand(rs, b, conf->filt.min_base_qual, 0);
+                /* When methylated C converts, reads without methylation carry no
+                   conversions, so neither mismatch counting nor the YD tags of
+                   bisulfite aligners can tell their strand */
+                uint8_t bsstrand = methylated_c_converts(conf->comm.chemistry) ?
+                    bsstrand_from_flags(b) : get_bsstrand(rs, b, conf->filt.min_base_qual, 0);
 
                 /* read-based filtering */
                 bam1_core_t *c = &b->core;
@@ -1062,6 +1066,8 @@ static int usage(pileup_conf_t *conf) {
     fprintf(stderr, "\n");
     fprintf(stderr, "Note, bisulfite and em-seq read unmethylated cytosines as T, while taps and 5base (Illumina\n");
     fprintf(stderr, "    5-base) read methylated cytosines as T. BT is the methylated fraction in all cases.\n");
+    fprintf(stderr, "    taps and 5base assume a directional library and take the bisulfite strand from read\n");
+    fprintf(stderr, "    orientation (read 1 forward or read 2 reverse is BSW), not from YD/ZS/XG tags.\n");
     fprintf(stderr, "\n");
 
     return 1;

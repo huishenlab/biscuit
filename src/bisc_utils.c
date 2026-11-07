@@ -257,6 +257,16 @@ uint8_t get_bsstrand(refcache_t *rs, bam1_t *b, uint32_t min_base_qual, int allo
     return infer_bsstrand(rs, b, min_base_qual);
 }
 
+/* bsstrand from read orientation, assuming a directional library: read 1 (or an
+   unpaired read) aligned forward and read 2 aligned reverse are from the original
+   top strand (BSW) */
+uint8_t bsstrand_from_flags(bam1_t *b) {
+    uint16_t flag = b->core.flag;
+    int is_read2 = (flag & BAM_FPAIRED) && (flag & BAM_FREAD2);
+    int is_reverse = (flag & BAM_FREVERSE) != 0;
+    return is_read2 ^ is_reverse;
+}
+
 void pop_record_by_block_id(record_v *records, int64_t block_id, record_t *record) {
     uint64_t i;
     record_t *r;

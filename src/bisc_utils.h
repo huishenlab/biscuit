@@ -182,6 +182,7 @@ uint32_t cnt_retention(refcache_t *rs, bam1_t *b, uint8_t bsstrand);
 uint32_t get_mate_length(char *m_cigar);
 uint8_t infer_bsstrand(refcache_t *rs, bam1_t *b, uint32_t min_base_qual);
 uint8_t get_bsstrand(refcache_t *rs, bam1_t *b, uint32_t min_base_qual, int allow_u);
+uint8_t bsstrand_from_flags(bam1_t *b);
 
 // Parse region string
 static inline void biscuit_parse_region(const char *reg, void *hdr, int *tid, int *beg, int *end) {
