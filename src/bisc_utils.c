@@ -112,9 +112,9 @@ uint32_t cnt_retention(refcache_t *rs, bam1_t *b, uint8_t bsstrand) {
                     rb = refcache_getbase_upcase(rs, rpos+j);
                     qb = bscall(b, qpos+j);
                     if (bsstrand) {
-                        if (rb == 'C' && qb == 'C') cnt++;
-                    } else {
                         if (rb == 'G' && qb == 'G') cnt++;
+                    } else {
+                        if (rb == 'C' && qb == 'C') cnt++;
                     }
                 }
                 rpos += oplen;
