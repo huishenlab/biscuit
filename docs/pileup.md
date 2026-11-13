@@ -46,6 +46,22 @@ useful to understand are:
   - **CX:** cytosine context (CG, CHH, etc.)
   - **N5:** 5 base sequence context
 
+### TAPS and Illumina 5-base Data
+
+Thanks to the efforts of Tim Fennell at Fulcrum Genomics, BISCUIT natively handles data from TAPS and Illumina 5-base in
+`biscuit pileup` as of BISCUIT version 1.11.0. This is controlled via the `--chemistry` option. The TAPS and Illumina
+5-base protocols convert *methylated* cytosines to thymines (`mC` &rarr; `T`), which is the opposite of traditional WGBS
+and EM-seq protocols. `biscuit pileup --chemistry taps` or (`5base`) accounts for this difference so that the `BT` flag
+remains the methylated fraction. Downstream, `biscuit vcf2bed` and `biscuit mergecg` need no changes. When
+`--chemistry taps|5base` is included, the bisulfite strand is taken from the read orientation (read 1 on the forward
+strand is OT/CTOT pair and read 2 on the reverse strand is the OB/CTOB pair). Therefore, BISCUIT should be aligned in
+directional mode (`biscuit align -b1 ...`). This overrides using the `YD`/`ZS`/`XG` tag or base mismatches to determine
+the strand because reads from unmethylated regions do not have cytosine conversions.  Additionally, the `-t` option is
+not available in this mode.
+
+*Note, as of this time, TAPS/Illumina 5-base are natively handled in `biscuit pileup`, but not in other subcommands
+(e.g., `biscuit epiread`). Native handling will be added in the future.*
+
 ### Example Output with Diagnostic Information
 
 The `-v` option provides extra information when generating the pileup VCF. `-v 1` will include extra diagnostic

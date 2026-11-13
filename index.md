@@ -18,9 +18,9 @@ nav_order: 1
 ---
 
 BISulfite-seq CUI Toolkit (BISCUIT) is a utility suite for analyzing bulk and single-cell sodium bisulfite- or
-enzyme-based DNA methylation/modification data, such as WGBS, capture bisulfite sequencing, RRBS, NOMe-seq, and EM-seq.
-It was written to perform read alignment, DNA methylation and mutation calling, and allele specific methylation from
-bisulfite or bisulfite-like sequencing data.
+enzyme-based DNA methylation/modification data, such as WGBS, capture bisulfite sequencing, RRBS, NOMe-seq, EM-seq,
+TAPS, and Illumina 5-base. It was written to perform read alignment, DNA methylation and mutation calling, and allele
+specific methylation from bisulfite or bisulfite-like sequencing data.
 
 BISCUIT was developed by Wanding Zhou while he was a member of the [Shen Lab](https://shenlab.vai.org) at Van Andel
 Institute. He now holds a faculty position at University of Pennsylvania and Children's Hospital of Philadelphia.
