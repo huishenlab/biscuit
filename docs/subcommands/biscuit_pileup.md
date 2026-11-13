@@ -16,6 +16,8 @@ Options:
     -@ INT      Number of threads [3]
     -s INT      Step of window dispatching [100000]
     -N          NOMe-seq mode [off]
+    --chemistry STR
+                Conversion chemistry {bisulfite, em-seq, taps, 5base} [bisulfite]
     -S          Somatic mode, must provide -T and -I arguments [off]
     -T STR      Somatic mode, tumor BAM
     -I STR      Somatic mode, normal BAM
@@ -30,7 +32,7 @@ Filter options:
     -b INT      Minimum base quality [20]
     -m INT      Minimum mapping quality [40]
     -a INT      Minimum alignment score (from AS-tag) [40]
-    -t INT      Maximum cytosine retention in a read [999999]
+    -t INT      Maximum cytosine retention in a read, bisulfite and em-seq only [999999]
     -l INT      Minimum read length [10]
     -5 INT      Minimum distance to 5' end of a read [3]
     -3 INT      Minimum distance to 3' end of a read [3]
@@ -50,5 +52,10 @@ Genotyping options:
     -P FLOAT    Prior probability for heterozygous variant [0.333]
     -Q FLOAT    Prior probability for homozygous variant [0.333]
     -h          This help
+
+Note, bisulfite and em-seq read unmethylated cytosines as T, while taps and 5base (Illumina
+    5-base) read methylated cytosines as T. BT is the methylated fraction in all cases.
+    taps and 5base assume a directional library and take the bisulfite strand from read
+    orientation (read 1 forward or read 2 reverse is BSW), not from YD/ZS/XG tags.
 
 ```
